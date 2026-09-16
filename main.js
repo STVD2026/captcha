@@ -96,7 +96,7 @@ function showPage(name) {
   if(nb) nb.classList.add('active');
   // 메인 페이지는 라이트 테마
   document.body.classList.toggle('theme-light', name === 'main');
-  if (name === 'message') boothBuildGrid();
+  if (name === 'message') { boothBuildGrid(); boothInitCam().catch(function(){}); }
   window.scrollTo(0,0);
 }
 
@@ -363,35 +363,8 @@ var _frameColor = '#F2F2F7';     // 스트립 배경(프레임) 색
 var _bubbleInk  = { bg: '#5254FF', fg: '#FFFFFF' }; // 말풍선 색
 
 /* ── 원근 격자 배경 SVG ── */
-function boothBuildGrid() {
-  var host = document.getElementById('pb-grid');
-  if (!host || host.dataset.built === '1') return;
-  var W = 1600, H = 1000, vx = W / 2, vy = H * 0.46; // 소실점
-  var s = '<svg viewBox="0 0 ' + W + ' ' + H + '" preserveAspectRatio="xMidYMid slice">';
-  var stroke = 'stroke="#B9BBFF" stroke-width="1" opacity="0.55"';
-  // 가장자리에서 소실점으로 뻗는 방사선
-  var N = 26;
-  for (var i = 0; i <= N; i++) {
-    var t = i / N;
-    // 상/하 가장자리
-    s += '<line x1="' + (t * W) + '" y1="0" x2="' + vx + '" y2="' + vy + '" ' + stroke + '/>';
-    s += '<line x1="' + (t * W) + '" y1="' + H + '" x2="' + vx + '" y2="' + vy + '" ' + stroke + '/>';
-    // 좌/우 가장자리
-    s += '<line x1="0" y1="' + (t * H) + '" x2="' + vx + '" y2="' + vy + '" ' + stroke + '/>';
-    s += '<line x1="' + W + '" y1="' + (t * H) + '" x2="' + vx + '" y2="' + vy + '" ' + stroke + '/>';
-  }
-  // 소실점을 향해 축소되는 사각형 링 (깊이감)
-  for (var k = 1; k <= 12; k++) {
-    var f = Math.pow(k / 13, 1.6); // 비선형 → 원근
-    var x = vx - (vx) * (1 - f);
-    var y = vy - (vy) * (1 - f);
-    var w = W * f, h = H * f;
-    s += '<rect x="' + x + '" y="' + y + '" width="' + w + '" height="' + h + '" fill="none" ' + stroke + '/>';
-  }
-  s += '</svg>';
-  host.innerHTML = s;
-  host.dataset.built = '1';
-}
+/* 배경 그리드는 Figma 원본 이미지(images/booth/grid.png)를 CSS 배경으로 사용 — JS 주입 불필요 */
+function boothBuildGrid() {}
 
 /* ── 뷰티 필터 ── */
 var _bPrevW = 640, _bPrevH = 480; // 4:3 프리뷰
@@ -482,6 +455,8 @@ function boothInitCam() {
       boothStream = stream;
       document.getElementById('booth-video').srcObject = stream;
       _boothStartBeauty();
+      var pb = document.getElementById('pb');
+      if (pb) pb.classList.add('cam-on'); // 촬영 전부터 프리뷰 표시
     });
 }
 
@@ -507,13 +482,22 @@ function boothStart() {
   });
 }
 
+function boothSetInd(sec, cutIdx) {
+  var s = document.getElementById('pb-sec');
+  var c = document.getElementById('pb-cut');
+  if (s && sec != null) s.textContent = sec;
+  if (c && cutIdx != null) c.textContent = cutIdx + '/4';
+}
+
 function boothShootSequence(shotIdx) {
   if (shotIdx >= 4) {
     boothRunning = false;
     boothSetProgress(1);
+    boothSetInd(0, 4);
     boothEnterEdit();
     return;
   }
+  boothSetInd(3, shotIdx + 1); // 현재 컷 표시
   boothCountdown(3, function() {
     boothCapture(shotIdx);
     boothSetProgress((shotIdx + 1) / 4);
@@ -523,6 +507,7 @@ function boothShootSequence(shotIdx) {
 
 function boothCountdown(sec, cb) {
   var el = document.getElementById('booth-countdown');
+  boothSetInd(Math.max(0, sec), null); // 좌측 초 인디케이터 갱신
   if (sec <= 0) { el.textContent = ''; el.classList.remove('show'); cb(); return; }
   el.textContent = sec;
   el.classList.add('show');
@@ -577,14 +562,25 @@ function boothEnterEdit() {
   document.getElementById('pb').classList.remove('shooting');
   document.getElementById('pb-start').hidden = true;
   document.getElementById('pb-edit').hidden = false;
+  boothMTab('sticker'); // 모바일 기본 탭
   boothApplyFrame();
   boothUpdateBubble();
+}
+
+/* 모바일 편집 탭 전환 (스티커 / 프레임 / 메시지) */
+function boothMTab(name) {
+  var edit = document.getElementById('pb-edit');
+  if (edit) edit.setAttribute('data-mtab', name);
+  document.querySelectorAll('.pb-mtabs button').forEach(function(b) {
+    b.classList.toggle('is-on', b.getAttribute('data-sec') === name);
+  });
 }
 
 function boothRetake() {
   document.getElementById('pb-edit').hidden = true;
   document.getElementById('pb-start').hidden = false;
   boothSetProgress(0);
+  boothSetInd(3, 1);
   // 스티커 · 말풍선 초기화
   boothStickers.forEach(function(s){ if (s.el && s.el.parentNode) s.el.parentNode.removeChild(s.el); });
   boothStickers = [];
@@ -816,11 +812,8 @@ function boothDrawBubble(ctx, el, scale) {
   ctx.arcTo(x, y + h, x, y, r);
   ctx.arcTo(x, y, x + w, y, r);
   ctx.closePath();
-  ctx.shadowColor = 'rgba(0,0,0,0.22)';
-  ctx.shadowBlur = 10 * scale; ctx.shadowOffsetY = 3 * scale;
   ctx.fill();
   // 꼬리
-  ctx.shadowColor = 'transparent';
   ctx.beginPath();
   ctx.moveTo(x + 14 * scale, y + h);
   ctx.lineTo(x + 14 * scale, y + h + tail);
