@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Captcha! — 2026 서울과학기술대학교 시각디자인 졸업전시</title>
+<meta property="og:title" content="Captcha! — 2026 서울과학기술대학교 시각디자인 졸업전시">
+<meta property="og:description" content="제44회 서울과학기술대학교 시각디자인전공 졸업전시">
+<meta property="og:url" content="https://sie0nahn.github.io/web_2026/">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Captcha! — 2026 서울과학기술대학교 시각디자인 졸업전시">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" onload="this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap"></noscript>
+<link rel="stylesheet" href="style.css?v=74">
+</head>
+<body class="theme-light">
+
+<nav>
+  <span class="nav-logo" onclick="showPage('main')">Captcha!</span>
+  <ul class="nav-links">
+    <li><button onclick="showPage('main')" id="nav-main" class="active">Main</button></li>
+    <li><button onclick="showPage('designer')" id="nav-designer">Designer</button></li>
+    <li><button onclick="showPage('work')" id="nav-work">Work</button></li>
+    <li><button onclick="showPage('message')" id="nav-message">Message</button></li>
+  </ul>
+</nav>
+
+<!-- MAIN -->
+<div id="page-main" class="page active">
+
+  <!-- ── 풀스크린 3D 히어로 (컴퓨터 메인) ── -->
+  <section class="m-hero">
+    <canvas id="hero-canvas"></canvas>
+    <h1 class="m-title">Seoul Tech<br> Visual Communication Design<br>The 44th Graduation Exhibition</h1>
+ <div class="m-meta">
+      <!-- 세트1: 날짜 + 시간 -->
+      <div class="m-meta-group">
+        <div class="m-meta-item"><span class="gal">2026. 11. 17 –<br>2026. 11. 22</span></div>
+        <div class="m-meta-item"><span class="gal">10:00 –<br>20:00</span></div>
+      </div>
+
+      <!-- 세트2: 영문 장소 + 국문 장소 -->
+      <div class="m-meta-group">
+        <!-- 영문: PC 2줄 / 모바일 3줄 -->
+        <div class="m-meta-item"><span class="gal">SeoulTech<br>Centennial<span class="pc-inline"> </span><br class="mobile-br">Hall 1-3F</span></div>
+        <!-- 국문: PC 2줄 / 모바일 4줄 -->
+        <div class="m-meta-item"><span class="kr">서울과학기술<br class="mobile-br">대학교<br>백주년기념관<span class="pc-inline"> </span><br class="mobile-br"><span class="sg">1-3F</span></span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── 블루 섹션 (Frame 98) ── -->
+  <section class="m-blue">
+    <div class="m-video"><span>비디오 임의</span></div>
+    <div class="m-logo" role="img" aria-label="Captcha!"></div>
+  </section>
+
+  <!-- ── 콘셉트 텍스트 (Frame 39) ── -->
+  <section class="m-concept">
+    <div class="mc-col">
+      <p class="mc-body kr">AI시대의 모방된 막강한 인력(人力)으로부터 인간을 구분 지어줄 우리의 고유한 능력은 무엇일까. 증명할 능력 이전에, 비교적 너무도 빈약해진 인간이 스스로를 증명할 필요와 자리부터 전제되어야 하지 않은가. 그러나 놀랍게도 인간은 때로 인간임을 증명하길 요구받는다.
+      <br>“로봇이 아닙니다.”
+      <br> 오랜만에 접속하는 소셜 페이지에서 마주하게 되는 위 문장과 그 옆의 체크박스를 떠올려보라. 이어지는 절차들도 낯설지 않다. 와해된 단어를 읽어내고, 하나의 물체가 걸쳐진 모든 프레임을 식별해 내고, 다시 한번 로봇이 아니라는 선언에 체크하는 당신은. 정녕 인간이다.
+      <br> 우리는 AI가 읽어낼 수 없는 불완전-비정형의 관문을 지나는 것으로 인간임을 증명해 낸다. 무너진 언어 속에서 의미를 건져내고, 모호하게 구획된 프레임들을 골라내는 일은 역설적으로 불완전한 인간만이 해낼 수 있는 불완전의 능력이다. 흔들리되 응시하고야 마는 인간의 시선이 곧 인간다움을 담지하는 가장 큰 능력인 것이다.
+      <br> <captcha!>는 인간 고유의 시선을 믿음으로써 가능해지는 관문이자, 그로부터 마련된 하나의 장소이다. 로봇이 아닙니다. 고르고, 표시하고, 넘어오시면 됩니다.
+      <br> 마지막으로 한 번만 더.
+      <p class="mc-note kr">*CAPTCHA는 컴퓨터와 인간을 구별하기 위한, 완전 자동화된 공개 튜링 테스트다.</p>
+    </div>
+    <div class="mc-col">
+      <p class="mc-body en"> What is the capacity, uniquely ours, that would set the human apart from the formidable simulated human force (人力) of the AI age? Before any capacity to prove, shouldn’t we first assume the need — and the standing — for a human, by now so meager by comparison, to prove itself at all? And yet, astonishingly, the human is at times called upon to prove that it is human.
+        <br>“I’m not a robot.”
+        <br>Picture that sentence, and the checkbox beside it, waiting for you on a social media page you haven’t opened in months. What follows is no less familiar. You, who make out a word that has come apart; who identify every frame a single object lies across; who check, once again, the declaration that you are not a robot. Are, indeed, human.
+        <br>We prove our humanity by passing through an imperfect–unstructured gateway that AI cannot read. To dredge meaning out of collapsed language, to pick out vaguely partitioned frames — this is, paradoxically, a capacity of imperfection that only the imperfect human possesses. The human gaze, wavering yet insisting on its looking, is the greatest capacity in which our humanness is held.
+        <br>captcha! is a gateway made possible by trusting the gaze that is uniquely human’s, and a place opened up from it.
+        <br>I’m not a robot. Select, mark, and come on through.
+
+      </p>
+      <p class="mc-note en">*A CAPTCHA is a fully automated public Turing test designed to distinguish between computers and humans.</p>
+    </div>
+  </section>
+
+  <!-- ── 화이트 정보 섹션 (Frame 104) ── -->
+  <section class="m-info">
+    <div class="mi-block">
+      <div class="mi-label mi-line">Professor</div>
+      <div class="mi-profs">
+        <div class="mi-track">
+          <div class="mi-track-name"><span class="kr u">경험디자인</span><span class="sg">Experiential Design</span></div>
+          <div class="mi-people">
+            <div><span class="kr">박승배</span><span class="sg">Park Seungbae</span></div>
+            <div><span class="kr">안미경</span><span class="sg">An Mikyung</span></div>
+            <div><span class="kr">이은실</span><span class="sg">Lee Eunsil</span></div>
+          </div>
+        </div>
+        <div class="mi-track">
+          <div class="mi-track-name"><span class="kr u">콘텐츠 디자인</span><span class="sg">Contents Design</span></div>
+          <div class="mi-people">
+            <div><span class="kr">노준구</span><span class="sg">Noh Jungu</span></div>
+            <div><span class="kr">박우혁</span><span class="sg">Park Woohyuk</span></div>
+            <div><span class="kr">오영재</span><span class="sg">Oh Youngjae</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mi-block">
+      <div class="mi-label mi-line">Committee</div>
+      <div class="mi-comm">
+        <div class="mi-team">
+          <div class="mi-row"><span class="kr u">위원장</span><span class="kr">박진아</span></div>
+          <div class="mi-row"><span class="kr u">부위원장</span><span class="kr">최민석</span></div>
+        </div>
+        <div class="mi-team"><span class="kr u">재정팀</span><div class="mi-names"><span class="kr">신서애</span><span class="kr">박진아</span><span class="kr">최민석</span></div></div>
+        <div class="mi-team"><span class="kr u">DP팀</span><div class="mi-names"><span class="kr">서유랑</span><span class="kr">우지윤</span><span class="kr">지민</span><span class="kr">최민석</span></div></div>
+        <div class="mi-team"><span class="kr u">편집팀</span><div class="mi-names"><span class="kr">이장현</span><span class="kr">박진아</span><span class="kr">홍민아</span></div></div>
+        <div class="mi-team"><span class="kr u">홍보팀</span><div class="mi-names"><span class="kr">장정아</span><span class="kr">신서애</span></div></div>
+        <div class="mi-team"><span class="kr u">웹팀</span><div class="mi-names"><span class="kr">안시언</span></div></div>
+      </div>
+    </div>
+
+    <div class="mi-block">
+      <div class="mi-sponsor-row">
+        <div class="mi-label sp-label">Sponsor</div>
+        <div class="mi-sponsors">
+          <img src="images/sponsors/dinamo.png" alt="Dinamo">
+          <img src="images/sponsors/sandoll.svg" alt="산돌구름">
+          <img src="images/sponsors/oneul.svg" alt="오늘">
+          <img src="images/sponsors/rixfont.svg" alt="RixFont">
+          <img src="images/sponsors/yoondesign.svg" alt="Yoondesign">
+          <img src="images/sponsors/moorim.png" alt="무림페이퍼">
+        </div>
+      </div>
+      <div class="mi-foot">
+        <div class="mi-links">
+          <a class="mi-link" href="https://seoultech-vd-archive.github.io" target="_blank" rel="noopener noreferrer">
+            <img class="mi-link-logo" src="images/sponsors/seoultech.png" alt="SeoulTech">
+            <span class="mi-link-btn">역대 전시 아카이브 <span class="mi-arrow">↗</span></span>
+          </a>
+          <a class="mi-link" href="https://www.instagram.com/snad_vd/" target="_blank" rel="noopener noreferrer">
+            <img class="mi-link-logo" src="images/sponsors/captcha-mark.png" alt="Captcha!">
+            <span class="mi-link-btn">공식 인스타그램 <span class="mi-arrow">↗</span></span>
+          </a>
+        </div>
+        <p class="mi-copy">2026ⓒSeoul National University of Science and Technology. All Rights Reserved.</p>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- DESIGNER -->
+<div id="page-designer" class="page dz-page">
+  <div class="dz-main">
+    <div class="dz-inner dz-list">
+      <h2 class="dz-title">DESIGNER</h2>
+      <div class="dz-toolbar">
+        <div class="dz-filters">
+          <button class="dz-filter active" onclick="filterInitial(this,'all')">All</button>
+          <button class="dz-filter" onclick="filterInitial(this,'ㄱ')">ㄱ</button>
+          <button class="dz-filter" onclick="filterInitial(this,'ㄴ')">ㄴ</button>
+          <button class="dz-filter" onclick="filterInitial(this,'ㅂ')">ㅂ</button>
+          <button class="dz-filter" onclick="filterInitial(this,'ㅅ')">ㅅ</button>
+          <button class="dz-filter" onclick="filterInitial(this,'ㅇ')">ㅇ</button>
+          <button class="dz-filter" onclick="filterInitial(this,'ㅈ')">ㅈ</button>
+          <button class="dz-filter" onclick="filterInitial(this,'ㅊ')">ㅊ</button>
+          <button class="dz-filter" onclick="filterInitial(this,'ㅋ')">ㅋ</button>
+          <button class="dz-filter" onclick="filterInitial(this,'ㅎ')">ㅎ</button>
+        </div>
+        <div class="dz-search">
+          <input type="text" placeholder="SEARCH" oninput="searchDesigner(this.value)" aria-label="이름 검색">
+          <svg class="dz-search-ic" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/><line x1="16.5" y1="16.5" x2="21" y2="21" stroke="currentColor" stroke-width="2"/></svg>
+        </div>
+      </div>
+      <div class="dz-grid" id="designer-grid"></div>
+    </div>
+
+    <!-- 선택된 디자이너 상세 패널 -->
+    <aside class="dz-detail" id="dz-detail" aria-hidden="true">
+      <div class="dz-detail-head">
+        <button class="dz-x" onclick="closeDesignerDetail()" aria-label="닫기">X</button>
+        <div class="dz-dh-photo"><img id="dz-dimg" src="" alt=""></div>
+        <div class="dz-dh-info">
+          <h3 class="dz-dh-kr" id="dz-dkr"></h3>
+          <div class="dz-dh-en" id="dz-den"></div>
+          <div class="dz-dh-links" id="dz-dlinks"></div>
+        </div>
+      </div>
+      <div class="dz-detail-works" id="dz-dworks"></div>
+    </aside>
+  </div>
+  <footer class="dz-foot">
+    <span>2026 ⓒ Seoul National University of Science and Technology</span>
+    <span>Visual Communication Design</span>
+  </footer>
+</div>
+
+<!-- DESIGNER DETAIL -->
+<div id="designer-detail">
+  <div class="back-bar"><button class="back-btn" onclick="showPage('designer')">← Designer 목록으로</button></div>
+  <div class="detail-strip">
+    <div class="strip-avatar">
+      <div class="big-avatar" id="dd-av"></div>
+      <div class="det-name-kr" id="dd-kr"></div>
+      <div class="det-name-en" id="dd-en"></div>
+      <div class="det-track" id="dd-track"></div>
+    </div>
+    <div class="strip-contacts">
+      <div><div class="det-info-label">Instagram</div><div class="det-info-value" id="dd-insta"></div></div>
+      <div><div class="det-info-label">Work Category</div><div class="det-info-value" id="dd-cat"></div></div>
+    </div>
+    <div class="strip-about">
+      <div class="det-info-label" style="margin-bottom:14px">About</div>
+      <div class="det-intro" id="dd-intro"></div>
+    </div>
+  </div>
+  <div class="det-works-section">
+    <div class="det-works-label">Works</div>
+    <div class="det-works-grid" id="dd-works"></div>
+  </div>
+  <footer><span>2026 ⓒ Seoul National University of Science and Technology</span></footer>
+</div>
+
+<!-- WORK -->
+<div id="page-work" class="page wk-page">
+  <div class="wk-main">
+    <!-- 왼쪽 파란 사이드바: WORK + 부스 위치 안내 -->
+    <aside class="wk-side">
+      <div class="wk-side-head">
+        <h2 class="wk-title">WORK</h2>
+        <div class="wk-sub">부스별 위치 안내 <span>Directory</span></div>
+      </div>
+      <div class="wk-floors">
+        <button class="wk-floor active" onclick="wkFloor(this)">F1</button>
+        <button class="wk-floor" onclick="wkFloor(this)">F2</button>
+        <button class="wk-floor" onclick="wkFloor(this)">F3</button>
+      </div>
+      <div class="wk-map"><img src="images/work/booth-map.png" alt="부스 배치도" loading="lazy"></div>
+    </aside>
+    <!-- 오른쪽: 필터 + 검색 + 작품 그리드 -->
+    <div class="wk-list">
+      <div class="wk-toolbar">
+        <div class="wk-filters">
+          <button class="wk-filter active" onclick="filterWork(this,'all')">All</button>
+          <button class="wk-filter" onclick="filterWork(this,'BX(브랜드)')">BX(브랜드)</button>
+          <button class="wk-filter" onclick="filterWork(this,'CX(서비스디자인)')">CX(서비스디자인)</button>
+          <button class="wk-filter" onclick="filterWork(this,'UX/UI')">UX/UI</button>
+          <button class="wk-filter" onclick="filterWork(this,'일러스트')">일러스트</button>
+          <button class="wk-filter" onclick="filterWork(this,'편집')">편집</button>
+          <button class="wk-filter" onclick="filterWork(this,'영상')">영상</button>
+        </div>
+        <div class="wk-search">
+          <input type="text" placeholder="SEARCH" oninput="searchWork(this.value)" aria-label="작품 검색">
+          <svg class="wk-search-ic" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"></circle><line x1="16.5" y1="16.5" x2="21" y2="21" stroke="currentColor" stroke-width="2"></line></svg>
+        </div>
+      </div>
+      <div class="wk-grid" id="work-grid"></div>
+    </div>
+  </div>
+  <footer class="wk-foot">
+    <span>2026 ⓒ Seoul National University of Science and Technology</span>
+    <span>Visual Communication Design</span>
+  </footer>
+</div>
+
+<!-- WORK DETAIL -->
+<div id="work-detail" class="wk-detailpage">
+  <!-- 헤더: 흰 배경 + 파란 글씨 (뒤로가기 + 작품명 + 태그) -->
+  <div class="wd-head">
+    <div class="wd-head-top">
+      <button class="wd-back" onclick="showPage('work')" aria-label="뒤로">←</button>
+      <h2 class="wd-title" id="wd-title"></h2>
+    </div>
+    <div class="wd-en" id="wd-en"></div>
+    <div class="wd-tags" id="wd-tags"></div>
+  </div>
+  <!-- 본문: 좌 정보 / 우 이미지 갤러리 -->
+  <div class="wd-body">
+    <aside class="wd-info">
+      <div class="wd-info-row"><span class="wd-info-k">디자이너</span><a class="wd-dlink" id="wd-by"></a></div>
+      <div class="wd-info-row"><span class="wd-info-k">분야</span><span class="wd-info-v" id="wd-cat2"></span></div>
+      <p class="wd-desc" id="wd-desc"></p>
+    </aside>
+    <div class="wd-gallery" id="wdv-gallery"></div>
+    <div class="wd-more-wrap">
+      <button class="wd-more" id="wd-dlink2">디자이너 다른 작품</button>
+      <div class="wd-more-card" id="wd-more-card"></div>
+    </div>
+  </div>
+  <footer class="wk-foot"><span>2026 ⓒ Seoul National University of Science and Technology</span><span>Visual Communication Design</span></footer>
+</div>
+
+<!-- MESSAGE — PHOTOBOOTH -->
+<div id="page-message" class="page">
+  <section class="pb" id="pb">
+    <div class="pb-grid" id="pb-grid" aria-hidden="true"></div>
+    <div class="pb-inner">
+      <h2 class="pb-title">PHOTOBOOTH</h2>
+
+      <!-- STAGE 1 · 촬영 시작 -->
+      <div class="pb-stage pb-start" id="pb-start">
+        <div class="pb-deco pb-badge">70</div>
+        <div class="pb-deco pb-date">7.14</div>
+        <div class="pb-cambox" id="pb-cambox">
+          <div class="pb-progress"><span id="pb-prog"></span></div>
+          <video id="booth-video" autoplay playsinline muted></video>
+          <canvas id="booth-preview"></canvas>
+          <div class="pb-cam-idle" id="pb-cam-idle">
+            <svg class="pb-step" viewBox="0 0 40 40" fill="none" aria-hidden="true">
+              <path d="M6 26h9v-8h9v-8h9" stroke="#fff" stroke-width="4"/>
+            </svg>
+          </div>
+          <div class="booth-countdown" id="booth-countdown"></div>
+          <button class="pb-start-btn" id="booth-start-btn" onclick="boothStart()">촬영 시작 &nbsp; Start</button>
+        </div>
+        <p class="pb-hint pb-hint-start" id="booth-hint">버튼을 누르면 3초 카운트다운 후 4컷을 촬영합니다</p>
+      </div>
+
+      <!-- STAGE 2 · 편집 -->
+      <div class="pb-stage pb-edit" id="pb-edit" hidden>
+        <!-- 좌 · 스티커 / 프레임 -->
+        <aside class="pb-panel pb-side">
+          <h3 class="pb-panel-t">STICKER</h3>
+          <div class="pb-stickers" id="pb-stickers">
+            <button class="pb-sticker" onclick="boothAddSticker(1)"><img src="images/booth/sticker1.png" alt="스티커1"></button>
+            <button class="pb-sticker" onclick="boothAddSticker(2)"><img src="images/booth/sticker2.png" alt="스티커2"></button>
+            <button class="pb-sticker" onclick="boothAddSticker(3)"><img src="images/booth/sticker3.png" alt="스티커3"></button>
+            <button class="pb-sticker" onclick="boothAddSticker(4)"><img src="images/booth/sticker4.png" alt="스티커4"></button>
+            <button class="pb-sticker" onclick="boothAddSticker(5)"><img src="images/booth/sticker5.png" alt="스티커5"></button>
+          </div>
+          <h3 class="pb-panel-t">FRAME</h3>
+          <div class="pb-frames" id="pb-frames">
+            <button class="pb-fswatch is-on" data-frame="#F2F2F7" style="background:#F2F2F7" onclick="boothSetFrame(this)" aria-label="라이트 프레임"></button>
+            <button class="pb-fswatch" data-frame="#5254FF" style="background:#5254FF" onclick="boothSetFrame(this)" aria-label="블루 프레임"></button>
+            <button class="pb-fswatch" data-frame="#050530" style="background:#050530" onclick="boothSetFrame(this)" aria-label="네이비 프레임"></button>
+            <button class="pb-fswatch" data-frame="#EDEDF5" style="background:#EDEDF5" onclick="boothSetFrame(this)" aria-label="화이트 프레임"></button>
+            <button class="pb-fswatch" data-frame="#6A6CFF" style="background:#6A6CFF" onclick="boothSetFrame(this)" aria-label="라이트블루 프레임"></button>
+            <button class="pb-fswatch" data-frame="#0B0B0F" style="background:#0B0B0F" onclick="boothSetFrame(this)" aria-label="블랙 프레임"></button>
+          </div>
+        </aside>
+
+        <!-- 중앙 · 포토 스트립 -->
+        <div class="pb-stripwrap">
+          <div class="pb-strip" id="booth-strip">
+            <div class="booth-frame" id="booth-frame-0"><span class="booth-frame-num">1</span></div>
+            <div class="booth-frame" id="booth-frame-1"><span class="booth-frame-num">2</span></div>
+            <div class="booth-frame" id="booth-frame-2"><span class="booth-frame-num">3</span></div>
+            <div class="booth-frame" id="booth-frame-3"><span class="booth-frame-num">4</span></div>
+            <div class="booth-strip-footer">CAPTCHA! — 2026 SNUT</div>
+            <!-- 스티커 · 말풍선 오버레이 -->
+            <div class="pb-overlay" id="pb-overlay">
+              <div class="booth-bubble" id="booth-bubble-text" style="display:none"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 우 · 메시지 -->
+        <aside class="pb-panel pb-msg">
+          <h3 class="pb-panel-t">MESSAGE</h3>
+          <div class="pb-swatches" id="pb-swatches">
+            <button class="pb-swatch is-on" data-ink="#FFFFFF" data-bubble="#5254FF" style="background:#fff" onclick="boothSetInk(this)" aria-label="화이트 말풍선"></button>
+            <button class="pb-swatch" data-ink="#5254FF" data-bubble="#FFFFFF" style="background:#5254FF" onclick="boothSetInk(this)" aria-label="블루 말풍선"></button>
+            <button class="pb-swatch" data-ink="#050530" data-bubble="#FFFFFF" style="background:#050530" onclick="boothSetInk(this)" aria-label="네이비 말풍선"></button>
+          </div>
+          <div class="pb-msgbox">
+            <textarea id="booth-msg-input" maxlength="60"
+              placeholder="남기고 싶은 말을 적어보세요&#10;(최대 60자)"
+              oninput="boothUpdateBubble()"></textarea>
+            <div class="pb-msgbox-bar">
+              <span class="pb-count" id="pb-count">0/60</span>
+              <svg viewBox="0 0 24 16" class="pb-kbd" aria-hidden="true"><rect x="1" y="1" width="22" height="14" rx="2" stroke="currentColor" fill="none"/><path d="M4 5h1M7 5h1M10 5h1M13 5h1M16 5h1M19 5h1M4 8h1M7 8h1M10 8h1M13 8h1M16 8h1M19 8h1M7 11h10" stroke="currentColor" stroke-width="1"/></svg>
+            </div>
+          </div>
+          <p class="pb-hint" id="booth-msg-hint-drag">오른쪽 사진에서 말풍선을 드래그해 위치를 조정하세요</p>
+          <button class="pb-done" id="pb-done" onclick="boothRetake()">다시 촬영</button>
+          <button class="pb-qr" id="booth-qr-btn" onclick="boothShowQR()">
+            <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1v9M8 1L5 4M8 1l3 3M2 10v4h12v-4" stroke="currentColor" stroke-width="1.4" fill="none"/></svg>
+            QR 내보내기
+          </button>
+        </aside>
+      </div>
+
+      <canvas id="booth-canvas" style="display:none"></canvas>
+    </div>
+  </section>
+
+  <!-- QR 모달 -->
+  <div class="booth-qr-modal" id="booth-qr-modal" onclick="boothCloseQR()">
+    <div class="booth-qr-box" onclick="event.stopPropagation()">
+      <div class="booth-qr-label">QR코드를 스캔해 사진을 저장하세요<br><span>약 10분 후 링크가 만료됩니다</span></div>
+      <img id="booth-qr-img" src="" alt="QR Code">
+      <a id="booth-qr-link" href="#" target="_blank" class="booth-qr-direct">→ 직접 링크 열기</a>
+      <button class="booth-qr-close" onclick="boothCloseQR()">닫기</button>
+    </div>
+  </div>
+
+  <footer>
+    <span>2026 ⓒ Seoul National University of Science and Technology</span>
+    <span>Visual Communication Design</span>
+  </footer>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+<script src="main.js?v=23"></script>
+
+<!-- 3D 인터랙티브 히어로 (Three.js — 로컬 번들, CDN 의존 없음) -->
+<script src="models.js?v=1"></script>
+<script async src="vendor/es-module-shims.js"></script>
+<script type="importmap">
+{"imports":{"three":"./vendor/three/three.module.js","three/addons/":"./vendor/three/addons/"}}
+</script>
+<script type="module" src="hero3d.js?v=12"></script>
+</body>
+</html>
