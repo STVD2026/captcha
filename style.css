@@ -209,44 +209,100 @@ footer{padding:28px 40px;background:var(--bg2);border-top:1px solid var(--g800);
 #page-message{background:var(--blue);color:#fff}
 .pb{position:relative;min-height:calc(100vh - 43px);overflow:hidden;background:var(--blue)}
 /* 원근 격자 배경 (JS로 SVG 주입) */
-.pb-grid{position:absolute;inset:0;z-index:0;pointer-events:none;opacity:.85}
+/* 배경 그리드 — Figma 원본 이미지(dither-3.png)를 #5254FF 위에 opacity 0.6, 전체 채움(비균등 stretch) */
+.pb-grid{position:absolute;inset:0;z-index:0;pointer-events:none;opacity:.6;
+  background:url('images/booth/grid.png') center center/100% 100% no-repeat}
 .pb-grid svg{width:100%;height:100%;display:block}
-.pb-inner{position:relative;z-index:1;padding:28px 30px 60px;display:flex;flex-direction:column;align-items:center}
+.pb-inner{position:relative;z-index:1;min-height:calc(100vh - 43px);box-sizing:border-box;padding:28px 30px 60px;display:flex;flex-direction:column;align-items:center}
 .pb-title{font-family:var(--gal);font-weight:700;font-size:clamp(34px,4.6vw,60px);letter-spacing:.06em;text-transform:uppercase;color:#fff;text-align:center;margin-bottom:26px;transform:skewX(-8deg)}
 
 /* ── STAGE 1 · 시작 ── */
-.pb-start{position:relative;width:100%;max-width:1000px;display:flex;flex-direction:column;align-items:center}
-.pb-deco{position:absolute;font-family:var(--gal);font-weight:700;color:#fff;pointer-events:none}
-.pb-badge{left:2%;top:70px;width:78px;height:78px;border:2px solid #fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:26px;transform:skewX(-8deg)}
-.pb-date{right:3%;top:150px;font-size:34px;transform:skewX(-8deg)}
-.pb-cambox{position:relative;width:100%;max-width:760px;aspect-ratio:4/3;background:#C7C7CF;overflow:hidden}
+/* 시작 스테이지: 타이틀 아래 남은 공간을 채우고 카메라를 세로 중앙(살짝 아래)에 배치 */
+.pb-start{position:relative;width:100%;max-width:1000px;flex:1 1 auto;display:flex;flex-direction:column;justify-content:center;align-items:center;padding-top:2vh}
+/* 카메라 프레임 래퍼 — 데코(70·7.14)를 이 프레임 모서리에 고정해 어떤 창에서도 붙어있게 */
+/* 카메라 폭을 줄여 양옆 그리드 공간 확보 → 인디케이터를 카메라 옆에 크게 배치 */
+.pb-camwrap{position:relative;width:min(720px, calc((100vh - 320px) * 4 / 3), 70vw);max-width:100%;margin:0 auto;flex:0 0 auto}
+/* 초/컷수 인디케이터 — 카메라 양옆 빈 공간, 라벨과 함께 크게 */
+.pb-ind{position:absolute;display:flex;flex-direction:column;align-items:center;gap:7px;color:#fff;pointer-events:none;z-index:5}
+.pb-ind em{font-family:var(--sg);font-style:normal;font-weight:700;font-size:11px;letter-spacing:.22em;opacity:.9}
+/* SEC 원형 인디케이터 + 카운트다운 링 */
+.pb-ind-circle{position:relative;width:88px;height:88px;display:flex;align-items:center;justify-content:center;font-family:var(--sg);font-weight:700;font-size:40px;line-height:1}
+.pb-ind-circle span{position:relative;z-index:1}
+/* 시계방향으로 줄어들게(rotate -90 + 좌우 반전) */
+.pb-ring{position:absolute;inset:0;width:100%;height:100%;transform:rotate(-90deg) scaleX(-1)}
+.pb-ring circle{fill:none;stroke-width:6}
+.pb-ring-track{stroke:rgba(255,255,255,.28)}
+.pb-ring-prog{stroke:#fff;stroke-linecap:round;stroke-dasharray:289;stroke-dashoffset:0;transition:stroke-dashoffset .12s linear}
+.pb-ind-num{font-family:var(--sg);font-weight:700;font-size:38px;line-height:1}
+/* 좌: 초 / 우: 컷수 — 카메라 바깥쪽, 세로 중앙 부근 */
+.pb-ind-sec{right:100%;margin-right:28px;top:50%;transform:translateY(-60%)}
+.pb-ind-cut{left:100%;margin-left:28px;top:50%;transform:translateY(-40%)}
+.pb-cambox{position:relative;width:100%;aspect-ratio:4/3;background:#C7C7CF;overflow:hidden}
 .pb-progress{position:absolute;top:0;left:0;right:0;height:6px;background:rgba(255,255,255,.5);z-index:4}
-.pb-progress span{display:block;height:100%;width:0;background:var(--blue);transition:width .3s ease}
+/* 우측 고정 → 왼쪽에서 오른쪽으로 닳음 */
+.pb-progress span{position:absolute;right:0;top:0;height:100%;width:100%;background:var(--blue);transition:width .12s linear}
 .pb-cambox video{width:100%;height:100%;object-fit:cover;display:none;transform:scaleX(-1)}
-#booth-preview{position:absolute;inset:0;width:100%;height:100%;display:none;filter:blur(.5px) contrast(1.06) brightness(1.02)}
+#booth-preview{position:absolute;inset:0;width:100%;height:100%;display:none;filter:contrast(1.04) brightness(1.02)}
+/* 카메라별 라이브 프리뷰 필터 (레퍼런스 LUT 프리셋 근사) */
+.pb.fx-fuji  #booth-preview{filter:brightness(1.05) contrast(1.03) saturate(1.05) sepia(.05)}
+.pb.fx-ccd   #booth-preview{filter:brightness(1.05) contrast(1.12) saturate(.97)}
+.pb.fx-pixel #booth-preview{filter:contrast(1.1) saturate(1.32);image-rendering:pixelated}
+/* 화이트밸런스 근사용 은은한 컬러 워시 (soft-light) */
+.pb-cam-fx{position:absolute;inset:0;pointer-events:none;display:none;z-index:2}
+.pb.fx-fuji  .pb-fx-bloom{display:block;background:rgba(255,206,170,.08);mix-blend-mode:soft-light}
+.pb.fx-fuji  .pb-fx-grain{display:block;background-image:url('images/booth/grain-tile.png');background-size:150px 150px;opacity:.5;mix-blend-mode:overlay}
+.pb.fx-ccd   .pb-fx-bloom{display:block;background:rgba(140,170,220,.12);mix-blend-mode:soft-light}
+/* 선택 카메라 태그 */
+.pb-cam-tag{position:absolute;top:10px;left:10px;z-index:3;font-family:var(--sg);font-weight:700;font-size:10px;letter-spacing:.12em;color:#fff;background:rgba(0,0,0,.4);padding:4px 8px}
+.pb-cam-tag:empty{display:none}
+/* 카메라가 켜지면(cam-on) 촬영 전부터 프리뷰 표시, 계단 아이콘 숨김 */
+.pb.cam-on #booth-preview{display:block}
+.pb.cam-on .pb-cam-idle{display:none}
 .pb.shooting .pb-cambox video,.pb.shooting #booth-preview{display:block}
-.pb.shooting .pb-cam-idle,.pb.shooting .pb-start-btn{display:none}
+.pb.shooting .pb-start-btn{display:none}
 .pb-cam-idle{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
 .pb-step{width:44px;height:44px}
-.pb-start-btn{position:absolute;left:50%;bottom:16%;transform:translateX(-50%);background:#fff;color:#111;border:none;padding:12px 26px;font-family:var(--font);font-size:13px;font-weight:700;letter-spacing:.02em;cursor:pointer;transition:opacity var(--ease);white-space:nowrap;z-index:4}
-.pb-start-btn:hover{opacity:.8}
-.booth-countdown{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:min(18vw,120px);font-weight:900;color:#fff;opacity:0;pointer-events:none;letter-spacing:-.06em;text-shadow:0 0 60px rgba(0,0,0,.5);z-index:5}
+/* Start 버튼 — 사이트 아이덴티티(블루/갈라파고스/반전 hover/레코드 도트) */
+.pb-start-btn{position:absolute;left:50%;bottom:14%;transform:translateX(-50%);
+  background:var(--blue);color:#fff;border:2px solid var(--blue);
+  padding:13px 30px;font-family:var(--noto);font-size:14px;font-weight:700;letter-spacing:.01em;
+  cursor:pointer;transition:background var(--ease),color var(--ease);white-space:nowrap;z-index:4;
+  display:flex;align-items:center;gap:10px}
+.pb-start-btn .en{font-family:var(--gal);font-weight:700;text-transform:uppercase;letter-spacing:.06em}
+.pb-start-btn .pb-rec{width:9px;height:9px;border-radius:50%;background:currentColor;flex:0 0 auto;transition:transform var(--ease)}
+.pb-start-btn:hover{background:#fff;color:var(--blue)}
+.pb-start-btn:hover .pb-rec{transform:scale(1.25)}
+.booth-countdown{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:min(18vw,120px);font-weight:900;color:#fff;opacity:0;pointer-events:none;letter-spacing:-.06em;z-index:5}
 .booth-countdown.show{opacity:1}
 .pb-hint{font-size:11px;color:rgba(255,255,255,.75);line-height:1.6;text-align:center}
-.pb-hint-start{margin-top:18px}
+.pb-cam-change{background:none;border:none;color:#fff;font-family:var(--noto);font-size:11px;font-weight:600;cursor:pointer;text-decoration:underline;padding:0;text-underline-offset:2px}
+.pb-cam-change:hover{opacity:.8}
+
+/* ── STAGE 0 · 카메라 선택 ── */
+.pb-pick{width:100%;max-width:860px;flex:1 1 auto;min-height:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:2vh 0}
+.pb-pick-title{font-family:var(--gal);font-weight:700;font-size:clamp(22px,3vw,32px);color:#fff;text-transform:uppercase;letter-spacing:.05em}
+.pb-pick-sub{font-family:var(--noto);font-size:12px;color:rgba(255,255,255,.82);margin-bottom:24px}
+.pb-cams{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;width:100%}
+.pb-cam{background:rgba(255,255,255,.95);border:2px solid transparent;padding:14px 14px 16px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:9px;transition:transform var(--ease),border-color var(--ease)}
+.pb-cam:hover{transform:translateY(-4px);border-color:#fff}
+.pb-cam-img{width:100%;aspect-ratio:4/5;background-size:cover;background-position:center;display:block}
+.pb-cam-name{font-family:var(--gal);font-weight:700;font-size:20px;color:var(--blue);letter-spacing:.04em}
+.pb-cam-desc{font-family:var(--noto);font-weight:500;font-size:11px;line-height:1.5;color:var(--blue);opacity:.82;text-align:center}
+.pb-hint-start{margin-top:24px;flex:0 0 auto}
 
 /* ── STAGE 2 · 편집 ── */
-.pb-edit{width:100%;max-width:1160px;display:grid;grid-template-columns:260px minmax(0,1fr) 260px;gap:24px;align-items:start;justify-content:center}
+/* 편집 화면: 화면 세로 중앙에 오도록 위아래 auto 마진 */
+.pb-edit{width:100%;max-width:1160px;margin-block:auto;display:grid;grid-template-columns:260px minmax(0,1fr) 260px;gap:24px;align-items:start;justify-content:center}
 .pb-panel{background:rgba(255,255,255,.9);color:var(--blue);padding:22px 20px;display:flex;flex-direction:column;gap:14px;backdrop-filter:blur(2px)}
 .pb-panel-t{font-family:var(--gal);font-weight:700;font-size:22px;letter-spacing:.06em;text-transform:uppercase;color:var(--blue);transform:skewX(-8deg)}
 .pb-panel-t+.pb-panel-t{margin-top:10px}
 /* 스티커 */
-.pb-stickers{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-.pb-sticker{aspect-ratio:1;background:#fff;border:1px solid var(--blue);padding:6px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background var(--ease)}
+.pb-stickers{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.pb-sticker{aspect-ratio:1;min-width:0;overflow:hidden;background:#fff;border:1px solid var(--blue);padding:6px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background var(--ease)}
 .pb-sticker.is-on,.pb-sticker:hover{background:var(--blue)}
 .pb-sticker img{max-width:100%;max-height:100%;object-fit:contain}
 /* 프레임 색 */
-.pb-frames{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.pb-frames{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
 .pb-fswatch{aspect-ratio:1;border:1px solid var(--blue);cursor:pointer;transition:outline var(--ease)}
 .pb-fswatch.is-on{outline:3px solid var(--blue);outline-offset:2px}
 /* 중앙 스트립 */
@@ -258,10 +314,10 @@ footer{padding:28px 40px;background:var(--bg2);border-top:1px solid var(--g800);
 .booth-strip-footer{grid-column:1/-1;color:#999;font-size:8px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;text-align:center;padding:8px 0 12px}
 /* 오버레이 (스티커 + 말풍선) */
 .pb-overlay{position:absolute;inset:0;z-index:10;pointer-events:none}
-.pb-sticker-inst{position:absolute;width:84px;cursor:grab;pointer-events:all;user-select:none;touch-action:none;filter:drop-shadow(0 2px 6px rgba(0,0,0,.25))}
+.pb-sticker-inst{position:absolute;width:84px;cursor:grab;pointer-events:all;user-select:none;touch-action:none}
 .pb-sticker-inst img{width:100%;display:block;pointer-events:none}
 .pb-sticker-inst.dragging{cursor:grabbing}
-.booth-bubble{position:absolute;background:var(--blue);color:#fff;border-radius:14px;padding:7px 12px;font-size:11px;font-weight:700;line-height:1.4;max-width:70%;word-break:break-all;cursor:grab;pointer-events:all;user-select:none;box-shadow:0 3px 12px rgba(0,0,0,.28);touch-action:none}
+.booth-bubble{position:absolute;background:var(--blue);color:#fff;border-radius:14px;padding:7px 12px;font-size:11px;font-weight:700;line-height:1.4;max-width:70%;word-break:break-all;cursor:grab;pointer-events:all;user-select:none;touch-action:none}
 .booth-bubble.dragging{cursor:grabbing}
 .booth-bubble::after{content:'';position:absolute;bottom:-6px;left:14px;width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;border-top:6px solid var(--blue)}
 /* 메시지 패널 */
@@ -274,26 +330,71 @@ footer{padding:28px 40px;background:var(--bg2);border-top:1px solid var(--g800);
 .pb-msgbox-bar{display:flex;align-items:center;justify-content:space-between;margin-top:6px}
 .pb-count{font-family:var(--sg);font-size:12px;font-weight:500;color:var(--blue)}
 .pb-kbd{width:24px;height:16px;color:var(--blue)}
+/* 편집 섹션 래퍼 (탭 전환 단위) · 액션 버튼 묶음 */
+.pb-sec{display:flex;flex-direction:column;gap:14px}
+.pb-actions{display:flex;flex-direction:column;gap:14px;margin-top:auto}
+.pb-mtabs{display:none}
 .pb-done{background:#C9CAF2;color:var(--blue);border:none;padding:12px 0;width:100%;font-family:var(--noto);font-size:14px;font-weight:600;cursor:pointer;transition:opacity var(--ease)}
 .pb-done:hover{opacity:.82}
-.pb-qr{margin-top:auto;background:var(--blue);color:#fff;border:none;padding:14px 0;width:100%;font-family:var(--noto);font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:opacity var(--ease)}
+.pb-qr{background:var(--blue);color:#fff;border:none;padding:14px 0;width:100%;font-family:var(--noto);font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:opacity var(--ease)}
 .pb-qr:hover:not(:disabled){opacity:.85}
 .pb-qr:disabled{opacity:.4;cursor:not-allowed}
 .pb-qr svg{width:15px;height:15px}
 
 /* ── 반응형 ── */
 @media(max-width:920px){
-  .pb-edit{grid-template-columns:1fr;max-width:420px;gap:18px}
-  .pb-panel{order:2}
-  .pb-stripwrap{order:1}
-  .pb-msg{order:3}
-  .pb-badge{width:60px;height:60px;font-size:20px;top:40px}
-  .pb-date{font-size:26px;top:96px}
+  .pb-ind-circle{width:66px;height:66px;font-size:30px}
+  .pb-ind-num{font-size:32px}
+  .pb-ind em{font-size:9px}
+  .pb-ind-sec{margin-right:18px}
+  .pb-ind-cut{margin-left:18px}
+
+  /* ── 편집 화면: 사진 상단 고정 + 탭 바텀시트 + 하단 액션바 ── */
+  /* 뷰포트 높이로 고정 → 섹션(flex:1)이 줄어들며 액션바가 항상 하단에 보임 */
+  .pb-inner{height:calc(100vh - 43px);min-height:0;overflow:hidden}
+  .pb-title{margin-bottom:12px;flex:0 0 auto}
+  .pb-edit{margin:0;width:100%;max-width:480px;flex:1 1 auto;min-height:0;
+    display:flex;flex-direction:column;align-items:stretch;gap:12px}
+  /* 패널을 투명화 → 내부 섹션이 pb-edit 플렉스에 직접 흐름 */
+  .pb-side,.pb-msg{display:contents}
+  /* 1) 사진 스트립 — 상단 고정, 높이에 맞춰 축소 */
+  .pb-stripwrap{order:1;flex:0 0 auto}
+  .pb-strip{width:min(72vw,300px,34vh);max-width:none;margin:0 auto}
+  /* 2) 탭 바 */
+  .pb-mtabs{order:2;position:static;display:flex;flex:0 0 auto}
+  .pb-mtabs button{flex:1;background:rgba(255,255,255,.9);color:var(--blue);
+    border:1px solid var(--blue);border-right:none;padding:12px 0;
+    font-family:var(--noto);font-weight:700;font-size:13px;cursor:pointer;transition:background var(--ease),color var(--ease)}
+  .pb-mtabs button:last-child{border-right:1px solid var(--blue)}
+  .pb-mtabs button.is-on{background:var(--blue);color:#fff}
+  /* 3) 활성 섹션만 표시 (스크롤 영역) */
+  .pb-sec{order:3;display:none;flex:1 1 auto;min-height:0;overflow-y:auto;
+    background:rgba(255,255,255,.92);padding:16px 16px 4px;box-sizing:border-box}
+  .pb-edit[data-mtab="sticker"] .pb-sec[data-sec="sticker"],
+  .pb-edit[data-mtab="frame"]   .pb-sec[data-sec="frame"],
+  .pb-edit[data-mtab="message"] .pb-sec[data-sec="message"]{display:flex}
+  .pb-sec .pb-panel-t{display:none} /* 탭이 제목 역할 */
+  /* 4) 액션 바 — 항상 하단 */
+  .pb-actions{order:4;flex:0 0 auto;flex-direction:row;gap:8px;margin:0}
+  .pb-actions .pb-done{flex:0 0 38%}
+  .pb-actions .pb-qr{flex:1}
+  /* 탭 안이라 스티커·프레임을 크게 */
+  .pb-stickers{grid-template-columns:repeat(5,minmax(0,1fr))}
+  .pb-frames{grid-template-columns:repeat(6,minmax(0,1fr))}
+  .pb-swatch{width:44px;height:44px}
 }
 @media(max-width:560px){
-  .pb-inner{padding:22px 16px 48px}
+  .pb-inner{padding:18px 14px 20px}
   .pb-deco{display:none}
-  .pb-stickers,.pb-frames{grid-template-columns:repeat(6,1fr)}
+  .pb-stickers{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .pb-frames{grid-template-columns:repeat(6,minmax(0,1fr))}
+  /* 카메라 선택: 가로형 카드 1열 */
+  .pb-pick-sub{margin-bottom:16px}
+  .pb-cams{grid-template-columns:1fr;gap:12px}
+  .pb-cam{flex-direction:row;align-items:center;gap:14px;padding:12px;text-align:left}
+  .pb-cam-img{width:78px;flex:0 0 auto}
+  .pb-cam-name{font-size:18px}
+  .pb-cam-desc{text-align:left}
 }
 /* QR 모달 */
 .booth-qr-modal{position:fixed;inset:0;background:rgba(0,0,0,.75);backdrop-filter:blur(8px);z-index:500;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s}
@@ -403,7 +504,7 @@ nav{
 }
 /* 한국어를 단어(띄어쓰기) 단위로 줄바꿈 */
 .mc-col{display:flex;flex-direction:column;gap:12px;word-break:keep-all;overflow-wrap:break-word}
-.mc-body{font-family:var(--noto);font-weight:400;font-size:15px;line-height:1.6;color:var(--blue)}
+.mc-body{font-family:var(--noto);font-weight:400;font-size:15px;line-height:1.6;color:var(--blue);font-style:italic}
 .mc-body.en{font-family:var(--sg)}
 .mc-note{font-family:var(--noto);font-weight:400;font-size:15px;line-height:1.6;color:var(--blue)}
 .mc-note.en{font-family:var(--sg)}
@@ -416,26 +517,41 @@ nav{
 }
 .mi-block{display:flex;flex-direction:column;gap:20px}
 .mi-label{font-family:var(--sg);font-weight:700;font-size:16px;line-height:1.2;text-transform:uppercase;color:#FFFFFF;}
-.mi-profs{display:flex;flex-wrap:wrap;gap:82px}
-.mi-track{display:flex;gap:77px;flex:1;min-width:280px}
-.mi-track-name{display:flex;flex-direction:column;gap:8px;flex:none}
+.mi-profs{display:flex;flex-direction:column;gap:40px}
+/* 라벨 열 고정 → 교수 이름 열을 위원회 2번째 열과 같은 세로선(x)에 정렬 */
+.mi-track{display:grid;grid-template-columns:200px 1fr;column-gap:0;align-items:start;min-width:0}
+.mi-track-name{display:flex;flex-direction:column;gap:8px}
 .mi-track-name .kr{font-family:var(--noto);font-weight:700;font-size:13px;line-height:1.4;color:#FFFFFF;}
 .mi-track-name .sg{font-family:var(--sg);font-weight:700;font-size:13px;line-height:1.2;text-transform:uppercase;color:#FFFFFF;}
-.mi-people{display:flex;flex-wrap:wrap;gap:8px 24px}
+.mi-people{display:flex;flex-direction:column;gap:14px}
 .mi-people>div{display:flex;flex-direction:column;gap:4px}
 .mi-people .kr{font-family:var(--noto);font-weight:700;font-size:13px;line-height:1.4;color:#FFFFFF;}
 .mi-people .sg{font-family:var(--sg);font-weight:500;font-size:13px;line-height:1.2;color:#FFFFFF;}
+/* 데스크톱(전체): 교수 두 트랙을 위원회와 동일한 4열 그리드에 나란히 배치
+   → 경험디자인(라벨 col1 / 이름 col2) · 콘텐츠디자인(라벨 col3 / 이름 col4)이 위원회 세로열에 정렬 */
+@media (min-width:1081px){
+  /* 교수·위원회 공통 4열: 열 폭 고정 + 좌측 정렬 → 열 간격 축소, 우측 여백 확보 */
+  .mi-profs{display:grid;grid-template-columns:repeat(4,1fr);column-gap:40px;row-gap:40px;align-items:start;max-width:80%}
+  .mi-track{display:contents}
+}
 
 /* 밑줄 */
 .u{position:relative;text-decoration:none;display:inline-block;align-self:flex-start;width:fit-content}
 .u::after{content:"";position:absolute;left:0;right:0;bottom:-0.25em;height:1.5px;background:currentColor}
 
-/* 그리드로 배치해 줄바꿈 시에도 팀이 컬럼에 정렬됨(가운데 뜨는 문제 방지) */
-.mi-comm{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:28px 24px}
-.mi-team{display:flex;flex-wrap:wrap;gap:8px 16px;align-content:flex-start;min-width:0}
+/* 4열 고정 그리드 + 팀마다 라벨 열 폭 고정 → 이름 세로선이 모든 팀에서 동일하게 정렬 */
+.mi-comm{display:grid;grid-template-columns:repeat(4,1fr);gap:32px 24px}
+.mi-team{display:grid;grid-template-columns:56px 1fr;column-gap:12px;row-gap:6px;align-content:start;align-items:start;min-width:0}
+.mi-team>.kr.u{grid-column:1}
 .mi-team .kr{font-family:var(--noto);font-weight:700;font-size:13px;line-height:1.4;color:#FFFFFF;}
-.mi-row{display:flex;gap:16px;width:100%}
-.mi-names{display:flex;flex-direction:column;gap:4px}
+/* 위원장/부위원장처럼 행(row)으로 구성된 팀 */
+.mi-team:has(.mi-row){display:flex;flex-direction:column;gap:10px}
+.mi-row{display:grid;grid-template-columns:56px 1fr;column-gap:12px;width:100%}
+.mi-names{display:flex;flex-direction:column;gap:6px}
+/* 데스크톱(전체): 위원회 열 폭 고정 + 좌측 정렬 → 열 간격 축소, 우측 여백 (교수와 동일 정렬) */
+@media (min-width:1081px){
+  .mi-comm{grid-template-columns:repeat(4,1fr);column-gap:40px;row-gap:32px;max-width:80%}
+}
 /* PROFESSOR / COMMITTEE : 라벨 아래 긴 밑줄(전체 폭) */
 .mi-line{border-bottom:1px solid #fff;padding-bottom:8px}
 /* SPONSOR : 라벨+선은 왼쪽, 로고는 오른쪽 */
@@ -452,7 +568,7 @@ nav{
 .mi-sponsors {
   display: flex;
   flex-wrap: wrap;
-  justify-content: flex-end; /* 우측 정렬 유지 */
+  justify-content: flex-start; /* 좌측 정렬 */
   align-items: center;
   gap: 28px;
   width: 100%;           /* 너비를 100%로 지정하여 우측 정렬이 정상 작동하도록 설정 */
@@ -463,7 +579,7 @@ nav{
 .mi-block + .mi-block{margin-top:20px}
 
 /* 하단: 로고+링크 버튼 / 카피라이트 */
-.mi-foot{display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:24px;margin-top:20px}
+.mi-foot{display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:24px;margin-top:220px}
 .mi-links{display:flex;gap:52px}
 /* 피그마와 동일: 아카이브 링크 140px / 인스타 링크 120px (이미지=버튼 동일 폭) */
 .mi-link{display:flex;flex-direction:column;gap:12px;text-decoration:none}
@@ -534,7 +650,7 @@ nav{
   .mc-body,.mc-note{font-size:13px}
   /* 스폰서 라벨 줄바꿈 + 하단 세로 스택 */
   .sp-label{flex-basis:100%}
-  .mi-foot{flex-direction:column;align-items:flex-start;gap:28px}
+  .mi-foot{flex-direction:column;align-items:flex-start;gap:28px;margin-top:96px}
   .mi-links{gap:20px;flex-wrap:wrap}
 }
 /* ── 메타 정보 줄바꿈 설정 (PC 2줄 / 모바일 3~4줄) ── */
@@ -550,6 +666,12 @@ nav{
    Designer 페이지 (Figma node 107-14762) — 반응형
    ══════════════════════════════════════════════════ */
 .dz-page{background:#fff;color:#111;min-height:100vh}
+/* 페이지 배경 3D 오브제 캔버스 (UI 뒤에 떠다님) */
+.page-bg3d{position:fixed;top:43px;left:0;right:0;bottom:0;width:100%;height:auto;z-index:0;pointer-events:none;opacity:.7}
+#designer-bg{opacity:.42} /* 디자이너 배경 오브제는 더 연하게 */
+/* 콘텐츠를 캔버스 위로 */
+.dz-main,.dz-foot{position:relative;z-index:1}
+.wk-main,.wk-foot{position:relative;z-index:1}
 #page-designer.active{display:flex;flex-direction:column;min-height:100vh}
 .dz-inner{flex:1;padding:0 30px 60px}
 /* 디테일 패널이 열렸을 때만 리스트 오른쪽 여백 축소 30→? (좁힌 버전 유지) */

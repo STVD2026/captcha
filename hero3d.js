@@ -3,10 +3,27 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 
-const canvas = document.getElementById('hero-canvas');
-if (canvas) initHero(canvas);
+// 메인 히어로: 방(그리드) + 4개 오브제
+const heroCanvas = document.getElementById('hero-canvas');
+if (heroCanvas) initHero(heroCanvas);
 
-function initHero(canvas) {
+// 페이지 배경: 방 없이 페이지별로 다른 오브제 1~2개만 (UI 뒤에 떠다님)
+const DESIGNER_BG_LAYOUT = [
+  { key: 'steps',         nx: -0.66, ny:  0.40, hf: 0.34, d: 26, rx: 0.26, ry:  0.95, rz:  0.20, mScale: 1.0, mnx: -0.5, mny:  0.5 },
+  { key: 'traffic_light', nx:  0.70, ny: -0.34, hf: 0.30, d: 28, rx: 0.10, ry: -0.48, rz:  1.42, mScale: 1.1, mnx:  0.5, mny: -0.5 },
+];
+const WORK_BG_LAYOUT = [
+  { key: 'road_narrows',  nx:  0.66, ny:  0.42, hf: 0.52, d: 20, rx: 0.15, ry:  0.25, rz: -2.30, mScale: 1.0, mnx:  0.5, mny:  0.5 },
+  { key: 'fire_hydrant',  nx: -0.64, ny: -0.40, hf: 0.46, d: 24, rx: 0.10, ry:  0.30, rz:  2.19, mScale: 1.1, mnx: -0.5, mny: -0.5 },
+];
+const designerBg = document.getElementById('designer-bg');
+if (designerBg) initHero(designerBg, { withRoom: false, layout: DESIGNER_BG_LAYOUT, sizeMode: 'viewport' });
+const workBg = document.getElementById('work-bg');
+if (workBg) initHero(workBg, { withRoom: false, layout: WORK_BG_LAYOUT, sizeMode: 'viewport' });
+
+function initHero(canvas, opts = {}) {
+  const withRoom = opts.withRoom !== false;
+  const sizeMode = opts.sizeMode || 'stage';
   const stage = canvas.parentElement;
   const BLUE = 0x5254ff;
 
@@ -47,13 +64,15 @@ function initHero(canvas) {
       opacity: 1.0 
     }));
   }
-  const room = new THREE.Group(); scene.add(room);
-  let m;
-  m = gridPlane(ROOM_W, ROOM_H); m.position.z = -ROOM_D / 2; room.add(m);
-  m = gridPlane(ROOM_W, ROOM_D); m.rotation.x = -Math.PI / 2; m.position.y = -ROOM_H / 2; room.add(m);
-  m = gridPlane(ROOM_W, ROOM_D); m.rotation.x = Math.PI / 2; m.position.y = ROOM_H / 2; room.add(m);
-  m = gridPlane(ROOM_D, ROOM_H); m.rotation.y = Math.PI / 2; m.position.x = -ROOM_W / 2; room.add(m);
-  m = gridPlane(ROOM_D, ROOM_H); m.rotation.y = -Math.PI / 2; m.position.x = ROOM_W / 2; room.add(m);
+  if (withRoom) {
+    const room = new THREE.Group(); scene.add(room);
+    let m;
+    m = gridPlane(ROOM_W, ROOM_H); m.position.z = -ROOM_D / 2; room.add(m);
+    m = gridPlane(ROOM_W, ROOM_D); m.rotation.x = -Math.PI / 2; m.position.y = -ROOM_H / 2; room.add(m);
+    m = gridPlane(ROOM_W, ROOM_D); m.rotation.x = Math.PI / 2; m.position.y = ROOM_H / 2; room.add(m);
+    m = gridPlane(ROOM_D, ROOM_H); m.rotation.y = Math.PI / 2; m.position.x = -ROOM_W / 2; room.add(m);
+    m = gridPlane(ROOM_D, ROOM_H); m.rotation.y = -Math.PI / 2; m.position.x = ROOM_W / 2; room.add(m);
+  }
 
   const material = new THREE.MeshStandardMaterial({ color: BLUE, roughness: 0.32, metalness: 0, envMapIntensity: 1.0 });
 
@@ -62,7 +81,7 @@ function initHero(canvas) {
   const b64ToBuf = b64 => { const s = atob(b64), n = s.length, a = new Uint8Array(n); for (let i = 0; i < n; i++) a[i] = s.charCodeAt(i); return a.buffer; };
 
   const DESIGN_ASPECT = 1440 / 754;
-  const LAYOUT = [
+  const LAYOUT = opts.layout || [
     { key: 'steps',         nx: -0.651, ny:  0.138, hf: 0.350, d: 30, rx:  0.26, ry:  0.95, rz:  0.20, mScale: 1.0, mnx: -0.55, mny:  0.56 },
     { key: 'fire_hydrant',  nx: -0.296, ny: -0.186, hf: 0.454, d: 22, rx:  0.10, ry:  0.30, rz:  2.19, mScale: 1.2, mnx: -0.34, mny: -0.52 },
     { key: 'road_narrows',  nx:  0.230, ny:  0.108, hf: 0.799, d: 17, rx:  0.15, ry:  0.25, rz: -2.30, mScale: 1.1, mnx:  0.14, mny:  0.02 },
@@ -211,7 +230,8 @@ function initHero(canvas) {
 
   let PR = 1;
   function resize() {
-    const w = stage.clientWidth, h = Math.max(stage.clientHeight - 43, 1);
+    const w = sizeMode === 'viewport' ? window.innerWidth  : stage.clientWidth;
+    const h = Math.max((sizeMode === 'viewport' ? window.innerHeight : stage.clientHeight) - 43, 1);
     PR = Math.min(window.devicePixelRatio, 1.5);
     const scale = ditherMat.uniforms.uScale.value;
     
@@ -227,10 +247,14 @@ function initHero(canvas) {
     camera.aspect = w / h; camera.updateProjectionMatrix();
     layoutAll();
   }
-  new ResizeObserver(resize).observe(stage); resize();
+  if (sizeMode === 'viewport') window.addEventListener('resize', resize);
+  else new ResizeObserver(resize).observe(stage);
+  resize();
 
   const clock = new THREE.Clock();
   (function loop() {
+    // 페이지가 숨겨져 있으면(비활성) 렌더 생략 — 성능 절약
+    if (canvas.getClientRects().length === 0) { requestAnimationFrame(loop); return; }
     const t = clock.getElapsedTime();
     cur.x += (target.x - cur.x) * 0.06;
     cur.y += (target.y - cur.y) * 0.06;

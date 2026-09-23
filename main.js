@@ -96,7 +96,7 @@ function showPage(name) {
   if(nb) nb.classList.add('active');
   // 메인 페이지는 라이트 테마
   document.body.classList.toggle('theme-light', name === 'main');
-  if (name === 'message') boothBuildGrid();
+  if (name === 'message') { boothBuildGrid(); boothShowStage('pick'); boothInitCam().catch(function(){}); }
   window.scrollTo(0,0);
 }
 
@@ -361,37 +361,147 @@ var boothStickers = [];          // {el} 리스트
 var _sid = 0;
 var _frameColor = '#F2F2F7';     // 스트립 배경(프레임) 색
 var _bubbleInk  = { bg: '#5254FF', fg: '#FFFFFF' }; // 말풍선 색
+var _cam = 'ccd';                // 선택 카메라
+var CAMS = {
+  ccd:   { name: 'CCD' },       // 쿨·클린 디카룩
+  fuji:  { name: 'FILM' },      // 밝고 따뜻·에어리 + 그레인
+  pixel: { name: 'PIXEL' }      // 픽셀 아트(레트로)
+};
+
+/* 스테이지 전환: pick / start / edit */
+function boothShowStage(name) {
+  ['pick', 'start', 'edit'].forEach(function(s) {
+    var el = document.getElementById('pb-' + s);
+    if (el) el.hidden = (s !== name);
+  });
+}
+
+/* 카메라 선택 → 촬영 화면으로 */
+function boothPickCam(cam) {
+  _cam = cam;
+  var pb = document.getElementById('pb');
+  pb.classList.remove('fx-ccd', 'fx-canon', 'fx-fuji');
+  pb.classList.add('fx-' + cam);
+  var tag = document.getElementById('pb-cam-tag');
+  if (tag) tag.textContent = CAMS[cam].name;
+  boothShowStage('start');
+  boothResetTimer();
+  boothInitCam().catch(function(){});
+}
+
+/* ── 촬영 결과에 카메라 감성 필터 적용 (픽셀 단위 컬러 그레이딩) ── */
+function _cl(v){ return v < 0 ? 0 : v > 255 ? 255 : v; }
+function _smooth(t){ return t<0?0:t>1?1:t*t*(3-2*t); } // smoothstep
+
+/* 밝은 영역만 뽑아 블러 후 가산 합성 → 리얼 헐레이션/글로우 */
+function _bloom(canvas, threshold, blurPx, strength, tint) {
+  var w = canvas.width, h = canvas.height, ctx = canvas.getContext('2d');
+  var t = document.createElement('canvas'); t.width = w; t.height = h;
+  var tx = t.getContext('2d', { willReadFrequently: true });
+  tx.drawImage(canvas, 0, 0);
+  var im = tx.getImageData(0, 0, w, h), d = im.data;
+  for (var i = 0; i < d.length; i += 4) {
+    var l = 0.299*d[i] + 0.587*d[i+1] + 0.114*d[i+2];
+    if (l <= threshold) { d[i]=d[i+1]=d[i+2]=0; }
+    else {
+      var k = (l - threshold) / (255 - threshold);      // 0..1
+      k = k*k;                                           // 하이라이트일수록 급증
+      d[i]=tint[0]*k; d[i+1]=tint[1]*k; d[i+2]=tint[2]*k;
+    }
+  }
+  tx.putImageData(im, 0, 0);
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  ctx.globalAlpha = strength;
+  ctx.filter = 'blur(' + blurPx + 'px)';
+  ctx.drawImage(t, 0, 0);
+  ctx.restore(); ctx.filter = 'none'; ctx.globalAlpha = 1;
+}
+function _vignette(canvas, inner, strength) {
+  var w = canvas.width, h = canvas.height, ctx = canvas.getContext('2d');
+  var g = ctx.createRadialGradient(w/2, h*0.46, Math.min(w,h)*inner, w/2, h*0.5, Math.max(w,h)*0.72);
+  g.addColorStop(0, 'rgba(0,0,0,0)'); g.addColorStop(1, 'rgba(0,0,0,' + strength + ')');
+  ctx.fillStyle = g; ctx.fillRect(0, 0, w, h);
+}
+function _grain(canvas, amt, mono) {
+  var w = canvas.width, h = canvas.height, ctx = canvas.getContext('2d');
+  var im = ctx.getImageData(0, 0, w, h), d = im.data;
+  for (var i = 0; i < d.length; i += 4) {
+    if (mono) { var n = (Math.random()-0.5)*amt; d[i]=_cl(d[i]+n); d[i+1]=_cl(d[i+1]+n); d[i+2]=_cl(d[i+2]+n); }
+    else { d[i]=_cl(d[i]+(Math.random()-0.5)*amt); d[i+1]=_cl(d[i+1]+(Math.random()-0.5)*amt); d[i+2]=_cl(d[i+2]+(Math.random()-0.5)*amt); }
+  }
+  ctx.putImageData(im, 0, 0);
+}
+
+/* 채널 톤커브 LUT: black 리프트, white 롤오프, gamma, gain(화이트밸런스) */
+function _toneLut(black, white, gamma, gain) {
+  var a = new Float32Array(256);
+  for (var i = 0; i < 256; i++) {
+    var v = Math.pow(i / 255, gamma);
+    a[i] = (black + (white - black) * v) * gain;
+  }
+  return a;
+}
+/* 픽셀 아트: 저해상도 다운스케일 + 제한 팔레트(포스터라이즈) */
+function _gradePixel(canvas) {
+  var w = canvas.width, h = canvas.height, ctx = canvas.getContext('2d');
+  var px = Math.max(4, Math.round(w / 120));           // 픽셀 블록 크기
+  var sw = Math.max(1, Math.round(w / px)), sh = Math.max(1, Math.round(h / px));
+  var small = document.createElement('canvas'); small.width = sw; small.height = sh;
+  var sx = small.getContext('2d'); sx.imageSmoothingEnabled = false;
+  sx.drawImage(canvas, 0, 0, sw, sh);                  // 다운스케일
+  var im = sx.getImageData(0, 0, sw, sh), d = im.data;
+  var levels = 6, stp = 255 / (levels - 1);
+  for (var i = 0; i < d.length; i += 4) {
+    var r = d[i], g = d[i+1], b = d[i+2];
+    var gr = 0.299*r + 0.587*g + 0.114*b;
+    r = gr + (r-gr)*1.32; g = gr + (g-gr)*1.32; b = gr + (b-gr)*1.32; // 비비드
+    r = 128 + (r-128)*1.1; g = 128 + (g-128)*1.1; b = 128 + (b-128)*1.1; // 대비
+    d[i]   = _cl(Math.round(r/stp)*stp);               // 포스터라이즈(제한 팔레트)
+    d[i+1] = _cl(Math.round(g/stp)*stp);
+    d[i+2] = _cl(Math.round(b/stp)*stp);
+  }
+  sx.putImageData(im, 0, 0);
+  ctx.imageSmoothingEnabled = false; ctx.clearRect(0, 0, w, h);
+  ctx.drawImage(small, 0, 0, sw, sh, 0, 0, w, h);      // 니어리스트 업스케일
+  ctx.imageSmoothingEnabled = true;
+}
+
+/* 카메라별 컬러 그레이딩 (레퍼런스 LUT 프리셋 재현) */
+function boothApplyCam(canvas) {
+  if (_cam === 'pixel') { _gradePixel(canvas); return; }
+  var w = canvas.width, h = canvas.height, ctx = canvas.getContext('2d');
+  var im = ctx.getImageData(0, 0, w, h), d = im.data;
+  var P;
+  if (_cam === 'ccd') {
+    // CCD (ninoco) — 쿨·클린, 살짝 밝고 대비 있는 디카룩
+    P = { lr:_toneLut(6,252,0.95,0.984), lg:_toneLut(7,253,0.94,1.006), lb:_toneLut(9,255,0.93,1.042),
+          ct:1.10, sat:0.97, shR:-4, shG:5, shB:5, hiR:-2, hiG:1, hiB:3 };
+  } else {
+    // FILM — 밝고 따뜻·에어리 + 필름 그레인
+    P = { lr:_toneLut(5,250,0.93,1.022), lg:_toneLut(5,250,0.94,1.004), lb:_toneLut(6,247,0.96,0.986),
+          ct:1.04, sat:1.05, shR:1, shG:1, shB:0, hiR:6, hiG:2, hiB:-5 };
+  }
+  var lr=P.lr, lg=P.lg, lb=P.lb, ct=P.ct, sat=P.sat;
+  for (var i = 0; i < d.length; i += 4) {
+    var r = lr[d[i]], g = lg[d[i+1]], b = lb[d[i+2]];
+    // 대비(피벗 128)
+    r = 128 + (r-128)*ct; g = 128 + (g-128)*ct; b = 128 + (b-128)*ct;
+    // 스플릿토닝(섀도/하이라이트 색)
+    var lum = (0.299*r + 0.587*g + 0.114*b) / 255, sh = 1-lum, hi = lum;
+    r += P.shR*sh + P.hiR*hi;  g += P.shG*sh + P.hiG*hi;  b += P.shB*sh + P.hiB*hi;
+    // 채도
+    var gr = 0.299*r + 0.587*g + 0.114*b;
+    r = gr + (r-gr)*sat; g = gr + (g-gr)*sat; b = gr + (b-gr)*sat;
+    d[i]=_cl(r); d[i+1]=_cl(g); d[i+2]=_cl(b);
+  }
+  ctx.putImageData(im, 0, 0);
+  if (_cam === 'fuji') _grain(canvas, 18, true); // 필름 그레인
+}
 
 /* ── 원근 격자 배경 SVG ── */
-function boothBuildGrid() {
-  var host = document.getElementById('pb-grid');
-  if (!host || host.dataset.built === '1') return;
-  var W = 1600, H = 1000, vx = W / 2, vy = H * 0.46; // 소실점
-  var s = '<svg viewBox="0 0 ' + W + ' ' + H + '" preserveAspectRatio="xMidYMid slice">';
-  var stroke = 'stroke="#B9BBFF" stroke-width="1" opacity="0.55"';
-  // 가장자리에서 소실점으로 뻗는 방사선
-  var N = 26;
-  for (var i = 0; i <= N; i++) {
-    var t = i / N;
-    // 상/하 가장자리
-    s += '<line x1="' + (t * W) + '" y1="0" x2="' + vx + '" y2="' + vy + '" ' + stroke + '/>';
-    s += '<line x1="' + (t * W) + '" y1="' + H + '" x2="' + vx + '" y2="' + vy + '" ' + stroke + '/>';
-    // 좌/우 가장자리
-    s += '<line x1="0" y1="' + (t * H) + '" x2="' + vx + '" y2="' + vy + '" ' + stroke + '/>';
-    s += '<line x1="' + W + '" y1="' + (t * H) + '" x2="' + vx + '" y2="' + vy + '" ' + stroke + '/>';
-  }
-  // 소실점을 향해 축소되는 사각형 링 (깊이감)
-  for (var k = 1; k <= 12; k++) {
-    var f = Math.pow(k / 13, 1.6); // 비선형 → 원근
-    var x = vx - (vx) * (1 - f);
-    var y = vy - (vy) * (1 - f);
-    var w = W * f, h = H * f;
-    s += '<rect x="' + x + '" y="' + y + '" width="' + w + '" height="' + h + '" fill="none" ' + stroke + '/>';
-  }
-  s += '</svg>';
-  host.innerHTML = s;
-  host.dataset.built = '1';
-}
+/* 배경 그리드는 Figma 원본 이미지(images/booth/grid.png)를 CSS 배경으로 사용 — JS 주입 불필요 */
+function boothBuildGrid() {}
 
 /* ── 뷰티 필터 ── */
 var _bPrevW = 640, _bPrevH = 480; // 4:3 프리뷰
@@ -426,19 +536,9 @@ function _buildBeautyLUT(w, h) {
   return lut;
 }
 
+/* 얼굴 왜곡(뷰티 워프) 제거 — 원본 그대로 복사 */
 function _applyWarp(src, dst, lut, w, h) {
-  for (var i = 0; i < w * h; i++) {
-    var di = i * 4;
-    var sx = lut[i*2], sy = lut[i*2+1];
-    var x0=sx|0, y0=sy|0, x1=Math.min(w-1,x0+1), y1=Math.min(h-1,y0+1);
-    var fx=sx-x0, fy=sy-y0;
-    var i00=(y0*w+x0)*4,i10=(y0*w+x1)*4,i01=(y1*w+x0)*4,i11=(y1*w+x1)*4;
-    for (var c=0;c<3;c++) {
-      dst[di+c]=(src[i00+c]*(1-fx)*(1-fy)+src[i10+c]*fx*(1-fy)+
-                 src[i01+c]*(1-fx)*fy+src[i11+c]*fx*fy)|0;
-    }
-    dst[di+3]=255;
-  }
+  dst.set(src);
 }
 
 function _boothLoop() {
@@ -458,6 +558,14 @@ function _boothLoop() {
     var dst = new ImageData(w, h);
     _applyWarp(src.data, dst.data, _bLUT, w, h);
     _bPrevCtx.putImageData(dst, 0, 0);
+    // 픽셀 카메라: 라이브 프리뷰도 블록 픽셀화
+    if (_cam === 'pixel') {
+      var prev = _bPrevCtx.canvas, pw = Math.max(1, Math.round(w / 6)), ph = Math.max(1, Math.round(h / 6));
+      _bPrevCtx.imageSmoothingEnabled = false;
+      _bPrevCtx.drawImage(prev, 0, 0, w, h, 0, 0, pw, ph);
+      _bPrevCtx.drawImage(prev, 0, 0, pw, ph, 0, 0, w, h);
+      _bPrevCtx.imageSmoothingEnabled = true;
+    }
   }
   _bAnimId = requestAnimationFrame(_boothLoop);
 }
@@ -482,6 +590,8 @@ function boothInitCam() {
       boothStream = stream;
       document.getElementById('booth-video').srcObject = stream;
       _boothStartBeauty();
+      var pb = document.getElementById('pb');
+      if (pb) pb.classList.add('cam-on'); // 촬영 전부터 프리뷰 표시
     });
 }
 
@@ -491,7 +601,16 @@ var _bubblePos = { x: 20, y: null };
 
 function boothSetProgress(p) {
   var el = document.getElementById('pb-prog');
-  if (el) el.style.width = Math.round(p * 100) + '%';
+  if (el) el.style.width = Math.max(0, Math.min(100, p * 100)) + '%';
+}
+/* SEC 원형 카운트다운 링 (frac 1→0) */
+function boothSetRing(frac) {
+  var el = document.getElementById('pb-ring');
+  if (el) el.style.strokeDashoffset = 289 * (1 - Math.max(0, Math.min(1, frac)));
+}
+/* 촬영 대기 상태(가득 찬 링·바, SEC=3) */
+function boothResetTimer() {
+  boothSetInd(3, null); boothSetRing(1); boothSetProgress(1);
 }
 
 function boothStart() {
@@ -500,33 +619,48 @@ function boothStart() {
     boothRunning = true;
     boothPhotos = [];
     document.getElementById('pb').classList.add('shooting');
-    boothSetProgress(0);
+    boothResetTimer();
     boothShootSequence(0);
   }).catch(function() {
     alert('카메라 접근 권한이 필요합니다.');
   });
 }
 
+function boothSetInd(sec, cutIdx) {
+  var s = document.getElementById('pb-sec');
+  var c = document.getElementById('pb-cut');
+  if (s && sec != null) s.textContent = sec;
+  if (c && cutIdx != null) c.textContent = cutIdx + '/4';
+}
+
 function boothShootSequence(shotIdx) {
   if (shotIdx >= 4) {
     boothRunning = false;
-    boothSetProgress(1);
+    boothSetProgress(0);
+    boothSetInd(0, 4);
     boothEnterEdit();
     return;
   }
+  boothSetInd(3, shotIdx + 1); // 현재 컷 표시
   boothCountdown(3, function() {
     boothCapture(shotIdx);
-    boothSetProgress((shotIdx + 1) / 4);
     setTimeout(function() { boothShootSequence(shotIdx + 1); }, 600);
   });
 }
 
+/* 3→2→1 부드럽게: SEC 숫자·원형 링·상단 바를 초에 맞춰 함께 닳게 */
 function boothCountdown(sec, cb) {
-  var el = document.getElementById('booth-countdown');
-  if (sec <= 0) { el.textContent = ''; el.classList.remove('show'); cb(); return; }
-  el.textContent = sec;
-  el.classList.add('show');
-  setTimeout(function() { boothCountdown(sec - 1, cb); }, 1000);
+  var dur = sec * 1000, start = performance.now();
+  (function tick(now) {
+    now = now || performance.now();
+    var remain = Math.max(0, dur - (now - start));
+    var frac = remain / dur;
+    boothSetInd(Math.max(1, Math.ceil(remain / 1000)), null);
+    boothSetRing(frac);
+    boothSetProgress(frac);
+    if (remain <= 0) { boothSetRing(0); boothSetProgress(0); cb(); return; }
+    requestAnimationFrame(tick);
+  })();
 }
 
 function boothCapture(idx) {
@@ -566,6 +700,7 @@ function boothCapture(idx) {
   ctx.globalAlpha = 0.28;
   ctx.drawImage(warpC, 0, 0);
   ctx.globalAlpha = 1; ctx.filter = 'none';
+  boothApplyCam(canvas); // 카메라 감성 필터
   var dataUrl = canvas.toDataURL('image/jpeg', 0.95);
   boothPhotos[idx] = dataUrl;
   var frame = document.getElementById('booth-frame-' + idx);
@@ -575,16 +710,25 @@ function boothCapture(idx) {
 /* ── 편집 화면 진입 ── */
 function boothEnterEdit() {
   document.getElementById('pb').classList.remove('shooting');
-  document.getElementById('pb-start').hidden = true;
-  document.getElementById('pb-edit').hidden = false;
+  boothShowStage('edit');
+  boothMTab('sticker'); // 모바일 기본 탭
   boothApplyFrame();
   boothUpdateBubble();
 }
 
+/* 모바일 편집 탭 전환 (스티커 / 프레임 / 메시지) */
+function boothMTab(name) {
+  var edit = document.getElementById('pb-edit');
+  if (edit) edit.setAttribute('data-mtab', name);
+  document.querySelectorAll('.pb-mtabs button').forEach(function(b) {
+    b.classList.toggle('is-on', b.getAttribute('data-sec') === name);
+  });
+}
+
 function boothRetake() {
-  document.getElementById('pb-edit').hidden = true;
-  document.getElementById('pb-start').hidden = false;
-  boothSetProgress(0);
+  boothShowStage('start');
+  boothResetTimer();
+  boothSetInd(3, 1);
   // 스티커 · 말풍선 초기화
   boothStickers.forEach(function(s){ if (s.el && s.el.parentNode) s.el.parentNode.removeChild(s.el); });
   boothStickers = [];
@@ -816,11 +960,8 @@ function boothDrawBubble(ctx, el, scale) {
   ctx.arcTo(x, y + h, x, y, r);
   ctx.arcTo(x, y, x + w, y, r);
   ctx.closePath();
-  ctx.shadowColor = 'rgba(0,0,0,0.22)';
-  ctx.shadowBlur = 10 * scale; ctx.shadowOffsetY = 3 * scale;
   ctx.fill();
   // 꼬리
-  ctx.shadowColor = 'transparent';
   ctx.beginPath();
   ctx.moveTo(x + 14 * scale, y + h);
   ctx.lineTo(x + 14 * scale, y + h + tail);

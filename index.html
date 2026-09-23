@@ -14,7 +14,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" onload="this.rel='stylesheet'">
 <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap"></noscript>
-<link rel="stylesheet" href="style.css?v=68">
+<link rel="stylesheet" href="style.css?v=95">
 </head>
 <body class="theme-light">
 
@@ -152,6 +152,7 @@
 
 <!-- DESIGNER -->
 <div id="page-designer" class="page dz-page">
+  <canvas id="designer-bg" class="page-bg3d" aria-hidden="true"></canvas>
   <div class="dz-main">
     <div class="dz-inner dz-list">
       <h2 class="dz-title">DESIGNER</h2>
@@ -224,6 +225,7 @@
 
 <!-- WORK -->
 <div id="page-work" class="page wk-page">
+  <canvas id="work-bg" class="page-bg3d" aria-hidden="true"></canvas>
   <div class="wk-main">
     <!-- 왼쪽 파란 사이드바: WORK + 부스 위치 안내 -->
     <aside class="wk-side">
@@ -298,49 +300,96 @@
     <div class="pb-inner">
       <h2 class="pb-title">PHOTOBOOTH</h2>
 
-      <!-- STAGE 1 · 촬영 시작 -->
-      <div class="pb-stage pb-start" id="pb-start">
-        <div class="pb-deco pb-badge">70</div>
-        <div class="pb-deco pb-date">7.14</div>
-        <div class="pb-cambox" id="pb-cambox">
-          <div class="pb-progress"><span id="pb-prog"></span></div>
-          <video id="booth-video" autoplay playsinline muted></video>
-          <canvas id="booth-preview"></canvas>
-          <div class="pb-cam-idle" id="pb-cam-idle">
-            <svg class="pb-step" viewBox="0 0 40 40" fill="none" aria-hidden="true">
-              <path d="M6 26h9v-8h9v-8h9" stroke="#fff" stroke-width="4"/>
-            </svg>
-          </div>
-          <div class="booth-countdown" id="booth-countdown"></div>
-          <button class="pb-start-btn" id="booth-start-btn" onclick="boothStart()">촬영 시작 &nbsp; Start</button>
+      <!-- STAGE 0 · 카메라 선택 -->
+      <div class="pb-stage pb-pick" id="pb-pick">
+        <h3 class="pb-pick-title">카메라를 골라보세요</h3>
+        <p class="pb-pick-sub">카메라마다 다른 감성으로 4컷이 담겨요</p>
+        <div class="pb-cams">
+          <button class="pb-cam" type="button" onclick="boothPickCam('ccd')">
+            <span class="pb-cam-img" style="background-image:url('images/booth/cam-ccd.png')"></span>
+            <span class="pb-cam-name">CCD</span>
+            <span class="pb-cam-desc">쿨 · 클린 디카룩</span>
+          </button>
+          <button class="pb-cam" type="button" onclick="boothPickCam('fuji')">
+            <span class="pb-cam-img" style="background-image:url('images/booth/cam-fuji.png')"></span>
+            <span class="pb-cam-name">FILM</span>
+            <span class="pb-cam-desc">필름 · 그레인 웜톤</span>
+          </button>
+          <button class="pb-cam" type="button" onclick="boothPickCam('pixel')">
+            <span class="pb-cam-img" style="background-image:url('images/booth/cam-pixel.png');image-rendering:pixelated"></span>
+            <span class="pb-cam-name">PIXEL</span>
+            <span class="pb-cam-desc">픽셀 아트 · 레트로</span>
+          </button>
         </div>
-        <p class="pb-hint pb-hint-start" id="booth-hint">버튼을 누르면 3초 카운트다운 후 4컷을 촬영합니다</p>
+      </div>
+
+      <!-- STAGE 1 · 촬영 시작 -->
+      <div class="pb-stage pb-start" id="pb-start" hidden>
+        <div class="pb-camwrap">
+          <div class="pb-deco pb-ind pb-ind-sec">
+            <div class="pb-ind-circle">
+              <svg class="pb-ring" viewBox="0 0 100 100" aria-hidden="true">
+                <circle class="pb-ring-track" cx="50" cy="50" r="46"></circle>
+                <circle class="pb-ring-prog" id="pb-ring" cx="50" cy="50" r="46"></circle>
+              </svg>
+              <span id="pb-sec">3</span>
+            </div>
+            <em>SEC</em>
+          </div>
+          <div class="pb-deco pb-ind pb-ind-cut">
+            <span class="pb-ind-num" id="pb-cut">1/4</span>
+            <em>CUT</em>
+          </div>
+          <div class="pb-cambox" id="pb-cambox">
+            <div class="pb-progress"><span id="pb-prog"></span></div>
+            <video id="booth-video" autoplay playsinline muted></video>
+            <canvas id="booth-preview"></canvas>
+            <div class="pb-cam-fx pb-fx-grain" aria-hidden="true"></div>
+            <div class="pb-cam-fx pb-fx-vignette" aria-hidden="true"></div>
+            <div class="pb-cam-fx pb-fx-bloom" aria-hidden="true"></div>
+            <div class="pb-cam-idle" id="pb-cam-idle">
+              <svg class="pb-step" viewBox="0 0 40 40" fill="none" aria-hidden="true">
+                <path d="M6 26h9v-8h9v-8h9" stroke="#fff" stroke-width="4"/>
+              </svg>
+            </div>
+            <div class="booth-countdown" id="booth-countdown"></div>
+            <span class="pb-cam-tag" id="pb-cam-tag"></span>
+            <button class="pb-start-btn" id="booth-start-btn" onclick="boothStart()">
+              <span class="pb-rec" aria-hidden="true"></span>촬영 시작 <span class="en">Start</span>
+            </button>
+          </div>
+        </div>
+        <p class="pb-hint pb-hint-start" id="booth-hint"><button type="button" class="pb-cam-change" onclick="boothShowStage('pick')">← 카메라 변경</button> · 버튼을 누르면 3초 카운트다운 후 4컷을 촬영합니다</p>
       </div>
 
       <!-- STAGE 2 · 편집 -->
-      <div class="pb-stage pb-edit" id="pb-edit" hidden>
+      <div class="pb-stage pb-edit" id="pb-edit" data-mtab="sticker" hidden>
         <!-- 좌 · 스티커 / 프레임 -->
         <aside class="pb-panel pb-side">
-          <h3 class="pb-panel-t">STICKER</h3>
-          <div class="pb-stickers" id="pb-stickers">
-            <button class="pb-sticker" onclick="boothAddSticker(1)"><img src="images/booth/sticker1.png" alt="스티커1"></button>
-            <button class="pb-sticker" onclick="boothAddSticker(2)"><img src="images/booth/sticker2.png" alt="스티커2"></button>
-            <button class="pb-sticker" onclick="boothAddSticker(3)"><img src="images/booth/sticker3.png" alt="스티커3"></button>
-            <button class="pb-sticker" onclick="boothAddSticker(4)"><img src="images/booth/sticker4.png" alt="스티커4"></button>
-            <button class="pb-sticker" onclick="boothAddSticker(5)"><img src="images/booth/sticker5.png" alt="스티커5"></button>
+          <div class="pb-sec" data-sec="sticker">
+            <h3 class="pb-panel-t">STICKER</h3>
+            <div class="pb-stickers" id="pb-stickers">
+              <button class="pb-sticker" onclick="boothAddSticker(1)"><img src="images/booth/sticker1.png" alt="스티커1"></button>
+              <button class="pb-sticker" onclick="boothAddSticker(2)"><img src="images/booth/sticker2.png" alt="스티커2"></button>
+              <button class="pb-sticker" onclick="boothAddSticker(3)"><img src="images/booth/sticker3.png" alt="스티커3"></button>
+              <button class="pb-sticker" onclick="boothAddSticker(4)"><img src="images/booth/sticker4.png" alt="스티커4"></button>
+              <button class="pb-sticker" onclick="boothAddSticker(5)"><img src="images/booth/sticker5.png" alt="스티커5"></button>
+            </div>
           </div>
-          <h3 class="pb-panel-t">FRAME</h3>
-          <div class="pb-frames" id="pb-frames">
-            <button class="pb-fswatch is-on" data-frame="#F2F2F7" style="background:#F2F2F7" onclick="boothSetFrame(this)" aria-label="라이트 프레임"></button>
-            <button class="pb-fswatch" data-frame="#5254FF" style="background:#5254FF" onclick="boothSetFrame(this)" aria-label="블루 프레임"></button>
-            <button class="pb-fswatch" data-frame="#050530" style="background:#050530" onclick="boothSetFrame(this)" aria-label="네이비 프레임"></button>
-            <button class="pb-fswatch" data-frame="#EDEDF5" style="background:#EDEDF5" onclick="boothSetFrame(this)" aria-label="화이트 프레임"></button>
-            <button class="pb-fswatch" data-frame="#6A6CFF" style="background:#6A6CFF" onclick="boothSetFrame(this)" aria-label="라이트블루 프레임"></button>
-            <button class="pb-fswatch" data-frame="#0B0B0F" style="background:#0B0B0F" onclick="boothSetFrame(this)" aria-label="블랙 프레임"></button>
+          <div class="pb-sec" data-sec="frame">
+            <h3 class="pb-panel-t">FRAME</h3>
+            <div class="pb-frames" id="pb-frames">
+              <button class="pb-fswatch is-on" data-frame="#F2F2F7" style="background:#F2F2F7" onclick="boothSetFrame(this)" aria-label="라이트 프레임"></button>
+              <button class="pb-fswatch" data-frame="#5254FF" style="background:#5254FF" onclick="boothSetFrame(this)" aria-label="블루 프레임"></button>
+              <button class="pb-fswatch" data-frame="#050530" style="background:#050530" onclick="boothSetFrame(this)" aria-label="네이비 프레임"></button>
+              <button class="pb-fswatch" data-frame="#EDEDF5" style="background:#EDEDF5" onclick="boothSetFrame(this)" aria-label="화이트 프레임"></button>
+              <button class="pb-fswatch" data-frame="#6A6CFF" style="background:#6A6CFF" onclick="boothSetFrame(this)" aria-label="라이트블루 프레임"></button>
+              <button class="pb-fswatch" data-frame="#0B0B0F" style="background:#0B0B0F" onclick="boothSetFrame(this)" aria-label="블랙 프레임"></button>
+            </div>
           </div>
         </aside>
 
-        <!-- 중앙 · 포토 스트립 -->
+        <!-- 중앙 · 포토 스트립 (모바일: 상단 고정) -->
         <div class="pb-stripwrap">
           <div class="pb-strip" id="booth-strip">
             <div class="booth-frame" id="booth-frame-0"><span class="booth-frame-num">1</span></div>
@@ -357,28 +406,39 @@
 
         <!-- 우 · 메시지 -->
         <aside class="pb-panel pb-msg">
-          <h3 class="pb-panel-t">MESSAGE</h3>
-          <div class="pb-swatches" id="pb-swatches">
-            <button class="pb-swatch is-on" data-ink="#FFFFFF" data-bubble="#5254FF" style="background:#fff" onclick="boothSetInk(this)" aria-label="화이트 말풍선"></button>
-            <button class="pb-swatch" data-ink="#5254FF" data-bubble="#FFFFFF" style="background:#5254FF" onclick="boothSetInk(this)" aria-label="블루 말풍선"></button>
-            <button class="pb-swatch" data-ink="#050530" data-bubble="#FFFFFF" style="background:#050530" onclick="boothSetInk(this)" aria-label="네이비 말풍선"></button>
-          </div>
-          <div class="pb-msgbox">
-            <textarea id="booth-msg-input" maxlength="60"
-              placeholder="남기고 싶은 말을 적어보세요&#10;(최대 60자)"
-              oninput="boothUpdateBubble()"></textarea>
-            <div class="pb-msgbox-bar">
-              <span class="pb-count" id="pb-count">0/60</span>
-              <svg viewBox="0 0 24 16" class="pb-kbd" aria-hidden="true"><rect x="1" y="1" width="22" height="14" rx="2" stroke="currentColor" fill="none"/><path d="M4 5h1M7 5h1M10 5h1M13 5h1M16 5h1M19 5h1M4 8h1M7 8h1M10 8h1M13 8h1M16 8h1M19 8h1M7 11h10" stroke="currentColor" stroke-width="1"/></svg>
+          <div class="pb-sec" data-sec="message">
+            <h3 class="pb-panel-t">MESSAGE</h3>
+            <div class="pb-swatches" id="pb-swatches">
+              <button class="pb-swatch is-on" data-ink="#FFFFFF" data-bubble="#5254FF" style="background:#fff" onclick="boothSetInk(this)" aria-label="화이트 말풍선"></button>
+              <button class="pb-swatch" data-ink="#5254FF" data-bubble="#FFFFFF" style="background:#5254FF" onclick="boothSetInk(this)" aria-label="블루 말풍선"></button>
+              <button class="pb-swatch" data-ink="#050530" data-bubble="#FFFFFF" style="background:#050530" onclick="boothSetInk(this)" aria-label="네이비 말풍선"></button>
             </div>
+            <div class="pb-msgbox">
+              <textarea id="booth-msg-input" maxlength="60"
+                placeholder="남기고 싶은 말을 적어보세요&#10;(최대 60자)"
+                oninput="boothUpdateBubble()"></textarea>
+              <div class="pb-msgbox-bar">
+                <span class="pb-count" id="pb-count">0/60</span>
+                <svg viewBox="0 0 24 16" class="pb-kbd" aria-hidden="true"><rect x="1" y="1" width="22" height="14" rx="2" stroke="currentColor" fill="none"/><path d="M4 5h1M7 5h1M10 5h1M13 5h1M16 5h1M19 5h1M4 8h1M7 8h1M10 8h1M13 8h1M16 8h1M19 8h1M7 11h10" stroke="currentColor" stroke-width="1"/></svg>
+              </div>
+            </div>
+            <p class="pb-hint" id="booth-msg-hint-drag">사진 위에서 말풍선을 드래그해 위치를 조정하세요</p>
           </div>
-          <p class="pb-hint" id="booth-msg-hint-drag">오른쪽 사진에서 말풍선을 드래그해 위치를 조정하세요</p>
-          <button class="pb-done" id="pb-done" onclick="boothRetake()">다시 촬영</button>
-          <button class="pb-qr" id="booth-qr-btn" onclick="boothShowQR()">
-            <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1v9M8 1L5 4M8 1l3 3M2 10v4h12v-4" stroke="currentColor" stroke-width="1.4" fill="none"/></svg>
-            QR 내보내기
-          </button>
+          <div class="pb-actions">
+            <button class="pb-done" id="pb-done" onclick="boothRetake()">다시 촬영</button>
+            <button class="pb-qr" id="booth-qr-btn" onclick="boothShowQR()">
+              <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1v9M8 1L5 4M8 1l3 3M2 10v4h12v-4" stroke="currentColor" stroke-width="1.4" fill="none"/></svg>
+              QR 내보내기
+            </button>
+          </div>
         </aside>
+
+        <!-- 모바일 전용 탭 바 -->
+        <div class="pb-mtabs" role="tablist" aria-label="편집 도구">
+          <button type="button" class="is-on" data-sec="sticker" onclick="boothMTab('sticker')">스티커</button>
+          <button type="button" data-sec="frame" onclick="boothMTab('frame')">프레임</button>
+          <button type="button" data-sec="message" onclick="boothMTab('message')">메시지</button>
+        </div>
       </div>
 
       <canvas id="booth-canvas" style="display:none"></canvas>
@@ -402,7 +462,7 @@
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
-<script src="main.js?v=23"></script>
+<script src="main.js?v=36"></script>
 
 <!-- 3D 인터랙티브 히어로 (Three.js — 로컬 번들, CDN 의존 없음) -->
 <script src="models.js?v=1"></script>
@@ -410,6 +470,6 @@
 <script type="importmap">
 {"imports":{"three":"./vendor/three/three.module.js","three/addons/":"./vendor/three/addons/"}}
 </script>
-<script type="module" src="hero3d.js?v=12"></script>
+<script type="module" src="hero3d.js?v=13"></script>
 </body>
 </html>
