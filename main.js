@@ -1119,3 +1119,19 @@ function boothOpenQRModal(url) {
 function boothCloseQR() {
   document.getElementById('booth-qr-modal').classList.remove('show');
 }
+
+/* 필터 툴바: 상단에 붙었을(sticky) 때만 흰 배경 */
+(function() {
+  function check() {
+    document.querySelectorAll('.dz-toolbar, .wk-toolbar').forEach(function(el) {
+      if (!el.offsetParent) return;
+      var top = parseFloat(getComputedStyle(el).top) || 0;
+      var r = el.getBoundingClientRect(), pr = el.parentElement.getBoundingClientRect();
+      var padTop = parseFloat(getComputedStyle(el.parentElement).paddingTop) || 0;
+      el.classList.toggle('is-stuck', r.top <= top + 1 && pr.top + padTop < r.top - 1);
+    });
+  }
+  document.addEventListener('scroll', check, { capture: true, passive: true });
+  window.addEventListener('resize', check);
+  document.addEventListener('click', function() { setTimeout(check, 50); });
+})();

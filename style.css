@@ -668,7 +668,7 @@ nav{
    ══════════════════════════════════════════════════ */
 .dz-page{background:#fff;color:#111;min-height:100vh}
 /* 페이지 배경 3D 오브제 캔버스 (UI 뒤에 떠다님) */
-.page-bg3d{position:fixed;top:43px;left:0;right:0;bottom:0;width:100%;height:auto;z-index:0;pointer-events:none;opacity:.7}
+.page-bg3d{position:fixed;top:43px;left:0;right:0;bottom:0;width:100%;height:auto;z-index:0;pointer-events:none;opacity:1}
 #designer-bg{opacity:.42} /* 디자이너 배경 오브제는 더 연하게 */
 /* 콘텐츠를 캔버스 위로 */
 .dz-main,.dz-foot{position:relative;z-index:1}
@@ -679,7 +679,7 @@ nav{
 .dz-main:has(.dz-detail.open) .dz-list{padding-right:30px}
 .dz-title{font-family:var(--gal);font-weight:700;font-size:56px;letter-spacing:.04em;text-transform:uppercase;color:var(--blue);padding:40px 0 28px}
 /* 스크롤 시 상단 고정 */
-.dz-toolbar{position:sticky;top:43px;z-index:30;background:#fff;display:flex;justify-content:space-between;align-items:center;gap:24px;flex-wrap:wrap;padding:12px 0 18px;margin-bottom:18px}
+.dz-toolbar{position:sticky;top:43px;z-index:30;background:transparent;display:flex;justify-content:space-between;align-items:center;gap:24px;flex-wrap:wrap;padding:12px 0 18px;margin-bottom:18px}
 .dz-filters{display:flex;flex-wrap:wrap;gap:8px}
 .dz-filter{min-width:3px;height:24px;padding:0 12px;display:flex;align-items:center;justify-content:center;
   border:1px solid var(--blue);background:#fff;color:var(--blue);
@@ -769,9 +769,11 @@ nav{
 /* 오른쪽 리스트 */
 .wk-list{flex:1;min-width:0;padding:36px 30px 60px}
 /* 스크롤 시 상단 고정 */
-.wk-toolbar{position:sticky;top:43px;z-index:30;background:#fff;display:flex;justify-content:space-between;align-items:center;gap:18px;flex-wrap:wrap;padding:12px 0 16px;margin-bottom:12px}
+.wk-toolbar{position:sticky;top:43px;z-index:30;background:transparent;display:flex;justify-content:space-between;align-items:center;gap:18px;flex-wrap:wrap;padding:12px 0 16px;margin-bottom:12px}
 .wk-filters{display:flex;gap:6px;flex-wrap:wrap}
-.wk-filter{height:30px;padding:0 12px;border:1px solid var(--blue);background:none;color:var(--blue);font-family:var(--noto);font-weight:500;font-size:13px;cursor:pointer;transition:background .12s,color .12s}
+/* 스크롤로 상단에 붙었을 때만 흰 배경 */
+.dz-toolbar.is-stuck,.wk-toolbar.is-stuck{background:#fff}
+.wk-filter{height:30px;padding:0 12px;border:1px solid var(--blue);background:#fff;color:var(--blue);font-family:var(--noto);font-weight:500;font-size:13px;cursor:pointer;transition:background .12s,color .12s}
 .wk-filter.active,.wk-filter:hover{background:var(--blue);color:#fff}
 .wk-search{position:relative;width:280px;max-width:100%}
 .wk-search input{width:100%;height:32px;background:var(--blue);border:none;padding:0 42px 0 14px;color:#fff;font-family:var(--sg);font-size:14px;letter-spacing:.06em}

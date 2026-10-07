@@ -9,17 +9,17 @@ if (heroCanvas) initHero(heroCanvas);
 
 // 페이지 배경: 방 없이 페이지별로 다른 오브제 1~2개만 (UI 뒤에 떠다님)
 const DESIGNER_BG_LAYOUT = [
-  { key: 'steps',         nx: -0.66, ny:  0.40, hf: 0.34, d: 26, rx: 0.26, ry:  0.95, rz:  0.20, mScale: 1.0, mnx: -0.5, mny:  0.5 },
-  { key: 'traffic_light', nx:  0.70, ny: -0.34, hf: 0.30, d: 28, rx: 0.10, ry: -0.48, rz:  1.42, mScale: 1.1, mnx:  0.5, mny: -0.5 },
+  { key: 'steps',         nx: -0.42, ny:  0.30, hf: 0.46, d: 24, rx: 0.26, ry:  0.95, rz:  0.20, mScale: 1.0, mnx: -0.5, mny:  0.5 },
+  { key: 'traffic_light', nx:  0.44, ny: -0.30, hf: 0.42, d: 24, rx: 0.10, ry: -0.48, rz:  1.42, mScale: 1.1, mnx:  0.5, mny: -0.5 },
 ];
 const WORK_BG_LAYOUT = [
-  { key: 'road_narrows',  nx:  0.66, ny:  0.42, hf: 0.52, d: 20, rx: 0.15, ry:  0.25, rz: -2.30, mScale: 1.0, mnx:  0.5, mny:  0.5 },
-  { key: 'fire_hydrant',  nx: -0.64, ny: -0.40, hf: 0.46, d: 24, rx: 0.10, ry:  0.30, rz:  2.19, mScale: 1.1, mnx: -0.5, mny: -0.5 },
+  { key: 'road_narrows',  nx:  0.42, ny:  0.32, hf: 0.58, d: 20, rx: 0.15, ry:  0.25, rz: -2.30, mScale: 1.0, mnx:  0.5, mny:  0.5 },
+  { key: 'fire_hydrant',  nx: -0.42, ny: -0.32, hf: 0.54, d: 22, rx: 0.10, ry:  0.30, rz:  2.19, mScale: 1.1, mnx: -0.5, mny: -0.5 },
 ];
 const designerBg = document.getElementById('designer-bg');
-if (designerBg) initHero(designerBg, { withRoom: false, layout: DESIGNER_BG_LAYOUT, sizeMode: 'viewport' });
+if (designerBg) initHero(designerBg, { withRoom: false, layout: DESIGNER_BG_LAYOUT, sizeMode: 'viewport', bg: true });
 const workBg = document.getElementById('work-bg');
-if (workBg) initHero(workBg, { withRoom: false, layout: WORK_BG_LAYOUT, sizeMode: 'viewport' });
+if (workBg) initHero(workBg, { withRoom: false, layout: WORK_BG_LAYOUT, sizeMode: 'viewport', bg: true });
 
 function initHero(canvas, opts = {}) {
   const withRoom = opts.withRoom !== false;
@@ -137,9 +137,9 @@ function initHero(canvas, opts = {}) {
     const u = pivot.userData, def = u.def, b = designBox(def.d);
     const mob = window.innerWidth < 768;
     const sc = mob ? (def.mScale || 1) : 1;
-    const spread = mob ? 1.12 : 1;
+    const spread = mob ? (opts.bg ? 0.75 : 1.12) : 1;
     pivot.position.set(def.nx * b.W * spread, def.ny * b.H * spread, camera.position.z - def.d);
-    u.baseY = pivot.position.y;
+    u.baseY = pivot.position.y; u.baseX = pivot.position.x;
     u.inner.scale.setScalar((def.hf * sc * 2 * b.H) / u.baseH);
   }
   const layoutAll = () => objs.forEach(layoutOne);
@@ -164,11 +164,13 @@ function initHero(canvas, opts = {}) {
   const postScene = new THREE.Scene();
   const ditherMat = new THREE.ShaderMaterial({
     transparent: true,
-    uniforms: { tDiffuse: { value: rt.texture }, uRes: { value: new THREE.Vector2(2, 2) }, uScale: { value: 3.4 } },
+    uniforms: { tDiffuse: { value: rt.texture }, uRes: { value: new THREE.Vector2(2, 2) }, uScale: { value: 3.4 },
+      uInk: { value: opts.bg ? new THREE.Vector3(0.70, 0.71, 1.0) : new THREE.Vector3(0.322, 0.329, 1.0) }, // 배경용은 연한 라벤더 블루
+      uFill: { value: opts.bg ? 1.0 : 0.0 } },
     vertexShader: `varying vec2 vUv; void main(){ vUv=uv; gl_Position=vec4(position.xy,0.0,1.0); }`,
     fragmentShader: `
       precision highp float;
-      uniform sampler2D tDiffuse; uniform vec2 uRes; uniform float uScale;
+      uniform sampler2D tDiffuse; uniform vec2 uRes; uniform float uScale; uniform vec3 uInk; uniform float uFill;
       varying vec2 vUv;
       float bayer(vec2 p){
         mat4 B = mat4( 0.0, 8.0, 2.0,10.0, 12.0, 4.0,14.0, 6.0, 3.0,11.0, 1.0, 9.0, 15.0, 7.0,13.0, 5.0)/16.0;
@@ -183,7 +185,7 @@ function initHero(canvas, opts = {}) {
         vec3 rgb = c.rgb / max(c.a, 0.1);
         float lum = dot(rgb, vec3(0.299,0.587,0.114));
         float v = 1.0 - lum;
-        v = (v - 0.65) * 4.5 + 0.01;
+        v = uFill > 0.5 ? (v - 0.42) * 2.6 + 0.12 : (v - 0.65) * 4.5 + 0.01; // 배경용: 더 꽉 찬 실루엣
         float cov = clamp(v, 0.0, 1.0) * clamp(c.a + 0.25, 0.0, 1.0);
         if(c.a > 0.03) cov = max(cov, 0.001);
         return cov;
@@ -212,7 +214,7 @@ function initHero(canvas, opts = {}) {
             float th = bayer(block);
             
             if(cov > th) {
-                gl_FragColor = vec4(0.322, 0.329, 1.0, 1.0);
+                gl_FragColor = vec4(uInk, 1.0);
             } else {
                 discard;
             }
@@ -262,7 +264,8 @@ function initHero(canvas, opts = {}) {
 
     objs.forEach(p => {
       const u = p.userData, inner = u.inner;
-      p.position.y = u.baseY + Math.sin(t * u.fSpeed + u.fPhase) * u.fAmp;
+      p.position.y = u.baseY + Math.sin(t * u.fSpeed + u.fPhase) * u.fAmp * (opts.bg ? 1.6 : 1);
+      if (opts.bg) p.position.x = u.baseX + Math.cos(t * u.fSpeed * 0.7 + u.fPhase) * u.fAmp * 1.4; // 배경: 좌우로도 유영
       const tiltX = my * u.mouseKX + Math.sin(t * u.dSpeed + u.dPhase) * u.dAmp;
       const tiltY = mx * u.mouseKY + Math.cos(t * u.dSpeed * 0.8 + u.dPhase) * u.dAmp;
       p.rotation.x += (tiltX - p.rotation.x) * 0.15;
