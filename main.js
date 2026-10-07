@@ -377,6 +377,12 @@ function boothShowStage(name) {
 }
 
 /* 카메라 선택 → 촬영 화면으로 */
+/* 카메라 선택 화면으로 돌아가기 */
+function boothBackToPick() {
+  if (boothRunning) return;
+  boothShowStage('pick');
+}
+
 function boothPickCam(cam) {
   _cam = cam;
   var pb = document.getElementById('pb');
@@ -442,61 +448,150 @@ function _toneLut(black, white, gamma, gain) {
   }
   return a;
 }
-/* 픽셀 아트: 저해상도 다운스케일 + 제한 팔레트(포스터라이즈) */
-function _gradePixel(canvas) {
+/* 디더(error-diffusion) — 그레인 + Floyd-Steinberg 2톤 잉크 */
+var _DITH_INK = [82, 84, 255], _DITH_PAPER = [242, 241, 236];
+function _ditherCanvas(canvas, px) {
   var w = canvas.width, h = canvas.height, ctx = canvas.getContext('2d');
-  var px = Math.max(4, Math.round(w / 120));           // 픽셀 블록 크기
   var sw = Math.max(1, Math.round(w / px)), sh = Math.max(1, Math.round(h / px));
   var small = document.createElement('canvas'); small.width = sw; small.height = sh;
-  var sx = small.getContext('2d'); sx.imageSmoothingEnabled = false;
-  sx.drawImage(canvas, 0, 0, sw, sh);                  // 다운스케일
-  var im = sx.getImageData(0, 0, sw, sh), d = im.data;
-  var levels = 6, stp = 255 / (levels - 1);
-  for (var i = 0; i < d.length; i += 4) {
-    var r = d[i], g = d[i+1], b = d[i+2];
-    var gr = 0.299*r + 0.587*g + 0.114*b;
-    r = gr + (r-gr)*1.32; g = gr + (g-gr)*1.32; b = gr + (b-gr)*1.32; // 비비드
-    r = 128 + (r-128)*1.1; g = 128 + (g-128)*1.1; b = 128 + (b-128)*1.1; // 대비
-    d[i]   = _cl(Math.round(r/stp)*stp);               // 포스터라이즈(제한 팔레트)
-    d[i+1] = _cl(Math.round(g/stp)*stp);
-    d[i+2] = _cl(Math.round(b/stp)*stp);
+  var sx = small.getContext('2d', { willReadFrequently: true });
+  sx.drawImage(canvas, 0, 0, sw, sh);
+  var im = sx.getImageData(0, 0, sw, sh), d = im.data, n = sw * sh;
+  var L = new Float32Array(n);
+  for (var i = 0, j = 0; j < n; i += 4, j++) {
+    var v = 0.299*d[i] + 0.587*d[i+1] + 0.114*d[i+2];
+    v = 255 * Math.pow(v / 255, 0.9);                // 감마(살짝 밝게)
+    v = 128 + (v - 128) * 1.55;                      // 대비
+    L[j] = v + (Math.random() - 0.5) * 36;           // 그레인
+  }
+  for (var y = 0; y < sh; y++) {
+    for (var x = 0; x < sw; x++) {
+      var k = y * sw + x, o = L[k], q = o < 128 ? 0 : 255, e = o - q;
+      L[k] = q;
+      if (x + 1 < sw) L[k+1] += e * 7/16;
+      if (y + 1 < sh) {
+        if (x > 0) L[k+sw-1] += e * 3/16;
+        L[k+sw] += e * 5/16;
+        if (x + 1 < sw) L[k+sw+1] += e * 1/16;
+      }
+    }
+  }
+  for (var i2 = 0, j2 = 0; j2 < n; i2 += 4, j2++) {
+    var c = L[j2] ? _DITH_PAPER : _DITH_INK;
+    d[i2] = c[0]; d[i2+1] = c[1]; d[i2+2] = c[2]; d[i2+3] = 255;
   }
   sx.putImageData(im, 0, 0);
   ctx.imageSmoothingEnabled = false; ctx.clearRect(0, 0, w, h);
-  ctx.drawImage(small, 0, 0, sw, sh, 0, 0, w, h);      // 니어리스트 업스케일
+  ctx.drawImage(small, 0, 0, sw, sh, 0, 0, w, h);
   ctx.imageSmoothingEnabled = true;
 }
+function _gradePixel(canvas) { _ditherCanvas(canvas, Math.max(1, Math.round(canvas.width / 640))); }
 
-/* 카메라별 컬러 그레이딩 (레퍼런스 LUT 프리셋 재현) */
-function boothApplyCam(canvas) {
-  if (_cam === 'pixel') { _gradePixel(canvas); return; }
-  var w = canvas.width, h = canvas.height, ctx = canvas.getContext('2d');
-  var im = ctx.getImageData(0, 0, w, h), d = im.data;
-  var P;
-  if (_cam === 'ccd') {
-    // CCD (ninoco) — 쿨·클린, 살짝 밝고 대비 있는 디카룩
-    P = { lr:_toneLut(6,252,0.95,0.984), lg:_toneLut(7,253,0.94,1.006), lb:_toneLut(9,255,0.93,1.042),
-          ct:1.10, sat:0.97, shR:-4, shG:5, shB:5, hiR:-2, hiG:1, hiB:3 };
-  } else {
-    // FILM — 밝고 따뜻·에어리 + 필름 그레인
-    P = { lr:_toneLut(5,250,0.93,1.022), lg:_toneLut(5,250,0.94,1.004), lb:_toneLut(6,247,0.96,0.986),
-          ct:1.04, sat:1.05, shR:1, shG:1, shB:0, hiR:6, hiG:2, hiB:-5 };
+/* ── 카메라 룩 (CCD / FILM) — 채널 커브 + 3-way 컬러 + 스킨 보호 채도 ── */
+/* 모노톤 큐빅 보간 커브 → 256 LUT */
+function _curve(pts) {
+  var n = pts.length, xs = [], ys = [], m = [], dl = [], a = new Float32Array(256), i;
+  for (i = 0; i < n; i++) { xs.push(pts[i][0]); ys.push(pts[i][1]); }
+  for (i = 0; i < n - 1; i++) dl.push((ys[i+1]-ys[i]) / (xs[i+1]-xs[i]));
+  m[0] = dl[0]; m[n-1] = dl[n-2];
+  for (i = 1; i < n - 1; i++) m[i] = dl[i-1]*dl[i] <= 0 ? 0 : (dl[i-1]+dl[i]) / 2;
+  for (var x = 0, k = 0; x < 256; x++) {
+    while (k < n - 2 && x > xs[k+1]) k++;
+    var hh = xs[k+1]-xs[k], t = (x - xs[k]) / hh, t2 = t*t, t3 = t2*t;
+    a[x] = (2*t3-3*t2+1)*ys[k] + (t3-2*t2+t)*hh*m[k] + (-2*t3+3*t2)*ys[k+1] + (t3-t2)*hh*m[k+1];
   }
-  var lr=P.lr, lg=P.lg, lb=P.lb, ct=P.ct, sat=P.sat;
+  return a;
+}
+var LOOKS = {
+  // CCD 디카 (2000년대 컴팩트 디카): 쿨·시안 섀도, 쨍한 대비, 살짝 날아가는 하이라이트
+  ccd: {
+    M: _curve([[0,0],[40,32],[96,94],[160,166],[220,226],[255,250]]),
+    R: _curve([[0,0],[128,124],[255,252]]),
+    G: _curve([[0,2],[128,129],[255,255]]),
+    B: _curve([[0,12],[128,138],[255,255]]),
+    sh: [-6, 2, 10], hi: [-2, 2, 6], sat: 1.14, skin: 0.55
+  },
+  // FILM (Portra/Superia 계열): 매트 블랙, 웜 하이라이트, 그린-틸 섀도, 부드러운 롤오프
+  fuji: {
+    M: _curve([[0,24],[40,46],[96,98],[160,170],[215,222],[255,240]]),
+    R: _curve([[0,0],[128,130],[255,252]]),
+    G: _curve([[0,6],[128,129],[255,250]]),
+    B: _curve([[0,16],[128,126],[255,246]]),
+    sh: [-6, 5, 8], hi: [3, 2, -1], sat: 0.92, skin: 0.5
+  }
+};
+/* 마스터 커브 → 채널 커브를 하나의 LUT로 합성(캐시) */
+function _lookLuts(L) {
+  if (L._r) return L;
+  var f = function(C) { var o = new Float32Array(256);
+    for (var x = 0; x < 256; x++) { var v = Math.round(_cl(L.M[x])); o[x] = _cl(C[v]); } return o; };
+  L._r = f(L.R); L._g = f(L.G); L._b = f(L.B);
+  return L;
+}
+function _gradeData(d, L) {
+  _lookLuts(L);
+  var R = L._r, G = L._g, B = L._b, sat = L.sat, sk = L.skin;
   for (var i = 0; i < d.length; i += 4) {
-    var r = lr[d[i]], g = lg[d[i+1]], b = lb[d[i+2]];
-    // 대비(피벗 128)
-    r = 128 + (r-128)*ct; g = 128 + (g-128)*ct; b = 128 + (b-128)*ct;
-    // 스플릿토닝(섀도/하이라이트 색)
-    var lum = (0.299*r + 0.587*g + 0.114*b) / 255, sh = 1-lum, hi = lum;
-    r += P.shR*sh + P.hiR*hi;  g += P.shG*sh + P.hiG*hi;  b += P.shB*sh + P.hiB*hi;
-    // 채도
-    var gr = 0.299*r + 0.587*g + 0.114*b;
-    r = gr + (r-gr)*sat; g = gr + (g-gr)*sat; b = gr + (b-gr)*sat;
-    d[i]=_cl(r); d[i+1]=_cl(g); d[i+2]=_cl(b);
+    var r = R[d[i]], g = G[d[i+1]], b = B[d[i+2]];
+    var lum = (0.299*r + 0.587*g + 0.114*b) / 255, s = (1-lum)*(1-lum), h = lum*lum;
+    r += L.sh[0]*s + L.hi[0]*h; g += L.sh[1]*s + L.hi[1]*h; b += L.sh[2]*s + L.hi[2]*h;
+    var y = 0.299*r + 0.587*g + 0.114*b;
+    // 스킨톤(r>g>b) 영역은 채도 변화를 줄여 피부를 자연스럽게
+    var isSkin = (r > g && g > b && r - b > 20) ? sk : 0;
+    var k = sat + (1 - sat) * isSkin;
+    d[i] = _cl(y + (r-y)*k); d[i+1] = _cl(y + (g-y)*k); d[i+2] = _cl(y + (b-y)*k);
+  }
+}
+/* 언샵 마스크(디카 특유의 샤픈) */
+function _sharpen(canvas, amt, rad) {
+  var w = canvas.width, h = canvas.height, ctx = canvas.getContext('2d');
+  var t = document.createElement('canvas'); t.width = w; t.height = h;
+  var tx = t.getContext('2d', { willReadFrequently: true });
+  tx.filter = 'blur(' + rad + 'px)'; tx.drawImage(canvas, 0, 0); tx.filter = 'none';
+  var bl = tx.getImageData(0, 0, w, h).data, im = ctx.getImageData(0, 0, w, h), d = im.data;
+  for (var i = 0; i < d.length; i += 4) {
+    d[i] = _cl(d[i] + (d[i]-bl[i])*amt); d[i+1] = _cl(d[i+1] + (d[i+1]-bl[i+1])*amt); d[i+2] = _cl(d[i+2] + (d[i+2]-bl[i+2])*amt);
   }
   ctx.putImageData(im, 0, 0);
-  if (_cam === 'fuji') _grain(canvas, 18, true); // 필름 그레인
+}
+/* 필름 그레인: 중간톤에 강하고, 살짝 뭉친 입자 */
+function _filmGrain(canvas, amt) {
+  var w = canvas.width, h = canvas.height, ctx = canvas.getContext('2d');
+  var gw = Math.ceil(w / 1.3), gh = Math.ceil(h / 1.3);
+  var g = document.createElement('canvas'); g.width = gw; g.height = gh;
+  var gx = g.getContext('2d'), gi = gx.createImageData(gw, gh), gd = gi.data;
+  for (var j = 0; j < gd.length; j += 4) { var v = 128 + (Math.random()-0.5)*255; gd[j]=gd[j+1]=gd[j+2]=v; gd[j+3]=255; }
+  gx.putImageData(gi, 0, 0);
+  var t = document.createElement('canvas'); t.width = w; t.height = h;
+  var tx = t.getContext('2d', { willReadFrequently: true });
+  tx.filter = 'blur(0.5px)'; tx.drawImage(g, 0, 0, w, h); tx.filter = 'none';
+  var nd = tx.getImageData(0, 0, w, h).data, im = ctx.getImageData(0, 0, w, h), d = im.data;
+  for (var i = 0; i < d.length; i += 4) {
+    var l = (0.299*d[i] + 0.587*d[i+1] + 0.114*d[i+2]) / 255;
+    var n = (nd[i] - 128) / 128 * amt * (0.35 + 1.3 * l * (1 - l) * 2);
+    d[i] = _cl(d[i]+n); d[i+1] = _cl(d[i+1]+n); d[i+2] = _cl(d[i+2]+n);
+  }
+  ctx.putImageData(im, 0, 0);
+}
+
+/* 촬영 결과에 카메라 룩 적용 */
+function boothApplyCam(canvas) {
+  if (_cam === 'pixel') { _gradePixel(canvas); return; }
+  var ctx = canvas.getContext('2d'), w = canvas.width, h = canvas.height;
+  var im = ctx.getImageData(0, 0, w, h);
+  _gradeData(im.data, LOOKS[_cam]);
+  ctx.putImageData(im, 0, 0);
+  if (_cam === 'ccd') {
+    _sharpen(canvas, 0.45, 1.2);                      // 디카 샤픈
+    _bloom(canvas, 228, 6, 0.22, [235, 245, 255]);   // 플래시 하이라이트 번짐(쿨)
+    _grain(canvas, 7, false);                         // 센서 컬러 노이즈
+    _vignette(canvas, 0.45, 0.16);
+  } else {
+    var c2 = ctx; c2.save(); c2.filter = 'blur(0.6px)'; c2.drawImage(canvas, 0, 0); c2.restore(); c2.filter = 'none'; // 필름 소프트니스
+    _bloom(canvas, 212, 10, 0.32, [255, 90, 60]);     // 할레이션(붉은 번짐)
+    _filmGrain(canvas, 20);
+    _vignette(canvas, 0.4, 0.24);
+  }
 }
 
 /* ── 원근 격자 배경 SVG ── */
@@ -557,15 +652,10 @@ function _boothLoop() {
     var src = _bTmpCtx.getImageData(0, 0, w, h);
     var dst = new ImageData(w, h);
     _applyWarp(src.data, dst.data, _bLUT, w, h);
+    if (LOOKS[_cam]) _gradeData(dst.data, LOOKS[_cam]); // 프리뷰에도 같은 룩
     _bPrevCtx.putImageData(dst, 0, 0);
-    // 픽셀 카메라: 라이브 프리뷰도 블록 픽셀화
-    if (_cam === 'pixel') {
-      var prev = _bPrevCtx.canvas, pw = Math.max(1, Math.round(w / 6)), ph = Math.max(1, Math.round(h / 6));
-      _bPrevCtx.imageSmoothingEnabled = false;
-      _bPrevCtx.drawImage(prev, 0, 0, w, h, 0, 0, pw, ph);
-      _bPrevCtx.drawImage(prev, 0, 0, pw, ph, 0, 0, w, h);
-      _bPrevCtx.imageSmoothingEnabled = true;
-    }
+    // 픽셀 카메라: 라이브 프리뷰도 디더
+    if (_cam === 'pixel') _ditherCanvas(_bPrevCtx.canvas, 1);
   }
   _bAnimId = requestAnimationFrame(_boothLoop);
 }

@@ -14,7 +14,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" onload="this.rel='stylesheet'">
 <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap"></noscript>
-<link rel="stylesheet" href="style.css?v=95">
+<link rel="stylesheet" href="style.css?v=97">
 </head>
 <body class="theme-light">
 
@@ -325,6 +325,7 @@
 
       <!-- STAGE 1 · 촬영 시작 -->
       <div class="pb-stage pb-start" id="pb-start" hidden>
+        <button type="button" class="pb-back" onclick="boothBackToPick()">← 카메라 다시 고르기</button>
         <div class="pb-camwrap">
           <div class="pb-deco pb-ind pb-ind-sec">
             <div class="pb-ind-circle">
@@ -359,7 +360,7 @@
             </button>
           </div>
         </div>
-        <p class="pb-hint pb-hint-start" id="booth-hint"><button type="button" class="pb-cam-change" onclick="boothShowStage('pick')">← 카메라 변경</button> · 버튼을 누르면 3초 카운트다운 후 4컷을 촬영합니다</p>
+        <p class="pb-hint pb-hint-start" id="booth-hint">버튼을 누르면 3초 카운트다운 후 4컷을 촬영합니다</p>
       </div>
 
       <!-- STAGE 2 · 편집 -->
@@ -462,7 +463,7 @@
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
-<script src="main.js?v=36"></script>
+<script src="main.js?v=42"></script>
 
 <!-- 3D 인터랙티브 히어로 (Three.js — 로컬 번들, CDN 의존 없음) -->
 <script src="models.js?v=1"></script>

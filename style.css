@@ -244,14 +244,11 @@ footer{padding:28px 40px;background:var(--bg2);border-top:1px solid var(--g800);
 .pb-cambox video{width:100%;height:100%;object-fit:cover;display:none;transform:scaleX(-1)}
 #booth-preview{position:absolute;inset:0;width:100%;height:100%;display:none;filter:contrast(1.04) brightness(1.02)}
 /* 카메라별 라이브 프리뷰 필터 (레퍼런스 LUT 프리셋 근사) */
-.pb.fx-fuji  #booth-preview{filter:brightness(1.05) contrast(1.03) saturate(1.05) sepia(.05)}
-.pb.fx-ccd   #booth-preview{filter:brightness(1.05) contrast(1.12) saturate(.97)}
+.pb.fx-fuji  #booth-preview,.pb.fx-ccd #booth-preview{filter:none} /* 룩은 JS로 실시간 적용 */
 .pb.fx-pixel #booth-preview{filter:contrast(1.1) saturate(1.32);image-rendering:pixelated}
 /* 화이트밸런스 근사용 은은한 컬러 워시 (soft-light) */
 .pb-cam-fx{position:absolute;inset:0;pointer-events:none;display:none;z-index:2}
-.pb.fx-fuji  .pb-fx-bloom{display:block;background:rgba(255,206,170,.08);mix-blend-mode:soft-light}
 .pb.fx-fuji  .pb-fx-grain{display:block;background-image:url('images/booth/grain-tile.png');background-size:150px 150px;opacity:.5;mix-blend-mode:overlay}
-.pb.fx-ccd   .pb-fx-bloom{display:block;background:rgba(140,170,220,.12);mix-blend-mode:soft-light}
 /* 선택 카메라 태그 */
 .pb-cam-tag{position:absolute;top:10px;left:10px;z-index:3;font-family:var(--sg);font-weight:700;font-size:10px;letter-spacing:.12em;color:#fff;background:rgba(0,0,0,.4);padding:4px 8px}
 .pb-cam-tag:empty{display:none}
@@ -277,6 +274,10 @@ footer{padding:28px 40px;background:var(--bg2);border-top:1px solid var(--g800);
 .pb-hint{font-size:11px;color:rgba(255,255,255,.75);line-height:1.6;text-align:center}
 .pb-cam-change{background:none;border:none;color:#fff;font-family:var(--noto);font-size:11px;font-weight:600;cursor:pointer;text-decoration:underline;padding:0;text-underline-offset:2px}
 .pb-cam-change:hover{opacity:.8}
+/* 뒤로 가기 */
+.pb-back{align-self:center;display:inline-flex;align-items:center;gap:8px;background:transparent;color:#fff;border:1.5px solid #fff;padding:8px 16px;font-family:var(--noto);font-size:13px;font-weight:700;cursor:pointer;margin-bottom:12px;transition:background var(--ease),color var(--ease)}
+.pb-back:hover{background:#fff;color:var(--blue)}
+.pb.shooting .pb-back{visibility:hidden}
 
 /* ── STAGE 0 · 카메라 선택 ── */
 .pb-pick{width:100%;max-width:860px;flex:1 1 auto;min-height:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:2vh 0}
