@@ -14,7 +14,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" onload="this.rel='stylesheet'">
 <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap"></noscript>
-<link rel="stylesheet" href="style.css?v=100">
+<link rel="stylesheet" href="style.css?v=124">
 </head>
 <body class="theme-light">
 
@@ -234,14 +234,15 @@
         <div class="wk-sub">부스별 위치 안내 <span>Directory</span></div>
       </div>
       <div class="wk-floors">
-        <button class="wk-floor active" onclick="wkFloor(this)">F1</button>
-        <button class="wk-floor" onclick="wkFloor(this)">F2</button>
-        <button class="wk-floor" onclick="wkFloor(this)">F3</button>
+        <button class="wk-floor active" data-floor="3" onclick="wkFloor(this)">F3</button>
+        <button class="wk-floor" data-floor="2" onclick="wkFloor(this)">F2</button>
+        <button class="wk-floor" data-floor="1" onclick="wkFloor(this)">F1</button>
       </div>
-      <div class="wk-map"><img src="images/work/booth-map.png" alt="부스 배치도" loading="lazy"></div>
+      <div class="wk-map" id="wk-map" aria-label="층별 부스 배치도"></div>
     </aside>
     <!-- 오른쪽: 필터 + 검색 + 작품 그리드 -->
     <div class="wk-list">
+      <div class="wk-preview" id="wk-preview" hidden></div>
       <div class="wk-toolbar">
         <div class="wk-filters">
           <button class="wk-filter active" onclick="filterWork(this,'all')">All</button>
@@ -282,7 +283,7 @@
     <aside class="wd-info">
       <div class="wd-info-row"><span class="wd-info-k">디자이너</span><a class="wd-dlink" id="wd-by"></a></div>
       <div class="wd-info-row"><span class="wd-info-k">분야</span><span class="wd-info-v" id="wd-cat2"></span></div>
-      <p class="wd-desc" id="wd-desc"></p>
+      <div class="wd-desc" id="wd-desc"></div>
     </aside>
     <div class="wd-gallery" id="wdv-gallery"></div>
     <div class="wd-more-wrap">
@@ -462,8 +463,8 @@
   </footer>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
-<script src="main.js?v=43"></script>
+<script src="works-data.js?v=4"></script>
+<script src="main.js?v=59"></script>
 
 <!-- 3D 인터랙티브 히어로 (Three.js — 로컬 번들, CDN 의존 없음) -->
 <script src="models.js?v=1"></script>

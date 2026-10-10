@@ -23,66 +23,47 @@ var curWorkCat = 'all';
 var curWorkSearch = '';
 var CAT_EN = {'BX(브랜드)':'brand','CX(서비스디자인)':'service design','UX/UI':'ux/ui','영상':'motion graphics','일러스트':'illustration','편집':'editorial'};
 
-window.addEventListener('DOMContentLoaded', () => {
-    fetch('2026_web.csv', {cache:'no-store'})
-        .then(response => {
-            if (!response.ok) throw new Error('CSV 로드 실패');
-            return response.text();
-        })
-        .then(csvString => {
-            Papa.parse(csvString, {
-                header: true,
-                skipEmptyLines: true,
-                complete: function(results) {
-                    const groupedDesigners = {};
-
-                    results.data.forEach(row => {
-                        const krName = row['이름'] || '';
-                        if (!groupedDesigners[krName]) {
-                            groupedDesigners[krName] = {
-                                kr: krName,
-                                en: row['영어 이름'] || '',
-                                track: row['트랙'] || '',
-                                insta: row['인스타'] || '',
-                                intro: row['한줄 소개'] || '',
-                                profileImg: profileWebp(krName),
-                                works: []
-                            };
-                        }
-                        var imgs = [];
-                        var imgKeys = ['작품이미지','작품이미지2','작품이미지3','작품이미지4','작품이미지5','작품이미지6','작품이미지7'];
-                        imgKeys.forEach(function(k){ if(row[k] && row[k].trim()) imgs.push(row[k].trim()); });
-                        if(imgs.length === 0) imgs.push('images/works/none.jpg');
-                        groupedDesigners[krName].works.push({
-                            workTitle: row['작품명'] || '',
-                            category: row['카테고리'] || '',
-                            workImgs: imgs
-                        });
-                    });
-
-                    // 가나다 순 정렬
-                    DESIGNERS = Object.values(groupedDesigners)
-                        .sort((a, b) => a.kr.localeCompare(b.kr, 'ko'))
-                        .map((designer, index) => ({
-                            id: index,
-                            ...designer
-                        }));
-
-                    // 디자이너별 부스 코드 부여 (작품은 소속 디자이너 부스 공유)
-                    DESIGNERS.forEach(function(d, i){
-                        d.booth = 'C.' + String(i + 1).padStart(2, '0');
-                        d.works.forEach(function(w){ w.booth = d.booth; });
-                        // 프로필 이미지가 없을 때 보여줄 대체 이미지(none1~none6 랜덤, 사람마다 고정)
-                        d.noneImg = 'images/profiles/none' + (Math.floor(Math.random() * 6) + 1) + '.png';
-                    });
-
-                    renderGrid();
-                    renderWorks();
-                }
-            });
-        })
-        .catch(err => console.error(err));
+// 데이터: works-data.js (tools/build_data.py 가 2026_web.csv + images 폴더로 생성)
+// 파일명은 NFC(완성형)로 커밋됨 → 요청 경로도 NFC로 통일
+function _nfd(p){ return p ? p.normalize('NFC') : p; }
+window.addEventListener('DOMContentLoaded', function() {
+  DESIGNERS = (window.WORKS_DATA || []).map(function(p, i) {
+    return {
+      id: i, sid: p.sid, kr: p.label, en: p.en,
+      track: p.works.map(function(w){ return w.track; }).filter(function(v, j, a){ return v && a.indexOf(v) === j; }).join(' · '),
+      contacts: p.contacts,
+      profileImg: _nfd(p.profile),
+      noneImg: 'images/profiles/none' + (Math.floor(Math.random() * 6) + 1) + '.png',
+      works: p.works.map(function(w) {
+        return {
+          workTitle: w.title, titleEn: w.titleEn, category: w.cat, track: w.track,
+          descKr: w.descKr, descEn: w.descEn, video: w.video, tags: w.tags,
+          booth: w.booth || '',
+          thumb: _nfd(w.thumb) || 'images/works/none.jpg',
+          workImgs: w.imgs.length ? w.imgs.map(_nfd) : [_nfd(w.thumb) || 'images/works/none.jpg']
+        };
+      })
+    };
+  });
+  renderGrid();
+  renderWorks();
 });
+
+/* 작품명: 국문 제목이 없거나 영문뿐이면 영문을 메인 제목 크기로 */
+function workNames(w) {
+  var kr = (w.workTitle || '').trim(), en = (w.titleEn || '').trim();
+  if (!kr || kr === '-' || kr === en || !/[가-힣]/.test(kr)) return { main: en || kr, sub: '' };
+  return { main: kr, sub: en };
+}
+
+/* 컨택트 → 링크 */
+function contactHTML(c) {
+  var t = c[0], v = c[1], href = v;
+  if (t === '이메일') href = 'mailto:' + v;
+  else if (!/^https?:/.test(v)) href = 'https://' + v.replace(/^@/, (t === '인스타그램' ? 'instagram.com/' : ''));
+  var label = { '이메일':'EMAIL', '인스타그램':'INSTAGRAM', '링크드인':'LINKEDIN', '비핸스':'BEHANCE', '기타':'LINK' }[t] || t;
+  return '<a class="dz-dh-link" href="' + href + '" target="_blank" rel="noopener noreferrer"><span class="dz-tag">' + label + '</span><span>' + v.replace(/^https?:\/\/(www\.)?/, '') + '</span></a>';
+}
 
 function showPage(name) {
   document.querySelectorAll('.page').forEach(function(p){ p.classList.remove('active'); });
@@ -109,7 +90,7 @@ function renderGrid() {
     if (curInitial !== 'all' && getChoseong(d.kr) !== curInitial) continue;
     if (q && d.kr.toLowerCase().indexOf(q) === -1 && d.en.toLowerCase().indexOf(q) === -1) continue;
     html += '<div class="dz-card' + (curDesigner === i ? ' sel' : '') + '" data-idx="' + i + '" onclick="openDesigner(' + i + ')">'
-      + '<div class="dz-img"><img src="' + d.profileImg + '" alt="' + d.kr + '" loading="lazy" onerror="this.onerror=null;this.src=\'' + d.noneImg + '\'"></div>'
+      + '<div class="dz-img"><img src="' + (d.profileImg || d.noneImg) + '" alt="' + d.kr + '" loading="lazy" onerror="this.onerror=null;this.src=\'' + d.noneImg + '\'"></div>'
       + '<div class="dz-kr">' + d.kr + '</div>'
       + '<div class="dz-en">' + d.en + '</div>'
       + '</div>';
@@ -141,16 +122,12 @@ function openDesigner(idx) {
 
   var img = document.getElementById('dz-dimg');
   img.onerror = function(){ this.onerror=null; this.src=d.noneImg; };
-  img.src = d.profileImg;
+  img.src = d.profileImg || d.noneImg;
   img.alt = d.kr;
   document.getElementById('dz-dkr').textContent = d.kr;
   document.getElementById('dz-den').textContent = d.en;
 
-  var links = '';
-  if(d.insta){
-    var ig = d.insta.replace(/^@/,'').trim();
-    links += '<a class="dz-dh-link" href="https://instagram.com/'+ig+'" target="_blank" rel="noopener noreferrer"><span class="dz-tag">SNS</span><span>'+d.insta+'</span></a>';
-  }
+  var links = (d.contacts || []).map(contactHTML).join('');
   document.getElementById('dz-dlinks').innerHTML = links;
 
   var whtml = '';
@@ -217,28 +194,48 @@ function openWorkDirect(dIdx, wIdx) {
   var nw = document.getElementById('nav-work'); if(nw) nw.classList.add('active');
   document.body.classList.remove('theme-light');
   var en = CAT_EN[w.category] || '';
-  document.getElementById('wd-title').textContent = w.workTitle;
-  document.getElementById('wd-en').textContent = en;
+  var nm = workNames(w);
+  document.getElementById('wd-title').textContent = nm.main;
+  document.getElementById('wd-en').textContent = nm.sub;
   document.getElementById('wd-tags').innerHTML =
       '<span class="wd-tag">'+w.booth+'</span>'
     + '<span class="wd-tag">'+w.category+'</span>'
-    + '<span class="wd-tag">'+d.kr+'</span>';
+    + '<span class="wd-tag">'+d.kr+'</span>'
+    + (w.tags || []).map(function(t){ return '<span class="wd-tag wd-hash">'+t.replace(/</g,'&lt;')+'</span>'; }).join('');
   var by = document.getElementById('wd-by');
   by.innerHTML = '<span class="wd-name">'+d.kr+' ('+d.en+')</span>'
     + '<span class="wd-arrow" aria-hidden="true">↗</span>';
   by.onclick = function(){ openDesignerFromWork(dIdx); };
-  document.getElementById('wd-cat2').textContent = d.track || w.category;
-  document.getElementById('wd-desc').textContent = (d.intro && d.intro.trim())
-      ? d.intro
-      : (d.kr + ' 디자이너의 졸업 작품입니다. Captcha! 졸업전시를 위해 제작되었습니다.');
+  document.getElementById('wd-cat2').textContent = w.track || w.category;
+  var desc = document.getElementById('wd-desc');
+  desc.innerHTML = '';
+  var langs = [['kr', '국문', w.descKr], ['en', 'ENG', w.descEn]].filter(function(x){ return x[2]; });
+  if (langs.length) {
+    desc.setAttribute('data-show', langs[0][0]);
+    if (langs.length > 1) {
+      var tabs = document.createElement('div'); tabs.className = 'wd-lang';
+      langs.forEach(function(x, k) {
+        var b = document.createElement('button'); b.type = 'button'; b.textContent = x[1]; if (!k) b.className = 'on';
+        b.onclick = function() { desc.setAttribute('data-show', x[0]); tabs.querySelectorAll('button').forEach(function(o){ o.classList.toggle('on', o === b); }); };
+        tabs.appendChild(b);
+      });
+      desc.appendChild(tabs);
+    }
+    var txt = document.createElement('div'); txt.className = 'wd-txt';
+    langs.forEach(function(x) { var pp = document.createElement('p'); pp.setAttribute('data-lang', x[0]); pp.textContent = x[2].replace(/[ \t]*\n[\s]*\n\s*/g, '\n').trim(); /* 빈 줄 제거 */ txt.appendChild(pp); });
+    desc.appendChild(txt);
+  }
+  if (w.video) { var va = document.createElement('a'); va.className = 'wd-video'; va.href = /^https?:/.test(w.video) ? w.video : 'https://' + w.video; va.target = '_blank'; va.rel = 'noopener noreferrer'; va.textContent = '▶ 영상 보기'; desc.appendChild(va); }
+  if (!desc.childNodes.length) desc.textContent = d.kr + ' 디자이너의 졸업 작품입니다.';
+  setTimeout(fitWorkDesc, 30); setTimeout(fitWorkDesc, 350);
   document.getElementById('wd-dlink2').onclick = function(){ openDesignerFromWork(dIdx); };
   // 디자이너 다른 작품 썸네일 (다른 작품이 있으면 그것, 없으면 현재 작품)
   var otherIdx = (d.works.length > 1) ? ((wIdx + 1) % d.works.length) : wIdx;
   var ow = d.works[otherIdx];
   var oen = CAT_EN[ow.category] || '';
   var mc = document.getElementById('wd-more-card');
-  mc.innerHTML = '<div class="wd-mc-img"><img src="'+ow.workImgs[0]+'" alt="'+ow.workTitle+'" loading="lazy" onerror="this.onerror=null;this.src=\'images/works/none.jpg\'"></div>'
-    + '<div class="wd-mc-body"><div class="wd-mc-title">'+ow.workTitle+'</div><div class="wd-mc-en">'+oen+'</div></div>';
+  mc.innerHTML = '<div class="wd-mc-img"><img src="'+ow.thumb+'" alt="'+workNames(ow).main+'" loading="lazy" onerror="this.onerror=null;this.src=\'images/works/none.jpg\'"></div>'
+    + '<div class="wd-mc-body"><div class="wd-mc-title">'+workNames(ow).main+'</div><div class="wd-mc-en">'+workNames(ow).sub+'</div>'+(ow.booth ? '<span class="wd-mc-booth">'+ow.booth+'</span>' : '')+'</div>';
   mc.onclick = function(){ openWorkDirect(dIdx, otherIdx); };
   var imgs = (w.workImgs && w.workImgs.length) ? w.workImgs : ['images/works/none.jpg'];
   document.getElementById('wdv-gallery').innerHTML = imgs.map(function(src, i){
@@ -253,8 +250,8 @@ function workCardHTML(dIdx, wIdx) {
   var w = d.works[wIdx];
   var en = CAT_EN[w.category] || '';
   return '<div class="wk-card" onclick="openWorkDirect('+dIdx+','+wIdx+')">'
-    +'<div class="wk-card-img"><img src="'+w.workImgs[0]+'" alt="'+w.workTitle+'" loading="lazy" onerror="this.onerror=null;this.src=\'images/works/none.jpg\'"></div>'
-    +'<div class="wk-card-body"><div class="wk-card-title">'+w.workTitle+'</div><div class="wk-card-en">'+en+'</div></div>'
+    +'<div class="wk-card-img"><img src="'+w.thumb+'" alt="'+workNames(w).main+'" loading="lazy" onerror="this.onerror=null;this.src=\'images/works/none.jpg\'"></div>'
+    +'<div class="wk-card-body"><div class="wk-card-title">'+workNames(w).main+'</div><div class="wk-card-en">'+workNames(w).sub+'</div></div>'
     +'<div class="wk-card-tags"><span class="wk-tag">'+w.booth+'</span><span class="wk-tag">'+w.category+'</span><span class="wk-tag name">'+d.kr+'</span></div>'
     +'</div>';
 }
@@ -268,7 +265,7 @@ function renderWorks() {
       var w = d.works[wi];
       if(curWorkCat!=='all' && w.category!==curWorkCat) continue;
       if(q){
-        var hay = (w.workTitle+' '+d.kr+' '+d.en+' '+w.category+' '+w.booth).toLowerCase();
+        var hay = (w.workTitle+' '+w.titleEn+' '+d.kr+' '+d.en+' '+w.category+' '+w.booth+' '+(w.tags||[]).join(' ')).toLowerCase();
         if(hay.indexOf(q) < 0) continue;
       }
       html += workCardHTML(i, wi);
@@ -276,6 +273,7 @@ function renderWorks() {
   }
   if(!html) html = '<div class="wk-empty">검색 결과가 없습니다.</div>';
   document.getElementById('work-grid').innerHTML = html;
+  setTimeout(syncWorkSearchWidth, 0);
 }
 
 function filterWork(btn, cat) {
@@ -290,10 +288,74 @@ function searchWork(value) {
   renderWorks();
 }
 
+/* ── WORK 부스 지도: 층별 SVG(Figma) + 부스 호버/클릭 → 오른쪽에 작품 미리보기 ── */
+var _wkMaps = {}, _wkFloor = '3', _wkPinned = '';
 function wkFloor(btn) {
-  document.querySelectorAll('.wk-floor').forEach(function(b){ b.classList.remove('active'); });
-  btn.classList.add('active');
+  document.querySelectorAll('.wk-floor').forEach(function(b){ b.classList.toggle('active', b === btn); });
+  _wkFloor = btn.getAttribute('data-floor');
+  wkUnpin();
+  wkLoadMap(_wkFloor);
 }
+function wkBoothWork(floor, code) {
+  for (var i = 0; i < DESIGNERS.length; i++) for (var j = 0; j < DESIGNERS[i].works.length; j++) {
+    var b = (DESIGNERS[i].works[j].booth || '').replace(/\s+/g, '');
+    if (b === floor + 'F' + code) return [i, j];
+  }
+  return null;
+}
+function wkLoadMap(floor) {
+  var el = document.getElementById('wk-map');
+  if (!el) return;
+  var apply = function(svg) {
+    if (_wkFloor !== floor) return;
+    el.innerHTML = svg;
+    var root = el.querySelector('svg'); root.removeAttribute('width'); root.removeAttribute('height');
+    root.querySelectorAll('g[id]').forEach(function(g) {
+      var code = g.id;
+      if (!/^[CE]\d\d$/.test(code)) return;
+      var hit = wkBoothWork(floor, code);
+      g.classList.add('wk-bt');
+      if (!hit) { g.classList.add('empty'); return; }
+      // 강조용 배경 알약(없으면 생성)
+      var pill = g.querySelector('rect');
+      if (!pill) {
+        var bb = g.getBBox(); pill = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+        pill.setAttribute('x', bb.x - 3); pill.setAttribute('y', bb.y - 2); pill.setAttribute('width', bb.width + 6); pill.setAttribute('height', bb.height + 4); pill.setAttribute('rx', Math.min(bb.width, bb.height) / 2 + 2);
+        g.insertBefore(pill, g.firstChild);
+      }
+      pill.classList.add('wk-pill');
+      g.addEventListener('mouseenter', function(){ if (!_wkPinned) wkShowPreview(code, hit); });
+      g.addEventListener('mouseleave', function(){ if (!_wkPinned) wkHidePreview(); });
+      g.addEventListener('click', function(e) {
+        e.stopPropagation();
+        if (window.innerWidth <= 920) { openWorkDirect(hit[0], hit[1]); return; }
+        if (_wkPinned === code) { wkUnpin(); return; }
+        _wkPinned = code; wkShowPreview(code, hit);
+      });
+    });
+  };
+  if (_wkMaps[floor]) apply(_wkMaps[floor]);
+  else fetch('images/work/map-' + floor + 'f.svg').then(function(r){ return r.text(); }).then(function(t){ _wkMaps[floor] = t; apply(t); });
+}
+function wkShowPreview(code, hit) {
+  document.querySelectorAll('#wk-map .wk-bt').forEach(function(g){ g.classList.toggle('on', g.id === code); });
+  var d = DESIGNERS[hit[0]], w = d.works[hit[1]], nm = workNames(w), pv = document.getElementById('wk-preview');
+  pv.innerHTML = '<div class="wk-card wk-pv-card" onclick="openWorkDirect(' + hit[0] + ',' + hit[1] + ')">'
+    + '<div class="wk-card-img"><img src="' + w.thumb + '" alt="' + nm.main + '" onerror="this.onerror=null;this.src=\'images/works/none.jpg\'"></div>'
+    + '<div class="wk-card-body"><div class="wk-card-title">' + nm.main + '</div><div class="wk-card-en">' + nm.sub + '</div></div>'
+    + '<div class="wk-card-tags"><span class="wk-tag">' + w.booth + '</span><span class="wk-tag">' + w.category + '</span><span class="wk-tag name">' + d.kr + '</span></div></div>';
+  pv.hidden = false;
+  pv.parentNode.classList.add('previewing');
+}
+function wkHidePreview() {
+  document.querySelectorAll('#wk-map .wk-bt.on').forEach(function(g){ g.classList.remove('on'); });
+  var pv = document.getElementById('wk-preview');
+  if (pv) { pv.hidden = true; pv.parentNode.classList.remove('previewing'); }
+}
+function wkUnpin() { _wkPinned = ''; wkHidePreview(); }
+document.addEventListener('click', function(e) { if (_wkPinned && !e.target.closest('#wk-preview, #wk-map .wk-bt')) wkUnpin(); });
+document.addEventListener('keydown', function(e) { if (e.key === 'Escape' && _wkPinned) wkUnpin(); });
+window.addEventListener('DOMContentLoaded', function(){ setTimeout(function(){ wkLoadMap(_wkFloor); }, 0); });
 
 function renderBooth() {
   var el = document.getElementById('wk-map');
@@ -1135,3 +1197,43 @@ function boothCloseQR() {
   window.addEventListener('resize', check);
   document.addEventListener('click', function() { setTimeout(check, 50); });
 })();
+
+/* 작품 상세(데스크탑): 설명 + 다른 작품 카드를 한 덩어리로 왼쪽에 고정 → 설명이 잘리지 않음 */
+var WD_GAP = 12; // 다른 작품 카드와 화면 하단 사이 간격(px)
+function fitWorkDesc(resize) {
+  var info = document.querySelector('.wd-info'), more = document.querySelector('.wd-more-wrap'), body = document.querySelector('.wd-body');
+  if (!info || !more || !body) return;
+  var card = more.querySelector('.wd-more-card');
+  if (window.innerWidth > 920) {
+    if (more.parentNode !== info) info.appendChild(more);
+    info.style.minHeight = '';
+    var r = info.getBoundingClientRect(), room = window.innerHeight - WD_GAP - r.top;
+    // 작품을 열 때/창 크기가 바뀔 때만 카드 크기를 정함 → 그 창에서는 크기 고정
+    if (resize !== false && card) {
+      card.style.maxWidth = '';
+      // 국문/영문 중 더 긴 설명 기준으로 계산 → 탭을 바꿔도 카드 크기 그대로
+      var desc = document.getElementById('wd-desc'), cur = desc.getAttribute('data-show'), over = -1e9;
+      (cur ? ['kr', 'en'] : [null]).forEach(function(l) { if (l) desc.setAttribute('data-show', l); over = Math.max(over, info.getBoundingClientRect().height - room); });
+      if (cur) desc.setAttribute('data-show', cur);
+      if (over > 0) {
+        var img = card.querySelector('.wd-mc-img'), ih = img.getBoundingClientRect().height;
+        var nh = Math.max(110, ih - over);
+        card.style.maxWidth = Math.round(card.getBoundingClientRect().width * nh / ih) + 'px'; // 3:2 비율 유지하며 카드 전체 축소
+      }
+      r = info.getBoundingClientRect(); room = window.innerHeight - WD_GAP - r.top;
+    }
+    info.style.minHeight = Math.max(0, room) + 'px';
+  } else { info.style.minHeight = ''; if (card) card.style.maxWidth = ''; if (more.parentNode !== body) body.insertBefore(more, info.nextSibling); }
+}
+window.addEventListener('scroll', function() { if (document.getElementById('work-detail').classList.contains('active')) fitWorkDesc(false); }, { passive: true });
+document.addEventListener('click', function(e) { if (e.target.closest('.wd-lang')) fitWorkDesc(false); });
+window.addEventListener('resize', fitWorkDesc);
+
+/* WORK 검색창 폭 = 작품 카드 한 칸 폭 */
+function syncWorkSearchWidth() {
+  var card = document.querySelector('#work-grid .wk-card'), box = document.querySelector('.wk-search');
+  if (!box) return;
+  box.style.width = (card && window.innerWidth > 920) ? card.getBoundingClientRect().width + 'px' : '';
+}
+window.addEventListener('resize', syncWorkSearchWidth);
+document.addEventListener('click', function(e) { if (e.target.closest('.nav-links button, .wk-filter')) setTimeout(syncWorkSearchWidth, 50); });

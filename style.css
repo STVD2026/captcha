@@ -756,16 +756,29 @@ nav{
 #page-work.active{display:block}
 .wk-main{display:flex;align-items:flex-start}
 /* 왼쪽 파란 사이드바 */
-.wk-side{flex:0 0 360px;min-width:0;background:var(--blue);color:#fff;position:sticky;top:43px;height:calc(100vh - 43px);overflow-y:auto;padding:36px 30px;display:flex;flex-direction:column;gap:20px}
+.wk-side{flex:0 0 540px;min-width:0;background:var(--blue);color:#fff;position:sticky;top:43px;height:calc(100vh - 43px);overflow-y:auto;padding:36px 30px;display:flex;flex-direction:column;gap:20px}
 .wk-side-head{display:flex;flex-direction:column;gap:16px}
 .wk-title{font-family:var(--gal);font-weight:700;font-size:44px;letter-spacing:.04em;text-transform:uppercase;line-height:1}
 .wk-sub{font-family:var(--noto);font-weight:700;font-size:15px}
 .wk-sub span{font-family:var(--sg);font-weight:500;opacity:.85;margin-left:6px}
-.wk-floors{display:flex;gap:8px}
-.wk-floor{width:46px;height:30px;border:1px solid #fff;background:none;color:#fff;font-family:var(--sg);font-weight:600;font-size:13px;cursor:pointer;transition:background .12s,color .12s}
+.wk-floors{display:flex;gap:14px}
+.wk-floor{width:53px;height:26px;border:none;background:rgba(255,255,255,.4);color:rgba(255,255,255,.85);font-family:var(--sg);font-weight:600;font-size:13px;cursor:pointer;transition:background .12s,color .12s}
 .wk-floor.active,.wk-floor:hover{background:#fff;color:var(--blue)}
 .wk-map{margin-top:4px}
-.wk-map img{width:100%;height:auto;display:block;border-radius:4px}
+.wk-map svg{width:100%;height:auto;display:block;overflow:visible}
+/* 부스 번호: 데이터 있는 곳만 반응, 호버/선택 시 흰 알약 + 파란 글자 */
+.wk-map .wk-bt:not(.empty){cursor:pointer}
+.wk-map .wk-bt .wk-pill{fill:transparent;transition:fill .12s}
+.wk-map .wk-bt path{transition:fill .12s}
+.wk-map .wk-bt.on .wk-pill,.wk-map .wk-bt:not(.empty):hover .wk-pill{fill:#fff}
+.wk-map .wk-bt.on path,.wk-map .wk-bt:not(.empty):hover path{fill:var(--blue)}
+.wk-map .wk-bt.empty{opacity:.45}
+/* 오른쪽 미리보기: 목록 대신 선택한 작품 크게 */
+.wk-list{position:relative}
+.wk-list.previewing>*:not(.wk-preview){visibility:hidden}
+.wk-preview{position:absolute;inset:0;padding:60px 8%;display:flex;align-items:flex-start;justify-content:center;z-index:5}
+.wk-preview[hidden]{display:none}
+.wk-preview .wk-pv-card{width:min(100%,760px);position:sticky;top:100px}
 /* 오른쪽 리스트 */
 .wk-list{flex:1;min-width:0;padding:36px 30px 60px}
 /* 스크롤 시 상단 고정 */
@@ -780,10 +793,10 @@ nav{
 .wk-search input::placeholder{color:rgba(255,255,255,.85);text-transform:uppercase;letter-spacing:.06em}
 .wk-search input:focus{outline:2px solid #3a3cff;outline-offset:1px}
 .wk-search-ic{position:absolute;right:12px;top:50%;transform:translateY(-50%);width:18px;height:18px;color:#fff;pointer-events:none}
-.wk-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:24px}
+.wk-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:16px}
 .wk-empty{grid-column:1/-1;padding:60px 0;color:#8A8A8A;font-family:var(--noto)}
 .wk-card{border:2px solid var(--blue);display:flex;flex-direction:column;cursor:pointer;background:#fff;transition:background .14s ease}
-.wk-card-img{position:relative;aspect-ratio:4/3;background:#111;overflow:hidden}
+.wk-card-img{position:relative;aspect-ratio:3/2;background:#111;overflow:hidden}
 .wk-card-img img{width:100%;height:100%;object-fit:cover;display:block}
 /* 제목 영역이 늘어나 옆 카드와 높이 맞춤(태그는 하단 정렬) */
 .wk-card-body{flex:1 1 auto;padding:14px 14px 12px;display:flex;flex-direction:column;gap:5px}
@@ -816,16 +829,16 @@ nav{
 /* 백 화살표: Galapagos 폰트 + 타이틀과 세로 중앙 정렬 */
 .wd-back{background:none;border:none;color:var(--blue);font-family:var(--gal);font-weight:700;font-size:26px;line-height:1;cursor:pointer;padding:0;flex:none;transform:translateY(-0.38em)}
 .wd-title{font-family:var(--noto);font-weight:700;font-size:26px;line-height:1.25;color:var(--blue);word-break:keep-all}
-.wd-en{font-family:var(--sg);font-weight:600;font-size:14px;color:var(--blue);margin-top:6px}
+.wd-en{font-family:var(--sg);font-weight:600;font-size:19px;color:var(--blue);margin-top:8px}
 /* 태그: 외곽선 스타일 (Figma 148-2620) */
 .wd-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:14px}
 .wd-tag{font-family:var(--sg);font-weight:600;font-size:12px;line-height:1;padding:6px 9px;background:transparent;border:1px solid var(--blue);color:var(--blue)}
 .wd-tag.name{font-family:var(--noto)}
 /* 좌: 정보(위)+다른작품(아래) / 우: 갤러리 (그리드) */
-.wd-body{position:relative;display:grid;grid-template-columns:300px 1fr;column-gap:32px;
+.wd-body{--wd-info-w:clamp(340px,34vw,500px);position:relative;display:grid;grid-template-columns:var(--wd-info-w) 1fr;column-gap:32px;
   grid-template-areas:"info gallery" "more gallery";align-items:start;padding:36px 30px 60px}
 /* 정보/갤러리 경계에 전체 높이 세로 구분선 (끝까지 이어짐) */
-.wd-body::before{content:"";position:absolute;top:0;bottom:0;left:calc(30px + 300px + 32px);width:1px;background:var(--blue)}
+.wd-body::before{content:"";position:absolute;top:0;bottom:0;left:calc(30px + var(--wd-info-w) + 32px);width:1px;background:var(--blue)}
 /* 좌측 정보는 스크롤해도 고정(sticky) */
 .wd-info{grid-area:info;min-width:0;display:flex;flex-direction:column;gap:16px;position:sticky;top:60px}
 .wd-info-row{display:flex;gap:20px;font-family:var(--noto);font-size:14px;line-height:1.4}
@@ -840,17 +853,37 @@ a.wd-dlink:hover{opacity:.75}
 /* 화살표: ABC Galapagos 폰트 텍스트, 타이틀과 중심선 정렬 */
 .wd-arrow{font-family:var(--gal);font-weight:700;font-size:16px;line-height:1;color:var(--blue);flex:none;display:inline-block;transform:translateY(1px)}
 .wd-desc{font-family:var(--noto);font-weight:500;font-size:14px;line-height:1.75;color:#2a2a2a;word-break:keep-all;overflow-wrap:break-word}
+.wd-desc p{margin:0 0 1em;white-space:pre-line}
+/* 국문/영문 설명 탭 */
+.wd-lang{display:flex;gap:0;margin:14px 0 14px}
+.wd-lang button{font-family:var(--sg);font-weight:600;font-size:12px;letter-spacing:.04em;padding:5px 12px;border:1px solid var(--blue);background:#fff;color:var(--blue);cursor:pointer}
+.wd-lang button+button{border-left:none}
+.wd-lang button.on{background:var(--blue);color:#fff}
+.wd-desc [data-lang]{display:none}
+.wd-desc[data-show="kr"] [data-lang="kr"],.wd-desc[data-show="en"] [data-lang="en"]{display:block}
+/* 화면이 아주 낮을 때만 설명 칸 안에서 스크롤 (다른 작품 카드와 겹침 방지) */
+@media (min-width:921px){
+  .wd-info .wd-more-wrap{position:static;margin-top:auto;padding-top:8px;align-self:stretch}
+  /* 다른 작품 카드: 데스크탑에선 가로형 컴팩트 카드로 → 설명 공간 확보 */
+  .wd-more-wrap .wd-more-card{max-width:320px}
+  .wd-desc{font-size:13px;line-height:1.65}
+  .wd-info{gap:12px}
+}
+/* 해시태그: 옆 태그와 같은 사각형, 색만 연하게 */
+.wd-tags .wd-hash{font-family:var(--noto);font-weight:500;color:#8E8FFF;border-color:#B9BAFF}
+.wd-video{display:inline-block;margin-top:4px;padding:8px 14px;border:1.5px solid var(--blue);color:var(--blue);font-weight:700;text-decoration:none}
+.wd-video:hover{background:var(--blue);color:#fff}
 /* 디자이너 다른 작품: 좌측 하단, 화면에 고정 (하단 30px 여유) */
 .wd-more-wrap{grid-area:more;align-self:end;position:sticky;bottom:30px;display:flex;flex-direction:column;gap:14px;margin-top:24px}
 .wd-more{align-self:flex-start;background:var(--blue);color:#fff;border:none;font-family:var(--noto);font-weight:500;font-size:13px;padding:8px 12px;cursor:pointer}
-.wd-more-card{border:1px solid var(--blue);cursor:pointer;background:#fff}
-.wd-more-card .wd-mc-img{aspect-ratio:4/3;background:#111;overflow:hidden}
+.wd-more-card{border:1px solid var(--blue);cursor:pointer;background:#fff;max-width:360px}
+.wd-more-card .wd-mc-img{aspect-ratio:3/2;background:#111;overflow:hidden}
 .wd-more-card .wd-mc-img img{width:100%;height:100%;object-fit:cover;display:block}
 .wd-more-card .wd-mc-body{padding:10px 12px;display:flex;flex-direction:column;gap:3px;border-top:1px solid var(--blue);text-align:left}
 .wd-more-card .wd-mc-title{font-family:var(--noto);font-weight:600;font-size:13px;color:#111;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;word-break:keep-all}
 .wd-more-card .wd-mc-en{font-family:var(--sg);font-size:11px;color:#8A8A8A}
 /* 이미지 갤러리 */
-.wd-gallery{grid-area:gallery;min-width:0;display:flex;flex-direction:column;gap:16px;padding-left:40px}
+.wd-gallery{grid-area:gallery;min-width:0;display:flex;flex-direction:column;gap:0;padding-left:40px}
 .wd-gallery img{width:100%;height:auto;display:block;background:#EDEDF5}
 
 /* ── WORK 태블릿: 사이드바를 상단 밴드로, 부스맵 크기 제한 ── */
@@ -908,3 +941,26 @@ a.wd-dlink:hover{opacity:.75}
   border-left:3px solid var(--blue);box-shadow:-12px 0 40px rgba(0,0,0,.18);overflow-y:auto;background:#fff}
 .dz-overlay-bd{position:fixed;inset:43px 0 0 0;background:rgba(0,0,0,.35);z-index:390;opacity:0;pointer-events:none;transition:opacity .2s}
 .dz-overlay-bd.show{opacity:1;pointer-events:auto}
+
+/* 영문 제목만 있는 작품: 빈 부제 줄 숨김 */
+.wk-card-en:empty,.wd-en:empty,.wd-mc-en:empty{display:none}
+
+/* 다른 작품 카드: 제목 + 층/부스 */
+.wd-more-card .wd-mc-booth{font-family:var(--sg);font-weight:600;font-size:11px;color:var(--blue);border:1px solid var(--blue);padding:3px 6px;white-space:nowrap}
+/* 제목(좌) · 층/부스(우) 한 줄 정렬 → 카드 높이 축소 */
+.wd-more-card .wd-mc-body{display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"t b" "e b";column-gap:10px;row-gap:1px;align-items:center;padding:8px 12px}
+.wd-more-card .wd-mc-title{grid-area:t;-webkit-line-clamp:1}
+.wd-more-card .wd-mc-en{grid-area:e;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wd-more-card .wd-mc-booth{grid-area:b}
+
+/* 툴바: 검색창을 가장 왼쪽으로 */
+.dz-search,.wk-search{order:-1}
+@media (min-width:921px){.dz-toolbar,.wk-toolbar{justify-content:flex-start}}
+
+/* 작품 상세 헤더: 영문 제목을 한글 제목 바로 아래, 화살표 다음 열에 정렬 */
+.wd-head{display:grid;grid-template-columns:auto minmax(0,1fr);column-gap:14px;align-items:center}
+.wd-head .wd-head-top{display:contents}
+.wd-head .wd-back{grid-column:1;grid-row:1;transform:translateY(-0.08em)}
+.wd-head .wd-title{grid-column:2;grid-row:1;margin-bottom:0}
+.wd-head .wd-en{grid-column:2;grid-row:2;margin-top:2px}
+.wd-head .wd-tags{grid-column:1 / -1;grid-row:3}
