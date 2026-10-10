@@ -764,21 +764,23 @@ nav{
 .wk-floors{display:flex;gap:14px}
 .wk-floor{width:53px;height:26px;border:none;background:rgba(255,255,255,.4);color:rgba(255,255,255,.85);font-family:var(--sg);font-weight:600;font-size:13px;cursor:pointer;transition:background .12s,color .12s}
 .wk-floor.active,.wk-floor:hover{background:#fff;color:var(--blue)}
-.wk-map{margin-top:4px}
+.wk-map{margin-top:28px} /* F3/F2/F1 버튼과 지도 사이 여백 */
 .wk-map svg{width:100%;height:auto;display:block;overflow:visible}
 /* 부스 번호: 데이터 있는 곳만 반응, 호버/선택 시 흰 알약 + 파란 글자 */
 .wk-map .wk-bt:not(.empty){cursor:pointer}
 .wk-map .wk-bt .wk-pill{fill:transparent;transition:fill .12s}
-.wk-map .wk-bt path{transition:fill .12s}
+.wk-map .wk-bt path{fill:#fff;transition:fill .12s} /* Figma에서 E12가 선택 상태(파란 글자)로 export돼서 기본은 흰 글자로 통일 */
 .wk-map .wk-bt.on .wk-pill,.wk-map .wk-bt:not(.empty):hover .wk-pill{fill:#fff}
 .wk-map .wk-bt.on path,.wk-map .wk-bt:not(.empty):hover path{fill:var(--blue)}
 .wk-map .wk-bt.empty{opacity:.45}
 /* 오른쪽 미리보기: 목록 대신 선택한 작품 크게 */
 .wk-list{position:relative}
-.wk-list.previewing>*:not(.wk-preview){visibility:hidden}
-.wk-preview{position:absolute;inset:0;padding:60px 8%;display:flex;align-items:flex-start;justify-content:center;z-index:5}
+.wk-list.previewing>*:not(.wk-preview){display:none}
+.wk-preview{position:relative;display:flex;flex-direction:column;align-items:center;gap:36px;z-index:5}
 .wk-preview[hidden]{display:none}
-.wk-preview .wk-pv-card{width:min(100%,760px);position:sticky;top:100px}
+.wk-preview .wk-pv-card{width:min(100%,760px)}
+.wk-pv-near{width:100%}
+.wk-pv-near-t{font-family:var(--noto);font-weight:700;font-size:14px;color:var(--blue);margin-bottom:12px}
 /* 오른쪽 리스트 */
 .wk-list{flex:1;min-width:0;padding:36px 30px 60px}
 /* 스크롤 시 상단 고정 */
@@ -911,11 +913,11 @@ a.wd-dlink:hover{opacity:.75}
   /* 툴바는 고정된 헤딩 바로 아래까지만 올라감 */
   .wk-toolbar{top:calc(43px + var(--wkhh));flex-direction:column;align-items:stretch;gap:14px;padding-top:6px}
   /* 콘텐츠 시트 드래그 핸들바: 위 여백 절반, 아래(필터까지) 여백 2배 */
-  .wk-toolbar::before{content:"";align-self:center;width:44px;height:5px;border-radius:3px;background:#BFC0EA;margin-bottom:18px}
+  .wk-toolbar::before{content:"";order:-2;align-self:center;width:44px;height:5px;border-radius:3px;background:#BFC0EA;margin-bottom:18px}
   .wk-filters{gap:6px}
   .wk-filter{font-size:12px;padding:0 10px}
   .wk-search{width:100%}
-  .wk-grid{grid-template-columns:repeat(2,1fr);gap:14px}
+  .wk-grid{grid-template-columns:repeat(2,1fr);gap:12px 8px}
   .wk-card-title{font-size:13px}
   /* 모바일 카드 태그: [부스 | 카테고리] 윗줄, [이름] 아랫줄 (Figma 186-339) */
   .wk-card-tags{flex-wrap:wrap;gap:0;border-top:1px solid var(--blue);padding:0}
@@ -964,3 +966,15 @@ a.wd-dlink:hover{opacity:.75}
 .wd-head .wd-title{grid-column:2;grid-row:1;margin-bottom:0}
 .wd-head .wd-en{grid-column:2;grid-row:2;margin-top:2px}
 .wd-head .wd-tags{grid-column:1 / -1;grid-row:3}
+
+/* 모바일·태블릿: 부스 지도 가운데 정렬 */
+@media (max-width:920px){.wk-side .wk-map{width:100%;max-width:none;margin-left:auto;margin-right:auto;align-self:stretch}.wk-side{padding-left:20px;padding-right:20px}}
+
+/* 모바일: 부스 터치 시 지도 아래 작품 카드 */
+.wk-mpreview{margin-top:8px}
+.wk-mpreview[hidden]{display:none}
+.wk-mpreview .wk-card{background:#fff}
+@media (min-width:921px){.wk-mpreview{display:none}}
+
+/* 공통 푸터: MAIN 하단 정보 섹션을 그대로 사용 */
+footer[data-shared-foot]{position:relative;z-index:1;display:block;padding:0;border:none;background:none}

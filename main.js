@@ -258,19 +258,25 @@ function workCardHTML(dIdx, wIdx) {
 
 function renderWorks() {
   var q = curWorkSearch.trim().toLowerCase();
-  var html = '';
+  var list = [];
   for(var i=0; i<DESIGNERS.length; i++){
     var d = DESIGNERS[i];
     for(var wi=0; wi<d.works.length; wi++){
       var w = d.works[wi];
+      var m = (w.booth || '').replace(/\s+/g, '').match(/^(\d)F([CE])(\d+)$/);
+      // 선택한 층 작품만 (검색 중에는 모든 층에서 찾기)
+      if(!q && typeof _wkFloor !== 'undefined' && (!m || m[1] !== _wkFloor)) continue;
       if(curWorkCat!=='all' && w.category!==curWorkCat) continue;
       if(q){
         var hay = (w.workTitle+' '+w.titleEn+' '+d.kr+' '+d.en+' '+w.category+' '+w.booth+' '+(w.tags||[]).join(' ')).toLowerCase();
         if(hay.indexOf(q) < 0) continue;
       }
-      html += workCardHTML(i, wi);
+      list.push({ i: i, wi: wi, k: m ? m[1] + m[2] + ('00' + m[3]).slice(-3) : 'z' });
     }
   }
+  // 부스 번호 순 (층 → C/E → 번호)
+  list.sort(function(a, b){ return a.k < b.k ? -1 : a.k > b.k ? 1 : 0; });
+  var html = list.map(function(x){ return workCardHTML(x.i, x.wi); }).join('');
   if(!html) html = '<div class="wk-empty">검색 결과가 없습니다.</div>';
   document.getElementById('work-grid').innerHTML = html;
   setTimeout(syncWorkSearchWidth, 0);
@@ -293,6 +299,7 @@ var _wkMaps = {}, _wkFloor = '3', _wkPinned = '';
 function wkFloor(btn) {
   document.querySelectorAll('.wk-floor').forEach(function(b){ b.classList.toggle('active', b === btn); });
   _wkFloor = btn.getAttribute('data-floor');
+  renderWorks();
   wkUnpin();
   wkLoadMap(_wkFloor);
 }
@@ -310,25 +317,20 @@ function wkLoadMap(floor) {
     if (_wkFloor !== floor) return;
     el.innerHTML = svg;
     var root = el.querySelector('svg'); root.removeAttribute('width'); root.removeAttribute('height');
+    // 범례(Frame 249)를 지도에서 더 띄움 → viewBox도 그만큼 늘림
+    var LEG = 28, legend = root.querySelector('g[id="Frame 249"]'), vb = root.getAttribute('viewBox').split(/\s+/).map(Number);
+    if (legend) { legend.setAttribute('transform', 'translate(0 ' + LEG + ')'); vb[3] += LEG; root.setAttribute('viewBox', vb.join(' ')); }
     root.querySelectorAll('g[id]').forEach(function(g) {
       var code = g.id;
       if (!/^[CE]\d\d$/.test(code)) return;
       var hit = wkBoothWork(floor, code);
       g.classList.add('wk-bt');
       if (!hit) { g.classList.add('empty'); return; }
-      // 강조용 배경 알약(없으면 생성)
-      var pill = g.querySelector('rect');
-      if (!pill) {
-        var bb = g.getBBox(); pill = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-        pill.setAttribute('x', bb.x - 3); pill.setAttribute('y', bb.y - 2); pill.setAttribute('width', bb.width + 6); pill.setAttribute('height', bb.height + 4); pill.setAttribute('rx', Math.min(bb.width, bb.height) / 2 + 2);
-        g.insertBefore(pill, g.firstChild);
-      }
-      pill.classList.add('wk-pill');
-      g.addEventListener('mouseenter', function(){ if (!_wkPinned) wkShowPreview(code, hit); });
-      g.addEventListener('mouseleave', function(){ if (!_wkPinned) wkHidePreview(); });
+      var own = g.querySelector('rect'); if (own) own.classList.add('wk-pill');
+      g.addEventListener('mouseenter', function(){ if (!_wkPinned && window.innerWidth > 920) wkShowPreview(code, hit); });
+      g.addEventListener('mouseleave', function(){ if (!_wkPinned && window.innerWidth > 920) wkHidePreview(); });
       g.addEventListener('click', function(e) {
         e.stopPropagation();
-        if (window.innerWidth <= 920) { openWorkDirect(hit[0], hit[1]); return; }
         if (_wkPinned === code) { wkUnpin(); return; }
         _wkPinned = code; wkShowPreview(code, hit);
       });
@@ -337,23 +339,56 @@ function wkLoadMap(floor) {
   if (_wkMaps[floor]) apply(_wkMaps[floor]);
   else fetch('images/work/map-' + floor + 'f.svg').then(function(r){ return r.text(); }).then(function(t){ _wkMaps[floor] = t; apply(t); });
 }
+/* 강조용 흰 알약: 화면에 보일 때 글자 크기에 맞춰 생성 (Figma E12 비율) */
+function wkEnsurePill(g) {
+  if (g.querySelector('.wk-pill')) return;
+  var b = { x: 1e9, y: 1e9, r: -1e9, btm: -1e9 };
+  g.querySelectorAll('path').forEach(function(p) { var bb = p.getBBox(); b.x = Math.min(b.x, bb.x); b.y = Math.min(b.y, bb.y); b.r = Math.max(b.r, bb.x + bb.width); b.btm = Math.max(b.btm, bb.y + bb.height); });
+  if (b.r < b.x) return;
+  var h = (b.btm - b.y) + 10, w = (b.r - b.x) + 15, cx = (b.x + b.r) / 2, cy = (b.y + b.btm) / 2;
+  var rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+  rect.setAttribute('x', cx - w / 2); rect.setAttribute('y', cy - h / 2); rect.setAttribute('width', w); rect.setAttribute('height', h); rect.setAttribute('rx', h / 2);
+  rect.setAttribute('class', 'wk-pill');
+  g.insertBefore(rect, g.firstChild);
+}
+function wkNearby(floor, code, self) {
+  var L = code[0], n = +code.slice(1), out = [];
+  DESIGNERS.forEach(function(d, i) { d.works.forEach(function(w, j) {
+    var m = (w.booth || '').replace(/\s+/g, '').match(/^(\d)F([CE])(\d\d)$/);
+    if (!m || m[1] !== floor || (i === self[0] && j === self[1])) return;
+    out.push({ i: i, j: j, dist: (m[2] === L ? 0 : 100) + Math.abs(+m[3] - n) });
+  }); });
+  return out.sort(function(a, b){ return a.dist - b.dist; }); // 같은 층 작품 전부, 가까운 순
+}
 function wkShowPreview(code, hit) {
+  var gg = document.querySelector('#wk-map g[id="' + code + '"]'); if (gg) wkEnsurePill(gg);
   document.querySelectorAll('#wk-map .wk-bt').forEach(function(g){ g.classList.toggle('on', g.id === code); });
   var d = DESIGNERS[hit[0]], w = d.works[hit[1]], nm = workNames(w), pv = document.getElementById('wk-preview');
+  // 모바일: 지도 바로 아래에 미리보기
+  if (window.innerWidth <= 920) {
+    pv = document.getElementById('wk-mpreview');
+    if (!pv) { pv = document.createElement('div'); pv.id = 'wk-mpreview'; pv.className = 'wk-mpreview'; document.getElementById('wk-map').insertAdjacentElement('afterend', pv); }
+  }
   pv.innerHTML = '<div class="wk-card wk-pv-card" onclick="openWorkDirect(' + hit[0] + ',' + hit[1] + ')">'
     + '<div class="wk-card-img"><img src="' + w.thumb + '" alt="' + nm.main + '" onerror="this.onerror=null;this.src=\'images/works/none.jpg\'"></div>'
     + '<div class="wk-card-body"><div class="wk-card-title">' + nm.main + '</div><div class="wk-card-en">' + nm.sub + '</div></div>'
     + '<div class="wk-card-tags"><span class="wk-tag">' + w.booth + '</span><span class="wk-tag">' + w.category + '</span><span class="wk-tag name">' + d.kr + '</span></div></div>';
+  // 웹: 큰 카드 아래에 같은 층 근처 부스 작품들
+  if (pv.id === 'wk-preview') {
+    var near = wkNearby(_wkFloor, code, hit);
+    if (near.length) pv.innerHTML += '<div class="wk-pv-near"><div class="wk-pv-near-t">근처 작품</div><div class="wk-grid">' + near.map(function(x){ return workCardHTML(x.i, x.j); }).join('') + '</div></div>';
+  }
   pv.hidden = false;
-  pv.parentNode.classList.add('previewing');
+  if (pv.id === 'wk-preview') pv.parentNode.classList.add('previewing');
 }
 function wkHidePreview() {
   document.querySelectorAll('#wk-map .wk-bt.on').forEach(function(g){ g.classList.remove('on'); });
   var pv = document.getElementById('wk-preview');
   if (pv) { pv.hidden = true; pv.parentNode.classList.remove('previewing'); }
+  var mp = document.getElementById('wk-mpreview'); if (mp) mp.hidden = true;
 }
 function wkUnpin() { _wkPinned = ''; wkHidePreview(); }
-document.addEventListener('click', function(e) { if (_wkPinned && !e.target.closest('#wk-preview, #wk-map .wk-bt')) wkUnpin(); });
+document.addEventListener('click', function(e) { if (_wkPinned && !e.target.closest('#wk-preview, #wk-mpreview, #wk-map .wk-bt')) wkUnpin(); });
 document.addEventListener('keydown', function(e) { if (e.key === 'Escape' && _wkPinned) wkUnpin(); });
 window.addEventListener('DOMContentLoaded', function(){ setTimeout(function(){ wkLoadMap(_wkFloor); }, 0); });
 
@@ -1237,3 +1272,13 @@ function syncWorkSearchWidth() {
 }
 window.addEventListener('resize', syncWorkSearchWidth);
 document.addEventListener('click', function(e) { if (e.target.closest('.nav-links button, .wk-filter')) setTimeout(syncWorkSearchWidth, 50); });
+
+/* 공통 푸터: MAIN 하단 정보(교수·위원회·후원·링크)를 모든 페이지 푸터로 복제 */
+window.addEventListener('DOMContentLoaded', function() {
+  var src = document.querySelector('#page-main .m-info');
+  if (!src) return;
+  document.querySelectorAll('footer[data-shared-foot]').forEach(function(f) {
+    var c = src.cloneNode(true);
+    f.innerHTML = ''; f.appendChild(c);
+  });
+});
