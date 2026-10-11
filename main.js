@@ -358,11 +358,12 @@ function wkLegend(root) {
   // 모바일: 범례를 지도 밖 한 줄(가로 스크롤)로 빼고, 지도는 화면 폭 가득 크게
   if (window.innerWidth <= 640) {
     var lt0 = legend.transform.baseVal.consolidate(), loy0 = lt0 ? lt0.matrix.f : 0;
-    var x0 = 0, rowH0 = 0, parts = [];
-    items.forEach(function(g, k) { var b = bbs[k]; parts.push('<g transform="translate(' + (x0 - b.x) + ' ' + (-b.y) + ')">' + g.innerHTML + '</g>'); x0 += b.width + 14; rowH0 = Math.max(rowH0, b.height); });
-    var rowW = x0 - 14, el = root.parentNode, lm = document.getElementById('wk-legend-m');
+    var parts = [];
+    items.forEach(function(g, k) { var b = bbs[k];
+      parts.push('<svg viewBox="' + b.x + ' ' + b.y + ' ' + b.width + ' ' + b.height + '" width="' + Math.round(b.width * 0.95) + '" height="' + Math.round(b.height * 0.95) + '" fill="none" xmlns="http://www.w3.org/2000/svg">' + g.innerHTML + '</svg>'); });
+    var el = root.parentNode, lm = document.getElementById('wk-legend-m');
     if (!lm) { lm = document.createElement('div'); lm.id = 'wk-legend-m'; lm.className = 'wk-legend-m'; el.insertAdjacentElement('afterend', lm); }
-    lm.innerHTML = '<svg viewBox="0 0 ' + rowW + ' ' + rowH0 + '" width="' + Math.round(rowW * 0.95) + '" height="' + Math.round(rowH0 * 0.95) + '" fill="none" xmlns="http://www.w3.org/2000/svg">' + parts.join('') + '</svg>';
+    lm.innerHTML = parts.join('');
     legend.style.display = 'none';
     var mb = -1e9; [].forEach.call(root.querySelectorAll('path, rect, line, polyline, ellipse'), function(e2){ if (legend.contains(e2)) return; var b2 = e2.getBBox(); if (b2.width || b2.height) mb = Math.max(mb, b2.y + b2.height); });
     vb[3] = mb + 6; root.setAttribute('viewBox', vb.join(' ')); root._legendDone = true; return;
@@ -1498,7 +1499,7 @@ function wkFitMobile() {
   var side2 = box.closest('.wk-side');
   var other = side2 ? side2.offsetHeight - box.offsetHeight : 0;
   // 첫 화면에 핸들바·검색·필터가 보이도록(약 150px) 지도 높이를 화면 높이에 맞춰 줄임
-  var H = Math.round(Math.max(260, Math.min(w * MAX_ASPECT, window.innerHeight - 43 - other - 150)));
+  var H = Math.round(Math.max(Math.min(w * MAX_ASPECT, window.innerHeight - 43 - other - 70), w * 1.2));
   box.style.height = H + 'px'; box.classList.add('wk-map-fixed');
   svg.style.maxHeight = H + 'px'; svg.style.width = 'auto'; svg.style.maxWidth = '100%';
 }
