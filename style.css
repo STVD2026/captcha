@@ -924,7 +924,7 @@ a.wd-dlink:hover{opacity:.75}
   .wk-filters{gap:6px}
   .wk-filter{font-size:12px;padding:0 10px}
   .wk-search{width:100%}
-  .wk-grid{grid-template-columns:repeat(2,1fr);gap:12px 8px}
+  .wk-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 8px} /* 긴 글자가 있어도 화면 밖으로 넘치지 않게 */
   .wk-card-title{font-size:13px}
   /* 모바일 카드 태그: [부스 | 카테고리] 윗줄, [이름] 아랫줄 (Figma 186-339) */
   .wk-card-tags{flex-wrap:wrap;gap:0;border-top:1px solid var(--blue);padding:0}
@@ -1042,3 +1042,8 @@ footer[data-shared-foot]{position:relative;z-index:1;display:block;padding:0;bor
 /* 모바일: 지도 칸 높이 고정, 지도는 가운데 */
 .wk-map.wk-map-fixed{display:flex;align-items:center;justify-content:center}
 .wk-map.wk-map-fixed svg{height:auto;max-width:100%}
+
+/* PC: 왼쪽 파란 칸 아래 안쪽 여백 축소 → 지도 조금 더 크게 */
+@media (min-width:921px){.wk-side{padding-bottom:24px}}
+
+@media (max-width:920px){.wk-main,.wk-list,.wk-side{min-width:0;max-width:100%}.wk-search{max-width:100%}}

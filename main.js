@@ -21,7 +21,9 @@ var curSearch = '';
 var curDesigner = -1;
 var curWorkCat = 'all';
 var curWorkSearch = '';
-var CAT_EN = {'BX(브랜드)':'brand','CX(서비스디자인)':'service design','UX/UI':'ux/ui','영상':'motion graphics','일러스트':'illustration','편집':'editorial'};
+// 분야 명칭 통일 (CSV 값 → 사이트 표시명)
+var CAT_NAME = {'BX(브랜드)':'브랜드디자인','CX(서비스디자인)':'서비스디자인','UX/UI':'UX/UI','영상':'영상디자인','편집':'편집디자인','일러스트':'일러스트'};
+var CAT_EN = {'브랜드디자인':'brand','서비스디자인':'service design','UX/UI':'ux/ui','영상디자인':'motion graphics','일러스트':'illustration','편집디자인':'editorial'};
 
 // 데이터: works-data.js (tools/build_data.py 가 2026_web.csv + images 폴더로 생성)
 // 파일명은 NFC(완성형)로 커밋됨 → 요청 경로도 NFC로 통일
@@ -36,7 +38,7 @@ window.addEventListener('DOMContentLoaded', function() {
       noneImg: 'images/profiles/none' + (Math.floor(Math.random() * 6) + 1) + '.png',
       works: p.works.map(function(w) {
         return {
-          workTitle: w.title, titleEn: w.titleEn, category: w.cat, track: w.track,
+          workTitle: w.title, titleEn: w.titleEn, category: CAT_NAME[w.cat] || w.cat, track: w.track,
           descKr: w.descKr, descEn: w.descEn, video: w.video, tags: w.tags,
           booth: w.booth || '',
           thumb: _nfd(w.thumb) || 'images/works/none.jpg',
@@ -1405,11 +1407,17 @@ function wdOpenDesc() {
 document.addEventListener('click', function(e) { if (e.target.closest('.wd-lang')) fitWorkDesc(); });
 window.addEventListener('resize', fitWorkDesc);
 
-/* WORK 검색창 폭 = 작품 카드 한 칸 폭 */
+/* WORK 검색창 폭 = 작품 카드 두 칸 폭 */
 function syncWorkSearchWidth() {
   var card = document.querySelector('#work-grid .wk-card'), box = document.querySelector('.wk-search');
   if (!box) return;
-  box.style.width = (card && window.innerWidth > 920) ? card.getBoundingClientRect().width + 'px' : '';
+  // 작품 카드 두 칸(카드 2개 + 사이 간격) 폭에 맞춤
+  var cards = document.querySelectorAll('#work-grid .wk-card'), w = '';
+  if (card && window.innerWidth > 920) {
+    var r1 = cards[0].getBoundingClientRect(), r2 = cards[1] && cards[1].getBoundingClientRect();
+    w = (r2 && Math.abs(r2.top - r1.top) < 2 ? (r2.right - r1.left) : r1.width) + 'px';
+  }
+  box.style.width = w;
 }
 window.addEventListener('resize', syncWorkSearchWidth);
 document.addEventListener('click', function(e) { if (e.target.closest('.nav-links button, .wk-filter')) setTimeout(syncWorkSearchWidth, 50); });
@@ -1431,7 +1439,24 @@ function wkFitMobile() {
   if (!svg || !search) return;
   svg.style.maxWidth = ''; svg.style.maxHeight = ''; svg.style.width = ''; svg.style.marginLeft = svg.style.marginRight = '';
   box.style.height = ''; box.classList.remove('wk-map-fixed');
-  if (window.innerWidth > 920 || !document.getElementById('page-work').classList.contains('active')) return;
+  if (!document.getElementById('page-work').classList.contains('active')) return;
+  if (window.innerWidth > 920) {
+    // PC: 왼쪽 파란 칸 안에 지도+범례가 다 들어오도록 지도 크기 제한.
+    // 지도가 작아지면 파란 칸 폭도 그만큼 줄임 (최소 400px, 최대 540px)
+    var side = box.closest('.wk-side');
+    side.style.flexBasis = '';
+    var sr = side.getBoundingClientRect(), br = svg.getBoundingClientRect();
+    var pad = parseFloat(getComputedStyle(side).paddingBottom) || 0, padX = (parseFloat(getComputedStyle(side).paddingLeft) || 0) * 2;
+    var avail = sr.bottom - pad - 4 - br.top; // 범례 아래 여백 살짝만 (패딩 + 4px)
+    if (br.height > avail && avail > 200) {
+      svg.style.maxHeight = Math.floor(avail) + 'px'; svg.style.width = 'auto'; svg.style.maxWidth = '100%';
+      var needW = avail * 0.82; // 가장 가로로 넓은 층(2층) 비율 기준 → 층을 바꿔도 칸 폭 일정
+      side.style.flexBasis = Math.round(Math.max(400, Math.min(540, needW + padX + 20))) + 'px';
+    }
+    svg.style.marginLeft = svg.style.marginRight = 'auto'; // 파란 칸 가운데 정렬
+    setTimeout(syncWorkSearchWidth, 0);
+    return;
+  }
   var w = box.getBoundingClientRect().width, mapH = box.getBoundingClientRect().height;
   var rest = (search.getBoundingClientRect().bottom + window.scrollY) - mapH; // 지도 칸을 뺀 나머지 높이
   var MAX_ASPECT = 1.49; // 가장 세로로 긴 층(3층, 범례 포함)의 높이/폭 비율
@@ -1440,6 +1465,7 @@ function wkFitMobile() {
   svg.style.maxHeight = Math.round(H) + 'px'; svg.style.width = 'auto'; svg.style.maxWidth = '100%';
 }
 window.addEventListener('resize', wkFitMobile);
+window.addEventListener('DOMContentLoaded', function(){ document.addEventListener('click', function(e){ if (e.target.closest('#nav-work')) setTimeout(wkFitMobile, 60); }); });
 
 /* 층·부스 태그(예: 3F E43)에 마우스를 올리면 해당 층 지도를 팝업으로 보여주고 부스를 강조 */
 var _wkPop = null;
