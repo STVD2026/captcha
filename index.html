@@ -14,7 +14,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" onload="this.rel='stylesheet'">
 <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap"></noscript>
-<link rel="stylesheet" href="style.css?v=124">
+<link rel="stylesheet" href="style.css?v=160">
 </head>
 <body class="theme-light">
 
@@ -191,10 +191,7 @@
       <div class="dz-detail-works" id="dz-dworks"></div>
     </aside>
   </div>
-  <footer class="dz-foot">
-    <span>2026 ⓒ Seoul National University of Science and Technology</span>
-    <span>Visual Communication Design</span>
-  </footer>
+  <footer class="site-foot" data-shared-foot></footer>
 </div>
 
 <!-- DESIGNER DETAIL -->
@@ -220,7 +217,7 @@
     <div class="det-works-label">Works</div>
     <div class="det-works-grid" id="dd-works"></div>
   </div>
-  <footer><span>2026 ⓒ Seoul National University of Science and Technology</span></footer>
+  <footer class="site-foot" data-shared-foot></footer>
 </div>
 
 <!-- WORK -->
@@ -238,6 +235,7 @@
         <button class="wk-floor" data-floor="2" onclick="wkFloor(this)">F2</button>
         <button class="wk-floor" data-floor="1" onclick="wkFloor(this)">F1</button>
       </div>
+      <p class="wk-hint"><span class="wk-hint-ic" aria-hidden="true">↘</span>부스 번호를 누르면 작품을 볼 수 있어요</p>
       <div class="wk-map" id="wk-map" aria-label="층별 부스 배치도"></div>
     </aside>
     <!-- 오른쪽: 필터 + 검색 + 작품 그리드 -->
@@ -261,10 +259,7 @@
       <div class="wk-grid" id="work-grid"></div>
     </div>
   </div>
-  <footer class="wk-foot">
-    <span>2026 ⓒ Seoul National University of Science and Technology</span>
-    <span>Visual Communication Design</span>
-  </footer>
+  <footer class="site-foot" data-shared-foot></footer>
 </div>
 
 <!-- WORK DETAIL -->
@@ -291,7 +286,7 @@
       <div class="wd-more-card" id="wd-more-card"></div>
     </div>
   </div>
-  <footer class="wk-foot"><span>2026 ⓒ Seoul National University of Science and Technology</span><span>Visual Communication Design</span></footer>
+<footer class="site-foot" data-shared-foot></footer>
 </div>
 
 <!-- MESSAGE — PHOTOBOOTH -->
@@ -457,14 +452,11 @@
     </div>
   </div>
 
-  <footer>
-    <span>2026 ⓒ Seoul National University of Science and Technology</span>
-    <span>Visual Communication Design</span>
-  </footer>
+  <footer class="site-foot" data-shared-foot></footer>
 </div>
 
 <script src="works-data.js?v=4"></script>
-<script src="main.js?v=59"></script>
+<script src="main.js?v=98"></script>
 
 <!-- 3D 인터랙티브 히어로 (Three.js — 로컬 번들, CDN 의존 없음) -->
 <script src="models.js?v=1"></script>

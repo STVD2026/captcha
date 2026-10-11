@@ -77,6 +77,7 @@ function showPage(name) {
   if(nb) nb.classList.add('active');
   // 메인 페이지는 라이트 테마
   document.body.classList.toggle('theme-light', name === 'main');
+  if (name === 'work' && typeof wkLoadMap === 'function') setTimeout(function(){ wkLoadMap(_wkFloor); }, 0);
   if (name === 'message') { boothBuildGrid(); boothShowStage('pick'); boothInitCam().catch(function(){}); }
   window.scrollTo(0,0);
 }
@@ -224,9 +225,11 @@ function openWorkDirect(dIdx, wIdx) {
     var txt = document.createElement('div'); txt.className = 'wd-txt';
     langs.forEach(function(x) { var pp = document.createElement('p'); pp.setAttribute('data-lang', x[0]); pp.textContent = x[2].replace(/[ \t]*\n[\s]*\n\s*/g, '\n').trim(); /* 빈 줄 제거 */ txt.appendChild(pp); });
     desc.appendChild(txt);
+    var mb = document.createElement('button'); mb.type = 'button'; mb.className = 'wd-desc-more'; mb.textContent = '더보기 +'; mb.onclick = wdOpenDesc; desc.appendChild(mb);
   }
   if (w.video) { var va = document.createElement('a'); va.className = 'wd-video'; va.href = /^https?:/.test(w.video) ? w.video : 'https://' + w.video; va.target = '_blank'; va.rel = 'noopener noreferrer'; va.textContent = '▶ 영상 보기'; desc.appendChild(va); }
   if (!desc.childNodes.length) desc.textContent = d.kr + ' 디자이너의 졸업 작품입니다.';
+  (function(){ var b = document.querySelector('.wd-body'); if (b && b.classList.contains('wd-released')) { b.classList.remove('wd-released'); ['.wd-info','.wd-more-wrap'].forEach(function(q){ var el = document.querySelector(q); if (el) el.style.position = el.style.top = el.style.left = el.style.width = el.style.bottom = el.style.gridArea = el.style.margin = ''; }); } })();
   setTimeout(fitWorkDesc, 30); setTimeout(fitWorkDesc, 350);
   document.getElementById('wd-dlink2').onclick = function(){ openDesignerFromWork(dIdx); };
   // 디자이너 다른 작품 썸네일 (다른 작품이 있으면 그것, 없으면 현재 작품)
@@ -256,23 +259,62 @@ function workCardHTML(dIdx, wIdx) {
     +'</div>';
 }
 
+/* 선택한 층에 작품이 없는 분야 필터는 숨김 */
+function syncWorkFilters() {
+  if (typeof _wkFloor === 'undefined') return;
+  var has = {};
+  DESIGNERS.forEach(function(d){ d.works.forEach(function(w){
+    var m = (w.booth || '').replace(/\s+/g, '').match(/^(\d)F/);
+    if (m && m[1] === _wkFloor) has[w.category] = (has[w.category] || 0) + 1;
+  }); });
+  var reset = false;
+  document.querySelectorAll('.wk-filter').forEach(function(b) {
+    var cat = (b.getAttribute('onclick') || '').match(/'([^']*)'\)/); cat = cat ? cat[1] : 'all';
+    var show = cat === 'all' || has[cat];
+    b.hidden = !show;
+    if (!show && b.classList.contains('active')) reset = true;
+  });
+  // 작품 수가 많은 분야부터 (All은 맨 앞)
+  var box = document.querySelector('.wk-filters'), btns = [].slice.call(box.querySelectorAll('.wk-filter'));
+  var catOf = function(b){ var c = (b.getAttribute('onclick') || '').match(/'([^']*)'\)/); return c ? c[1] : 'all'; };
+  btns.sort(function(a, b){ var ca = catOf(a), cb = catOf(b); if (ca === 'all') return -1; if (cb === 'all') return 1; return (has[cb] || 0) - (has[ca] || 0); })
+      .forEach(function(b){ box.appendChild(b); });
+  if (reset) { curWorkCat = 'all'; document.querySelectorAll('.wk-filter').forEach(function(b){ b.classList.toggle('active', /'all'/.test(b.getAttribute('onclick'))); }); }
+}
 function renderWorks() {
+  syncWorkFilters();
   var q = curWorkSearch.trim().toLowerCase();
-  var html = '';
+  var list = [];
   for(var i=0; i<DESIGNERS.length; i++){
     var d = DESIGNERS[i];
     for(var wi=0; wi<d.works.length; wi++){
       var w = d.works[wi];
+      var m = (w.booth || '').replace(/\s+/g, '').match(/^(\d)F([CE])(\d+)$/);
+      // 선택한 층 작품만 (검색 중에는 모든 층에서 찾기)
+      if(!q && typeof _wkFloor !== 'undefined' && (!m || m[1] !== _wkFloor)) continue;
       if(curWorkCat!=='all' && w.category!==curWorkCat) continue;
       if(q){
         var hay = (w.workTitle+' '+w.titleEn+' '+d.kr+' '+d.en+' '+w.category+' '+w.booth+' '+(w.tags||[]).join(' ')).toLowerCase();
         if(hay.indexOf(q) < 0) continue;
       }
-      html += workCardHTML(i, wi);
+      list.push({ i: i, wi: wi, k: m ? m[1] + m[2] + ('00' + m[3]).slice(-3) : 'z' });
     }
   }
+  // 부스 번호 순 (층 → C/E → 번호). 모바일에서 부스를 골랐으면 가까운 부스 순 (고른 작품은 위 카드로 보여서 제외)
+  var near = (typeof _wkNearCode !== 'undefined' && _wkNearCode && !q) ? _wkNearCode : null;
+  if (near) {
+    list = list.filter(function(x){ return !(x.i === near.i && x.wi === near.wi); });
+    list.forEach(function(x){ var c = x.k.slice(1, 2), n = +x.k.slice(2); x.d = (c === near.L ? 0 : 1000) + Math.abs(n - near.n); });
+    list.sort(function(a, b){ return a.d - b.d || (a.k < b.k ? -1 : 1); });
+  } else list.sort(function(a, b){ return a.k < b.k ? -1 : a.k > b.k ? 1 : 0; });
+  var html = list.map(function(x){ return workCardHTML(x.i, x.wi); }).join('');
   if(!html) html = '<div class="wk-empty">검색 결과가 없습니다.</div>';
   document.getElementById('work-grid').innerHTML = html;
+  // 모바일: 부스를 골랐을 때 "근처 작품" 안내 표시
+  var grid = document.getElementById('work-grid'), lab = document.getElementById('wk-near-label');
+  if (!lab) { lab = document.createElement('div'); lab.id = 'wk-near-label'; lab.className = 'wk-near-label'; grid.parentNode.insertBefore(lab, grid); }
+  if (near) { lab.innerHTML = '<b>' + _wkFloor + 'F ' + near.L + String(near.n).padStart(2, '0') + '</b> 근처 작품 <span>· 가까운 부스 순</span>'; lab.hidden = false; }
+  else lab.hidden = true;
   setTimeout(syncWorkSearchWidth, 0);
 }
 
@@ -289,10 +331,11 @@ function searchWork(value) {
 }
 
 /* ── WORK 부스 지도: 층별 SVG(Figma) + 부스 호버/클릭 → 오른쪽에 작품 미리보기 ── */
-var _wkMaps = {}, _wkFloor = '3', _wkPinned = '';
+var _wkMaps = {}, _wkFloor = '3', _wkPinned = '', _wkNearCode = null;
 function wkFloor(btn) {
   document.querySelectorAll('.wk-floor').forEach(function(b){ b.classList.toggle('active', b === btn); });
   _wkFloor = btn.getAttribute('data-floor');
+  renderWorks();
   wkUnpin();
   wkLoadMap(_wkFloor);
 }
@@ -303,57 +346,190 @@ function wkBoothWork(floor, code) {
   }
   return null;
 }
+/* 범례: 지도와 띄우고, 글자를 키워서 폭에 맞게 줄바꿈 배치 */
+function wkLegend(root) {
+  var legend = root.querySelector('g[id="Frame 249"]'), vb = root.getAttribute('viewBox').split(/\s+/).map(Number);
+  if (!legend || root._legendDone) return;
+  var items = [].filter.call(legend.querySelectorAll('g[id^="Frame 24"]'), function(g){ return !g.querySelector('g[id^="Frame 24"]'); });
+  var bbs = items.map(function(g){ return g.getBBox(); });
+  if (!bbs.length || !bbs[0].width) return; // 아직 화면에 안 보임 → 다음에 다시
+  /* 모든 층 범례 글자 크기 같게 */ var S = 1.1, GAP_X = 14, GAP_Y = 10, W = vb[2];
+  var top = Math.min.apply(null, bbs.map(function(b){ return b.y; }));
+  var startY = top + 28, x = 0, y = startY, rowH = 0;
+  items.forEach(function(g, k) {
+    var b = bbs[k], w = b.width * S, h = b.height * S;
+    if (x > 0 && x + w > W) { x = 0; y += rowH + GAP_Y; rowH = 0; }
+    g.setAttribute('transform', 'translate(' + (x - b.x * S) + ' ' + (y - b.y * S) + ') scale(' + S + ')');
+    x += w + GAP_X; rowH = Math.max(rowH, h);
+  });
+  var bottom = y + rowH + 4;
+  // 2층: 지도 왼쪽 아래가 비어 있어 범례를 그 안(지도 하단에 맞춤)으로 옮김 → 아래 빈 여백 제거
+  if (root._floor === '2') {
+    var mx2 = -1e9; [].forEach.call(root.querySelectorAll('path, rect, line, polyline'), function(el){ if (legend.contains(el)) return; var b = el.getBBox(); if (b.width || b.height) mx2 = Math.max(mx2, b.y + b.height); });
+    var lt = legend.transform.baseVal.consolidate(), loy = lt ? lt.matrix.f : 0; // 범례 그룹 자체 이동량 보정
+    var shift = (mx2 - 2 - loy) - (y + rowH);
+    items.forEach(function(g, k){ var t = g.getAttribute('transform'); var m = t.match(/translate\(([-\d.e]+) ([-\d.e]+)\)/); g.setAttribute('transform', t.replace(m[0], 'translate(' + m[1] + ' ' + (+m[2] + shift) + ')')); });
+    bottom = mx2 + 6;
+    vb[3] = bottom; root.setAttribute('viewBox', vb.join(' ')); root._legendDone = true; return;
+  }
+  // legend 그룹 자체 이동(translate)만큼 보정
+  var off = legend.transform.baseVal.consolidate(); var oy = off ? off.matrix.f : 0;
+  vb[3] = Math.max(vb[3], bottom + oy); root.setAttribute('viewBox', vb.join(' '));
+  root._legendDone = true;
+}
 function wkLoadMap(floor) {
   var el = document.getElementById('wk-map');
   if (!el) return;
   var apply = function(svg) {
     if (_wkFloor !== floor) return;
     el.innerHTML = svg;
-    var root = el.querySelector('svg'); root.removeAttribute('width'); root.removeAttribute('height');
+    var root = el.querySelector('svg'); root.removeAttribute('width'); root.removeAttribute('height'); root._floor = floor;
+    // 범례(Frame 249)를 지도에서 더 띄움 → viewBox도 그만큼 늘림
+    wkLegend(root);
+    requestAnimationFrame(function(){ wkAdjustLabels(root); });
+    setTimeout(wkFitMobile, 0);
     root.querySelectorAll('g[id]').forEach(function(g) {
       var code = g.id;
       if (!/^[CE]\d\d$/.test(code)) return;
       var hit = wkBoothWork(floor, code);
       g.classList.add('wk-bt');
       if (!hit) { g.classList.add('empty'); return; }
-      // 강조용 배경 알약(없으면 생성)
-      var pill = g.querySelector('rect');
-      if (!pill) {
-        var bb = g.getBBox(); pill = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-        pill.setAttribute('x', bb.x - 3); pill.setAttribute('y', bb.y - 2); pill.setAttribute('width', bb.width + 6); pill.setAttribute('height', bb.height + 4); pill.setAttribute('rx', Math.min(bb.width, bb.height) / 2 + 2);
-        g.insertBefore(pill, g.firstChild);
-      }
-      pill.classList.add('wk-pill');
-      g.addEventListener('mouseenter', function(){ if (!_wkPinned) wkShowPreview(code, hit); });
-      g.addEventListener('mouseleave', function(){ if (!_wkPinned) wkHidePreview(); });
+      var own = g.querySelector('rect'); if (own) own.style.display = 'none'; // 구워진 선택 알약 숨김
+      g.addEventListener('mouseenter', function(){ wkEnsurePill(g); /* 호버 강조용 흰 알약 먼저 준비 → 글자가 배경에 묻히지 않음 */ if (!_wkPinned && window.innerWidth > 920) wkShowPreview(code, hit); });
+      g.addEventListener('touchstart', function(){ wkEnsurePill(g); }, { passive: true });
+      g.addEventListener('mouseleave', function(){ if (!_wkPinned && window.innerWidth > 920) wkHidePreview(); });
       g.addEventListener('click', function(e) {
         e.stopPropagation();
-        if (window.innerWidth <= 920) { openWorkDirect(hit[0], hit[1]); return; }
         if (_wkPinned === code) { wkUnpin(); return; }
         _wkPinned = code; wkShowPreview(code, hit);
       });
     });
   };
   if (_wkMaps[floor]) apply(_wkMaps[floor]);
-  else fetch('images/work/map-' + floor + 'f.svg').then(function(r){ return r.text(); }).then(function(t){ _wkMaps[floor] = t; apply(t); });
+  // 손가락으로 누르기 쉽게: 번호 글자를 정확히 안 눌러도 가장 가까운 번호(28px 이내)를 선택
+  if (!el._nearTap) {
+    el._nearTap = true;
+    el.addEventListener('click', function(e) {
+      if (e.target.closest('.wk-bt')) return;
+      var best = null, bd = 28;
+      el.querySelectorAll('.wk-bt:not(.empty)').forEach(function(g) {
+        var r = g.getBoundingClientRect(), d = Math.hypot(e.clientX - (r.left + r.width / 2), e.clientY - (r.top + r.height / 2));
+        if (d < bd) { bd = d; best = g; }
+      });
+      if (best) { e.stopPropagation(); best.dispatchEvent(new MouseEvent('click', { bubbles: true })); }
+    });
+  }
+  else fetch('images/work/map-' + floor + 'f.svg?v=4').then(function(r){ return r.text(); }).then(function(t){ _wkMaps[floor] = t; apply(t); });
+}
+/* 강조용 흰 알약: 화면에 보일 때 글자 크기에 맞춰 생성 (Figma E12 비율) */
+var WK_PILL_W = 42, WK_PILL_H = 23; // 모든 층 동일한 강조 알약 크기 (SVG 단위)
+/* 번호 글자 위치 조정: 알약(글자 중앙, 42×23)이 이웃 번호 글자와 2px 이상 떨어지도록 글자를 살짝 이동 */
+function wkAdjustLabels(root) {
+  if (root._adjusted) return;
+  var gs = [].slice.call(root.querySelectorAll('.wk-bt'));
+  if (!gs.length || !gs[0].getBBox().width) return; // 아직 화면에 안 보임 → 다음에
+  var L = gs.map(function(g) {
+    var b = g.getBBox(), pts = [];
+    g.querySelectorAll('path').forEach(function(p){ var n = (p.getAttribute('d') || '').match(/-?\d*\.?\d+/g) || []; for (var i = 0; i + 1 < n.length; i += 2) pts.push([+n[i], +n[i + 1]]); });
+    var mx = 0, my = 0; pts.forEach(function(q){ mx += q[0]; my += q[1]; }); mx /= pts.length || 1; my /= pts.length || 1;
+    var sxy = 0, sxx = 0, syy = 0; pts.forEach(function(q){ var dx = q[0] - mx, dy = q[1] - my; sxx += dx * dx; syy += dy * dy; sxy += dx * dy; });
+    var ang = 0.5 * Math.atan2(2 * sxy, sxx - syy) * 180 / Math.PI;
+    ang = (Math.abs(ang) < 12 || b.width > b.height * 1.5) ? 0 : (ang > 0 ? 45 : -45);
+    return { g: g, x1: b.x, y1: b.y, x2: b.x + b.width, y2: b.y + b.height, cx: b.x + b.width / 2, cy: b.y + b.height / 2, a: ang * Math.PI / 180, dx: 0, dy: 0 };
+  });
+  var gap = function(l, dx, dy) {
+    var cx = l.cx + dx, cy = l.cy + dy, cs = Math.cos(l.a), sn = Math.sin(l.a), W = WK_PILL_W, H = WK_PILL_H, min = 1e9;
+    for (var i = 0; i <= 12; i++) for (var k = 0; k < 4; k++) {
+      var lx, ly; if (k < 2) { lx = -W / 2 + W * i / 12; ly = (k ? 1 : -1) * H / 2; } else { lx = (k === 3 ? 1 : -1) * W / 2; ly = -H / 2 + H * i / 12; }
+      var px = cx + lx * cs - ly * sn, py = cy + lx * sn + ly * cs;
+      L.forEach(function(o) { if (o === l) return;
+        var x1 = o.x1 + o.dx, x2 = o.x2 + o.dx, y1 = o.y1 + o.dy, y2 = o.y2 + o.dy;
+        var d = (px > x1 && px < x2 && py > y1 && py < y2) ? -1 : Math.hypot(Math.max(x1 - px, 0, px - x2), Math.max(y1 - py, 0, py - y2));
+        if (d < min) min = d;
+      });
+    }
+    return min;
+  };
+  for (var pass = 0; pass < 2; pass++) L.forEach(function(l) {
+    if (gap(l, l.dx, l.dy) >= 2) return;
+    var best = null, bd = 1e9;
+    for (var r = 0.5; r <= 8 && !best; r += 0.5) for (var t = 0; t < 16; t++) {
+      var dx = l.dx + r * Math.cos(t * Math.PI / 8), dy = l.dy + r * Math.sin(t * Math.PI / 8);
+      if (gap(l, dx, dy) >= 2 && r < bd) { best = [dx, dy]; bd = r; }
+    }
+    if (best) { l.dx = best[0]; l.dy = best[1]; }
+  });
+  L.forEach(function(l){ if (l.dx || l.dy) l.g.setAttribute('transform', 'translate(' + l.dx.toFixed(2) + ' ' + l.dy.toFixed(2) + ')'); });
+  root._adjusted = true;
+}
+function wkEnsurePill(g) {
+  if (g._pill) return;
+  // Figma에서 구워진 알약(rect)은 숨기고 같은 크기로 새로 만든다
+  [].forEach.call(g.querySelectorAll('rect'), function(r){ r.style.display = 'none'; r.classList.remove('wk-pill'); });
+  // 글자 path 좌표로 중심점과 글자 방향(기울기)을 구함
+  var pts = [];
+  g.querySelectorAll('path').forEach(function(p) {
+    var n = (p.getAttribute('d') || '').match(/-?\d*\.?\d+/g) || [];
+    for (var i = 0; i + 1 < n.length; i += 2) pts.push([+n[i], +n[i + 1]]);
+  });
+  if (!pts.length) return;
+  var cx = 0, cy = 0; pts.forEach(function(q){ cx += q[0]; cy += q[1]; }); cx /= pts.length; cy /= pts.length;
+  var sxx = 0, syy = 0, sxy = 0;
+  pts.forEach(function(q){ var dx = q[0] - cx, dy = q[1] - cy; sxx += dx * dx; syy += dy * dy; sxy += dx * dy; });
+  var ang = 0.5 * Math.atan2(2 * sxy, sxx - syy) * 180 / Math.PI;
+  var bb = g.getBBox(); cx = bb.x + bb.width / 2; cy = bb.y + bb.height / 2;
+  // 가로로 긴 글자(일반 번호)는 기울이지 않음 — 비스듬한 번호만 회전
+  if (Math.abs(ang) < 12 || bb.width > bb.height * 1.5) ang = 0;
+  else ang = ang > 0 ? 45 : -45; // 비스듬한 번호는 모두 같은 45° 각도로 통일
+  var PW = WK_PILL_W, PH = WK_PILL_H;
+  var rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+  rect.setAttribute('x', cx - PW / 2); rect.setAttribute('y', cy - PH / 2);
+  rect.setAttribute('width', PW); rect.setAttribute('height', PH); rect.setAttribute('rx', PH / 2);
+  if (ang) rect.setAttribute('transform', 'rotate(' + ang.toFixed(1) + ' ' + cx + ' ' + cy + ')');
+  rect.setAttribute('class', 'wk-pill');
+  g.insertBefore(rect, g.firstChild);
+  g._pill = rect;
+}
+function wkNearby(floor, code, self) {
+  var L = code[0], n = +code.slice(1), out = [];
+  DESIGNERS.forEach(function(d, i) { d.works.forEach(function(w, j) {
+    var m = (w.booth || '').replace(/\s+/g, '').match(/^(\d)F([CE])(\d\d)$/);
+    if (!m || m[1] !== floor || (i === self[0] && j === self[1])) return;
+    out.push({ i: i, j: j, dist: (m[2] === L ? 0 : 100) + Math.abs(+m[3] - n) });
+  }); });
+  return out.sort(function(a, b){ return a.dist - b.dist; }); // 같은 층 작품 전부, 가까운 순
 }
 function wkShowPreview(code, hit) {
+  var gg = document.querySelector('#wk-map g[id="' + code + '"]'); if (gg) wkEnsurePill(gg);
   document.querySelectorAll('#wk-map .wk-bt').forEach(function(g){ g.classList.toggle('on', g.id === code); });
   var d = DESIGNERS[hit[0]], w = d.works[hit[1]], nm = workNames(w), pv = document.getElementById('wk-preview');
+  // 모바일: 지도 바로 아래에 미리보기
+  if (window.innerWidth <= 920) {
+    pv = document.getElementById('wk-mpreview');
+    // 파란 지도 영역이 아니라 아래 흰 작품 목록 맨 위에 띄움
+    if (!pv) { pv = document.createElement('div'); pv.id = 'wk-mpreview'; pv.className = 'wk-mpreview'; var list = document.querySelector('.wk-list'); list.insertBefore(pv, list.firstChild); }
+  }
   pv.innerHTML = '<div class="wk-card wk-pv-card" onclick="openWorkDirect(' + hit[0] + ',' + hit[1] + ')">'
     + '<div class="wk-card-img"><img src="' + w.thumb + '" alt="' + nm.main + '" onerror="this.onerror=null;this.src=\'images/works/none.jpg\'"></div>'
     + '<div class="wk-card-body"><div class="wk-card-title">' + nm.main + '</div><div class="wk-card-en">' + nm.sub + '</div></div>'
     + '<div class="wk-card-tags"><span class="wk-tag">' + w.booth + '</span><span class="wk-tag">' + w.category + '</span><span class="wk-tag name">' + d.kr + '</span></div></div>';
+  // 웹: 큰 카드 아래에 같은 층 근처 부스 작품들
+  if (pv.id === 'wk-preview') {
+    var near = wkNearby(_wkFloor, code, hit);
+    if (near.length) pv.innerHTML += '<div class="wk-pv-near"><div class="wk-pv-near-t">근처 작품</div><div class="wk-grid">' + near.map(function(x){ return workCardHTML(x.i, x.j); }).join('') + '</div></div>';
+  }
   pv.hidden = false;
-  pv.parentNode.classList.add('previewing');
+  if (pv.id === 'wk-mpreview') { _wkNearCode = { L: code[0], n: +code.slice(1), i: hit[0], wi: hit[1] }; renderWorks(); setTimeout(function(){ pv.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 30); }
+  if (pv.id === 'wk-preview') pv.parentNode.classList.add('previewing');
 }
 function wkHidePreview() {
   document.querySelectorAll('#wk-map .wk-bt.on').forEach(function(g){ g.classList.remove('on'); });
   var pv = document.getElementById('wk-preview');
   if (pv) { pv.hidden = true; pv.parentNode.classList.remove('previewing'); }
+  var mp = document.getElementById('wk-mpreview'); if (mp && !mp.hidden) { mp.hidden = true; if (_wkNearCode) { _wkNearCode = null; renderWorks(); } }
 }
 function wkUnpin() { _wkPinned = ''; wkHidePreview(); }
-document.addEventListener('click', function(e) { if (_wkPinned && !e.target.closest('#wk-preview, #wk-map .wk-bt')) wkUnpin(); });
+document.addEventListener('click', function(e) { if (_wkPinned && !e.target.closest('#wk-preview, #wk-mpreview, #wk-map .wk-bt')) wkUnpin(); });
 document.addEventListener('keydown', function(e) { if (e.key === 'Escape' && _wkPinned) wkUnpin(); });
 window.addEventListener('DOMContentLoaded', function(){ setTimeout(function(){ wkLoadMap(_wkFloor); }, 0); });
 
@@ -1201,32 +1377,32 @@ function boothCloseQR() {
 /* 작품 상세(데스크탑): 설명 + 다른 작품 카드를 한 덩어리로 왼쪽에 고정 → 설명이 잘리지 않음 */
 var WD_GAP = 12; // 다른 작품 카드와 화면 하단 사이 간격(px)
 function fitWorkDesc(resize) {
+  // 데스크탑: 정보는 위에 고정, "다른 작품" 카드는 원래 크기로 화면 하단에 고정.
+  // 설명이 남은 공간보다 길면 보이는 만큼만 보여주고 「더보기」로 전체를 팝업에 띄움
   var info = document.querySelector('.wd-info'), more = document.querySelector('.wd-more-wrap'), body = document.querySelector('.wd-body');
   if (!info || !more || !body) return;
-  var card = more.querySelector('.wd-more-card');
-  if (window.innerWidth > 920) {
-    if (more.parentNode !== info) info.appendChild(more);
-    info.style.minHeight = '';
-    var r = info.getBoundingClientRect(), room = window.innerHeight - WD_GAP - r.top;
-    // 작품을 열 때/창 크기가 바뀔 때만 카드 크기를 정함 → 그 창에서는 크기 고정
-    if (resize !== false && card) {
-      card.style.maxWidth = '';
-      // 국문/영문 중 더 긴 설명 기준으로 계산 → 탭을 바꿔도 카드 크기 그대로
-      var desc = document.getElementById('wd-desc'), cur = desc.getAttribute('data-show'), over = -1e9;
-      (cur ? ['kr', 'en'] : [null]).forEach(function(l) { if (l) desc.setAttribute('data-show', l); over = Math.max(over, info.getBoundingClientRect().height - room); });
-      if (cur) desc.setAttribute('data-show', cur);
-      if (over > 0) {
-        var img = card.querySelector('.wd-mc-img'), ih = img.getBoundingClientRect().height;
-        var nh = Math.max(110, ih - over);
-        card.style.maxWidth = Math.round(card.getBoundingClientRect().width * nh / ih) + 'px'; // 3:2 비율 유지하며 카드 전체 축소
-      }
-      r = info.getBoundingClientRect(); room = window.innerHeight - WD_GAP - r.top;
-    }
-    info.style.minHeight = Math.max(0, room) + 'px';
-  } else { info.style.minHeight = ''; if (card) card.style.maxWidth = ''; if (more.parentNode !== body) body.insertBefore(more, info.nextSibling); }
+  info.style.minHeight = '';
+  if (more.parentNode !== body) body.insertBefore(more, info.nextSibling);
+  var desc = document.getElementById('wd-desc'), txt = desc && desc.querySelector('.wd-txt');
+  if (!txt) return;
+  txt.style.maxHeight = ''; desc.classList.remove('clamped', 'expanded'); body.classList.remove('wd-expanded');
+  var mbtn = desc.querySelector('.wd-desc-more'); if (mbtn) mbtn.textContent = '더보기 +';
+  if (window.innerWidth <= 920) return;
+  // 페이지 맨 위 상태 기준(가장 좁은 경우)으로 설명이 쓸 수 있는 높이 계산
+  var txtTop0 = txt.getBoundingClientRect().top + window.scrollY;
+  var avail = window.innerHeight - WD_GAP - more.getBoundingClientRect().height - 28 - txtTop0;
+  avail = Math.max(72, Math.floor(avail / 22) * 22); // 줄 단위로 자름
+  if (txt.scrollHeight > avail + 2) { txt.style.maxHeight = avail + 'px'; desc.classList.add('clamped'); }
 }
-window.addEventListener('scroll', function() { if (document.getElementById('work-detail').classList.contains('active')) fitWorkDesc(false); }, { passive: true });
-document.addEventListener('click', function(e) { if (e.target.closest('.wd-lang')) fitWorkDesc(false); });
+/* 「더보기」: 팝업 없이 그 자리에서 펼침/접기 */
+function wdOpenDesc() {
+  var desc = document.getElementById('wd-desc'), body = document.querySelector('.wd-body'), btn = desc.querySelector('.wd-desc-more');
+  var open = !desc.classList.contains('expanded');
+  desc.classList.toggle('expanded', open);
+  body.classList.toggle('wd-expanded', open); // 펼친 동안엔 카드가 설명 아래로 이어짐(겹침 방지)
+  btn.textContent = open ? '접기 −' : '더보기 +';
+}
+document.addEventListener('click', function(e) { if (e.target.closest('.wd-lang')) fitWorkDesc(); });
 window.addEventListener('resize', fitWorkDesc);
 
 /* WORK 검색창 폭 = 작품 카드 한 칸 폭 */
@@ -1237,3 +1413,91 @@ function syncWorkSearchWidth() {
 }
 window.addEventListener('resize', syncWorkSearchWidth);
 document.addEventListener('click', function(e) { if (e.target.closest('.nav-links button, .wk-filter')) setTimeout(syncWorkSearchWidth, 50); });
+
+/* 공통 푸터: MAIN 하단 정보(교수·위원회·후원·링크)를 모든 페이지 푸터로 복제 */
+window.addEventListener('DOMContentLoaded', function() {
+  var src = document.querySelector('#page-main .m-info');
+  if (!src) return;
+  document.querySelectorAll('footer[data-shared-foot]').forEach(function(f) {
+    var c = src.cloneNode(true);
+    f.innerHTML = ''; f.appendChild(c);
+  });
+});
+
+/* 모바일: 첫 화면에 지도 + 검색창(아래 여백 포함)이 다 보이도록 지도 크기를 화면 높이에 맞춤 */
+function wkFitMobile() {
+  // 모바일: 지도 칸 높이를 세 층 모두 같게 고정(파란 영역 높이 일정), 지도는 그 안에서 비율대로 맞춤
+  var box = document.getElementById('wk-map'), svg = box && box.querySelector('svg'), search = document.querySelector('.wk-search');
+  if (!svg || !search) return;
+  svg.style.maxWidth = ''; svg.style.maxHeight = ''; svg.style.width = ''; svg.style.marginLeft = svg.style.marginRight = '';
+  box.style.height = ''; box.classList.remove('wk-map-fixed');
+  if (window.innerWidth > 920 || !document.getElementById('page-work').classList.contains('active')) return;
+  var w = box.getBoundingClientRect().width, mapH = box.getBoundingClientRect().height;
+  var rest = (search.getBoundingClientRect().bottom + window.scrollY) - mapH; // 지도 칸을 뺀 나머지 높이
+  var MAX_ASPECT = 1.49; // 가장 세로로 긴 층(3층, 범례 포함)의 높이/폭 비율
+  var H = Math.max(180, Math.min(window.innerHeight - 16 - rest, w * MAX_ASPECT));
+  box.style.height = Math.round(H) + 'px'; box.classList.add('wk-map-fixed');
+  svg.style.maxHeight = Math.round(H) + 'px'; svg.style.width = 'auto'; svg.style.maxWidth = '100%';
+}
+window.addEventListener('resize', wkFitMobile);
+
+/* 층·부스 태그(예: 3F E43)에 마우스를 올리면 해당 층 지도를 팝업으로 보여주고 부스를 강조 */
+var _wkPop = null;
+function wkGetMap(floor, cb) {
+  if (_wkMaps[floor]) return cb(_wkMaps[floor]);
+  fetch('images/work/map-' + floor + 'f.svg?v=4').then(function(r){ return r.text(); }).then(function(t){ _wkMaps[floor] = t; cb(t); });
+}
+function wkShowMapPop(tag) {
+  var m = (tag.textContent || '').replace(/\s+/g, '').match(/^(\d)F([CE]\d\d)$/);
+  if (!m) return;
+  wkGetMap(m[1], function(svgText) {
+    if (!_wkPop) { _wkPop = document.createElement('div'); _wkPop.className = 'wk-map wk-map-pop'; document.body.appendChild(_wkPop); }
+    _wkPop.innerHTML = '<div class="wk-pop-head">' + m[1] + 'F · ' + m[2] + '</div>' + svgText;
+    var root = _wkPop.querySelector('svg'); root.removeAttribute('width'); root.removeAttribute('height');
+    var leg = root.querySelector('g[id="Frame 249"]'); if (leg) leg.style.display = 'none';
+    _wkPop.style.display = 'block';
+    var r = tag.getBoundingClientRect(), pw = _wkPop.offsetWidth, ph = _wkPop.offsetHeight;
+    var x = Math.min(window.innerWidth - pw - 12, Math.max(12, r.left + r.width / 2 - pw / 2));
+    var y = r.top - ph - 10; if (y < 50) y = Math.min(window.innerHeight - ph - 12, r.bottom + 10);
+    _wkPop.style.left = x + 'px'; _wkPop.style.top = y + 'px';
+    root.querySelectorAll('g[id]').forEach(function(g){ if (/^[CE]\d\d$/.test(g.id)) { var own = g.querySelector('rect'); if (own) own.style.display = 'none'; } });
+    var g = root.querySelector('g[id="' + m[2] + '"]');
+    if (g) { g.classList.add('wk-bt', 'on'); wkEnsurePill(g); }
+  });
+}
+function wkHideMapPop() { if (_wkPop) _wkPop.style.display = 'none'; }
+document.addEventListener('mouseover', function(e) { var t = e.target.closest('.wd-mc-booth, .wd-tag, .wk-tag'); if (t && /^\s*\dF\s*[CE]\d\d\s*$/.test(t.textContent)) wkShowMapPop(t); });
+document.addEventListener('mouseout', function(e) { var t = e.target.closest('.wd-mc-booth, .wd-tag, .wk-tag'); if (t) wkHideMapPop(); });
+window.addEventListener('scroll', wkHideMapPop, { passive: true });
+
+/* 작품 상세(PC): 푸터가 조금이라도 보이는 순간 왼쪽 고정(정보·카드)을 그 자리에서 풀어 함께 올라가게 → 겹침 없음 */
+function wdReleaseCheck() {
+  var wd = document.getElementById('work-detail');
+  if (!wd || !wd.classList.contains('active')) return;
+  var body = wd.querySelector('.wd-body'), info = wd.querySelector('.wd-info'), more = wd.querySelector('.wd-more-wrap'), foot = wd.querySelector('footer');
+  if (!body || !info || !more || !foot) return;
+  var want = window.innerWidth > 920 && !body.classList.contains('wd-expanded') && foot.getBoundingClientRect().top < window.innerHeight;
+  var on = body.classList.contains('wd-released');
+  if (want && !on) {
+    var br = body.getBoundingClientRect();
+    [info, more].forEach(function(el) {
+      var r = el.getBoundingClientRect();
+      // 그리드 칸이 아니라 .wd-body 기준으로, 여백 없이 현재 화면 위치 그대로 고정 해제
+      el.style.gridArea = 'auto'; el.style.margin = '0';
+      el.style.position = 'absolute'; el.style.top = (r.top - br.top) + 'px'; el.style.left = (r.left - br.left) + 'px'; el.style.width = r.width + 'px'; el.style.bottom = 'auto';
+    });
+    body.classList.add('wd-released');
+  } else if (!want && on) {
+    [info, more].forEach(function(el){ el.style.position = el.style.top = el.style.left = el.style.width = el.style.bottom = el.style.gridArea = el.style.margin = ''; });
+    body.classList.remove('wd-released');
+  }
+}
+window.addEventListener('scroll', wdReleaseCheck, { passive: true });
+window.addEventListener('resize', wdReleaseCheck);
+
+/* 모바일: 핸들바가 상단에 붙었는지 표시 (붙었을 때만 그라데이션) */
+window.addEventListener('scroll', function() {
+  var list = document.querySelector('#page-work.active .wk-list'), head = document.querySelector('.wk-side-head');
+  if (!list || !head || window.innerWidth > 640) return;
+  list.classList.toggle('handle-stuck', list.getBoundingClientRect().top < head.getBoundingClientRect().bottom - 4);
+}, { passive: true });
