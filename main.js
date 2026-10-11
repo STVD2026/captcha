@@ -366,7 +366,8 @@ function wkLegend(root) {
     lm.innerHTML = parts.join('');
     legend.style.display = 'none';
     var mb = -1e9; [].forEach.call(root.querySelectorAll('path, rect, line, polyline, ellipse'), function(e2){ if (legend.contains(e2)) return; var b2 = e2.getBBox(); if (b2.width || b2.height) mb = Math.max(mb, b2.y + b2.height); });
-    vb[3] = mb + 6; root.setAttribute('viewBox', vb.join(' ')); root._legendDone = true; return;
+    var mt = 1e9; [].forEach.call(root.querySelectorAll('path, rect, line, polyline, ellipse'), function(e2){ if (legend.contains(e2)) return; var b2 = e2.getBBox(); if (b2.width || b2.height) mt = Math.min(mt, b2.y); });
+    vb[1] = Math.max(0, mt - 4); vb[3] = mb + 6 - vb[1]; root.setAttribute('viewBox', vb.join(' ')); root._legendDone = true; return;
   }
   var lmOld = document.getElementById('wk-legend-m'); if (lmOld) lmOld.innerHTML = '';
   /* 모든 층 범례 글자 크기 같게 */ var S = 1.1, GAP_X = 14, GAP_Y = 10, W = vb[2];

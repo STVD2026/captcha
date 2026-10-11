@@ -1087,3 +1087,9 @@ body.bg-over .wk-side{position:relative;top:auto;z-index:33}
 body.bg-over .wk-filter,body.bg-over .dz-filter,body.bg-over .wk-search,body.bg-over .dz-search{position:relative;z-index:31}
 body.bg-over .wk-list::before{z-index:32}
 body.bg-over .dz-toolbar{z-index:34}
+/* 모바일 WORK: 지도 주변 여백 줄여 첫 화면에 핸들바·검색이 더 보이게 */
+@media (max-width:640px){
+  .wk-side{gap:10px;padding-bottom:14px}
+  .wk-side .wk-map{margin-top:0!important;margin-bottom:0!important}
+  .wk-legend-m{margin-top:4px}
+}
