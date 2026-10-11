@@ -1082,5 +1082,7 @@ body.bg-over .page-bg3d{z-index:30;mix-blend-mode:multiply}
 body.bg-over .dz-img,body.bg-over .wk-card-img{position:relative;z-index:31}
 body.bg-over .dz-main,body.bg-over .wk-main{z-index:auto}
 body.bg-over .dz-detail{z-index:32}
-body.bg-over .wk-side{position:relative;top:auto;z-index:31}
+body.bg-over .wk-side{position:relative;top:auto;z-index:33}
 @media (min-width:921px){body.bg-over .wk-side{position:sticky;top:43px}}
+body.bg-over .wk-filter,body.bg-over .dz-filter,body.bg-over .wk-search,body.bg-over .dz-search{position:relative;z-index:31}
+body.bg-over .wk-list::before{z-index:32}

@@ -1495,7 +1495,10 @@ function wkFitMobile() {
   }
   // 모바일: 지도는 화면 폭 가득. 층을 바꿔도 파란 영역 높이가 같도록 지도 칸 높이 고정
   var w = box.getBoundingClientRect().width, MAX_ASPECT = 1.27; // 가장 세로로 긴 층(범례 제외)의 높이/폭
-  var H = Math.round(w * MAX_ASPECT);
+  var side2 = box.closest('.wk-side');
+  var other = side2 ? side2.offsetHeight - box.offsetHeight : 0;
+  // 첫 화면에 핸들바·검색·필터가 보이도록(약 150px) 지도 높이를 화면 높이에 맞춰 줄임
+  var H = Math.round(Math.max(260, Math.min(w * MAX_ASPECT, window.innerHeight - 43 - other - 150)));
   box.style.height = H + 'px'; box.classList.add('wk-map-fixed');
   svg.style.maxHeight = H + 'px'; svg.style.width = 'auto'; svg.style.maxWidth = '100%';
 }
