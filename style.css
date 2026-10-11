@@ -413,7 +413,7 @@ footer{padding:28px 40px;background:var(--bg2);border-top:1px solid var(--g800);
 /* ══════════════════════════════════════════════════
    메인 페이지 (Figma node 85-9551) — 반응형
    ══════════════════════════════════════════════════ */
-:root{--blue:#5254FF;--blue2:#6A6CFF;--gal:'ABC Galapagos','Space Grotesk',sans-serif;--sg:'Space Grotesk',sans-serif;--noto:'Noto Sans KR',sans-serif;--wkhh:90px}
+:root{--blue:#5254FF;--blue2:#6A6CFF;--gal:'ABC Galapagos','Space Grotesk',sans-serif;--sg:'Space Grotesk',sans-serif;--noto:'Space Grotesk','Noto Sans KR',sans-serif;--wkhh:90px}
 
 /* 메인일 때 페이지 상단 패딩 제거 (히어로가 화면을 꽉 채우도록) */
 body.theme-light .page{padding-top:0}
@@ -701,16 +701,33 @@ nav{
 
 /* 최대 8명/행: auto-fill + max() 로 열 수를 8개로 상한 (좁아지면 자동 감소) */
 .dz-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(max(150px,(100% - 140px)/8),1fr));gap:0 8px}
-.dz-card{cursor:pointer;padding:0 0 18px;margin-bottom:26px;display:flex;flex-direction:column}
+.dz-card{cursor:pointer;padding:0 0 18px;margin-bottom:26px;display:flex;flex-direction:column;background:#fff}
 .dz-img{width:100%;aspect-ratio:4/5;background:#EDEDF5;overflow:hidden;margin-bottom:12px;transition:transform .12s ease}
 .dz-img img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .3s ease}
 .dz-card:hover .dz-img img{transform:scale(1.05)}
+/* 레퍼런스(saeroumi) 격자: 화면 끝까지 이어지는 선, 칸 패딩 8px, 호버 시 파랑 칸 */
+.dz-list{overflow-x:clip}
+.dz-grid{gap:0!important;margin:0 -10px;border-top:2px solid var(--blue);border-left:2px solid var(--blue)}
+.dz-card{margin:0!important;padding:8px;border-right:2px solid var(--blue);border-bottom:2px solid var(--blue)}
+.dz-card .dz-img{margin-bottom:8px}
+.dz-card:hover .dz-img img{transform:none}
+.dz-card:hover{background:#7C7EFF}
+.dz-card.sel{background:var(--blue)}
+.dz-card:hover .dz-kr,.dz-card:hover .dz-en{color:#fff}
+@media (max-width:640px){.dz-grid{margin:0}}
+/* WORK 목록도 디자이너와 같은 이어진 격자 (간격 0, 칸 사이 2px 선, 좌우 끝까지) */
+.wk-list{overflow-x:clip}
+.wk-grid{gap:0!important;margin:0 -10px;border-top:2px solid var(--blue);border-left:2px solid var(--blue)}
+.wk-grid .wk-card{border:none;border-right:2px solid var(--blue);border-bottom:2px solid var(--blue);padding:8px}
+.wk-grid .wk-card-body{padding:12px 4px 10px}
+.wk-grid .wk-card-tags{margin:0 -8px -8px}
+@media (max-width:640px){.wk-grid{margin:0}}
 /* 선택 상태: 파란 카드 + 흰 글씨 (Figma 139-346) */
 /* 선택 시 사진·글자 위치 그대로, 파란 테두리만 바깥으로 그림 (outline은 레이아웃에 영향 없음) */
-.dz-card.sel{background:var(--blue);outline:12px solid var(--blue);position:relative;z-index:1}
+.dz-card.sel{background:var(--blue);outline:none}
 .dz-card.sel .dz-kr,.dz-card.sel .dz-en{color:#fff}
-.dz-kr{font-family:var(--noto);font-weight:700;font-size:15px;color:#111;line-height:1.3}
-.dz-en{font-family:var(--sg);font-weight:400;font-size:13px;color:#8A8A8A;margin-top:2px}
+.dz-kr{font-family:var(--noto);font-weight:700;font-size:15px;color:#3a3cff;line-height:1.3}
+.dz-en{font-family:var(--sg);font-weight:400;font-size:13px;color:#3a3cff;margin-top:2px}
 .dz-grid .no-result{grid-column:1/-1;padding:60px 0;color:#8A8A8A}
 
 /* 상세 패널 */
@@ -722,7 +739,7 @@ nav{
 .dz-dh-photo img{width:150px;height:195px;object-fit:cover;background:#EDEDF5;display:block}
 .dz-dh-info{flex:1;min-width:180px;display:flex;flex-direction:column;justify-content:center}
 .dz-dh-kr{font-family:var(--noto);font-weight:700;font-size:36px;line-height:1.1;color:#fff}
-.dz-dh-en{font-family:var(--gal);font-weight:700;font-size:22px;text-transform:uppercase;letter-spacing:.04em;color:#fff;padding-bottom:16px;margin-bottom:16px;border-bottom:1px solid rgba(255,255,255,.55)}
+.dz-dh-en{font-family:var(--sg);font-weight:700;font-size:22px;text-transform:uppercase;letter-spacing:.04em;color:#fff;padding-bottom:16px;margin-bottom:16px;border-bottom:1px solid rgba(255,255,255,.55)}
 .dz-dh-links{display:flex;flex-wrap:wrap;gap:12px 28px}
 .dz-dh-link{display:flex;align-items:center;gap:8px;color:#fff;text-decoration:none;font-family:var(--sg);font-size:13px;word-break:break-all}
 .dz-tag{background:#fff;color:var(--blue);font-family:var(--sg);font-weight:700;font-size:11px;padding:3px 8px;letter-spacing:.04em;flex:none}
@@ -916,15 +933,15 @@ a.wd-dlink:hover{opacity:.75}
   /* 콘텐츠 시트 드래그 핸들바: 위 여백 절반, 아래(필터까지) 여백 2배 */
   /* 핸들바: 흰 영역 맨 위 (선택한 부스 카드보다 위) */
   /* 핸들바: 흰 시트 맨 위에 항상 고정 (스크롤해도 보임) */
-  .wk-list::before{content:"";display:block;position:sticky;top:calc(43px + var(--wkhh) - 8px);z-index:25;height:76px;margin:-20px -20px -36px;pointer-events:none;background:linear-gradient(#BFC0EA,#BFC0EA) center 18px/44px 5px no-repeat}
+  .wk-list::before{content:"";display:block;position:sticky;top:calc(43px + var(--wkhh));z-index:25;height:76px;margin:-12px -20px -44px;pointer-events:none;background:linear-gradient(#8E90DA,#8E90DA) center 8px/44px 5px no-repeat}
   /* 스크롤해서 핸들바가 상단에 붙었을 때만 흰색 + 그라데이션 (가만히 있을 땐 검색창을 가리지 않음) */
-  .wk-list.handle-stuck::before{background:linear-gradient(#BFC0EA,#BFC0EA) center 18px/44px 5px no-repeat,linear-gradient(#fff 0,#fff 42%,rgba(255,255,255,0) 100%)}
+  .wk-list.handle-stuck::before{background:linear-gradient(#8E90DA,#8E90DA) center 8px/44px 5px no-repeat,linear-gradient(#fff 0,#fff 42%,rgba(255,255,255,0) 100%)}
   /* 검색·필터는 고정 해제 → 목록과 함께 스크롤 */
   .wk-toolbar{position:static;background:transparent}
   .wk-filters{gap:6px}
   .wk-filter{font-size:12px;padding:0 10px}
   .wk-search{width:100%}
-  .wk-grid{grid-template-columns:repeat(2,1fr);gap:12px 8px}
+  .wk-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 8px} /* 긴 글자가 있어도 화면 밖으로 넘치지 않게 */
   .wk-card-title{font-size:13px}
   /* 모바일 카드 태그: [부스 | 카테고리] 윗줄, [이름] 아랫줄 (Figma 186-339) */
   .wk-card-tags{flex-wrap:wrap;gap:0;border-top:1px solid var(--blue);padding:0}
@@ -1042,3 +1059,28 @@ footer[data-shared-foot]{position:relative;z-index:1;display:block;padding:0;bor
 /* 모바일: 지도 칸 높이 고정, 지도는 가운데 */
 .wk-map.wk-map-fixed{display:flex;align-items:center;justify-content:center}
 .wk-map.wk-map-fixed svg{height:auto;max-width:100%}
+
+/* PC: 왼쪽 파란 칸 아래 안쪽 여백 축소 → 지도 조금 더 크게 */
+@media (min-width:921px){.wk-side{padding-bottom:24px}}
+
+@media (max-width:920px){.wk-main,.wk-list,.wk-side{min-width:0;max-width:100%}.wk-search{max-width:100%}}
+
+/* WORK: All 버튼 넓게 */
+.wk-filter[onclick*="'all'"]{min-width:72px}
+
+/* 모바일 범례: 지도 아래 한 줄 (넘치면 가로로 밀어서 보기) */
+.wk-legend-m{display:none}
+@media (max-width:640px){
+  .wk-legend-m{display:block;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;margin-top:14px;padding-bottom:2px}
+  .wk-legend-m::-webkit-scrollbar{display:none}
+  .wk-legend-m svg{display:block}
+}
+
+
+/* 3D 배경을 카드 위로 올려 곱하기(multiply)로 섞기. 클릭은 통과 */
+body.bg-over .page-bg3d{z-index:30;mix-blend-mode:multiply}
+body.bg-over .dz-img,body.bg-over .wk-card-img{position:relative;z-index:31}
+body.bg-over .dz-main,body.bg-over .wk-main{z-index:auto}
+body.bg-over .dz-detail{z-index:32}
+body.bg-over .wk-side{position:relative;z-index:31}
+@media (min-width:921px){body.bg-over .wk-side{position:sticky}}

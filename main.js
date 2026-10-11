@@ -21,7 +21,9 @@ var curSearch = '';
 var curDesigner = -1;
 var curWorkCat = 'all';
 var curWorkSearch = '';
-var CAT_EN = {'BX(브랜드)':'brand','CX(서비스디자인)':'service design','UX/UI':'ux/ui','영상':'motion graphics','일러스트':'illustration','편집':'editorial'};
+// 분야 명칭 통일 (CSV 값 → 사이트 표시명)
+var CAT_NAME = {'BX(브랜드)':'브랜드디자인','CX(서비스디자인)':'서비스디자인','UX/UI':'UX/UI','영상':'영상디자인','편집':'편집디자인','일러스트':'일러스트'};
+var CAT_EN = {'브랜드디자인':'brand','서비스디자인':'service design','UX/UI':'ux/ui','영상디자인':'motion graphics','일러스트':'illustration','편집디자인':'editorial'};
 
 // 데이터: works-data.js (tools/build_data.py 가 2026_web.csv + images 폴더로 생성)
 // 파일명은 NFC(완성형)로 커밋됨 → 요청 경로도 NFC로 통일
@@ -36,7 +38,7 @@ window.addEventListener('DOMContentLoaded', function() {
       noneImg: 'images/profiles/none' + (Math.floor(Math.random() * 6) + 1) + '.png',
       works: p.works.map(function(w) {
         return {
-          workTitle: w.title, titleEn: w.titleEn, category: w.cat, track: w.track,
+          workTitle: w.title, titleEn: w.titleEn, category: CAT_NAME[w.cat] || w.cat, track: w.track,
           descKr: w.descKr, descEn: w.descEn, video: w.video, tags: w.tags,
           booth: w.booth || '',
           thumb: _nfd(w.thumb) || 'images/works/none.jpg',
@@ -124,6 +126,7 @@ function openDesigner(idx) {
   var img = document.getElementById('dz-dimg');
   img.onerror = function(){ this.onerror=null; this.src=d.noneImg; };
   img.src = d.profileImg || d.noneImg;
+  img.parentNode.style.display = d.profileImg ? '' : 'none'; // 사진 없는 디자이너는 사진 칸 숨김
   img.alt = d.kr;
   document.getElementById('dz-dkr').textContent = d.kr;
   document.getElementById('dz-den').textContent = d.en;
@@ -223,9 +226,8 @@ function openWorkDirect(dIdx, wIdx) {
       desc.appendChild(tabs);
     }
     var txt = document.createElement('div'); txt.className = 'wd-txt';
-    langs.forEach(function(x) { var pp = document.createElement('p'); pp.setAttribute('data-lang', x[0]); pp.textContent = x[2].replace(/[ \t]*\n[\s]*\n\s*/g, '\n').trim(); /* 빈 줄 제거 */ txt.appendChild(pp); });
+    langs.forEach(function(x) { var pp = document.createElement('p'); pp.setAttribute('data-lang', x[0]); pp.textContent = x[2].replace(/\s*\n\s*/g, ' ').replace(/\s{2,}/g, ' ').trim(); /* 임의 줄바꿈 해제 → 한 문단으로 */ txt.appendChild(pp); });
     desc.appendChild(txt);
-    var mb = document.createElement('button'); mb.type = 'button'; mb.className = 'wd-desc-more'; mb.textContent = '더보기 +'; mb.onclick = wdOpenDesc; desc.appendChild(mb);
   }
   if (w.video) { var va = document.createElement('a'); va.className = 'wd-video'; va.href = /^https?:/.test(w.video) ? w.video : 'https://' + w.video; va.target = '_blank'; va.rel = 'noopener noreferrer'; va.textContent = '▶ 영상 보기'; desc.appendChild(va); }
   if (!desc.childNodes.length) desc.textContent = d.kr + ' 디자이너의 졸업 작품입니다.';
@@ -353,6 +355,19 @@ function wkLegend(root) {
   var items = [].filter.call(legend.querySelectorAll('g[id^="Frame 24"]'), function(g){ return !g.querySelector('g[id^="Frame 24"]'); });
   var bbs = items.map(function(g){ return g.getBBox(); });
   if (!bbs.length || !bbs[0].width) return; // 아직 화면에 안 보임 → 다음에 다시
+  // 모바일: 범례를 지도 밖 한 줄(가로 스크롤)로 빼고, 지도는 화면 폭 가득 크게
+  if (window.innerWidth <= 640) {
+    var lt0 = legend.transform.baseVal.consolidate(), loy0 = lt0 ? lt0.matrix.f : 0;
+    var x0 = 0, rowH0 = 0, parts = [];
+    items.forEach(function(g, k) { var b = bbs[k]; parts.push('<g transform="translate(' + (x0 - b.x) + ' ' + (-b.y) + ')">' + g.innerHTML + '</g>'); x0 += b.width + 14; rowH0 = Math.max(rowH0, b.height); });
+    var rowW = x0 - 14, el = root.parentNode, lm = document.getElementById('wk-legend-m');
+    if (!lm) { lm = document.createElement('div'); lm.id = 'wk-legend-m'; lm.className = 'wk-legend-m'; el.insertAdjacentElement('afterend', lm); }
+    lm.innerHTML = '<svg viewBox="0 0 ' + rowW + ' ' + rowH0 + '" width="' + Math.round(rowW * 0.95) + '" height="' + Math.round(rowH0 * 0.95) + '" fill="none" xmlns="http://www.w3.org/2000/svg">' + parts.join('') + '</svg>';
+    legend.style.display = 'none';
+    var mb = -1e9; [].forEach.call(root.querySelectorAll('path, rect, line, polyline, ellipse'), function(e2){ if (legend.contains(e2)) return; var b2 = e2.getBBox(); if (b2.width || b2.height) mb = Math.max(mb, b2.y + b2.height); });
+    vb[3] = mb + 6; root.setAttribute('viewBox', vb.join(' ')); root._legendDone = true; return;
+  }
+  var lmOld = document.getElementById('wk-legend-m'); if (lmOld) lmOld.innerHTML = '';
   /* 모든 층 범례 글자 크기 같게 */ var S = 1.1, GAP_X = 14, GAP_Y = 10, W = vb[2];
   var top = Math.min.apply(null, bbs.map(function(b){ return b.y; }));
   var startY = top + 28, x = 0, y = startY, rowH = 0;
@@ -766,7 +781,30 @@ function _lookLuts(L) {
   L._r = f(L.R); L._g = f(L.G); L._b = f(L.B);
   return L;
 }
+/* osmo 3D LUT (lut/*.bin: 33³ RGB 8bit, .cube 원본에서 변환) — 로드되면 커브 대신 사용 */
+var CUBE_N = 33;
+['ccd', 'fuji'].forEach(function(k) {
+  fetch('lut/' + k + '.bin?v=2').then(function(r) { return r.ok ? r.arrayBuffer() : null; })
+    .then(function(b) { if (b) LOOKS[k].cube = new Uint8Array(b); }).catch(function(){});
+});
+function _cubeData(d, T) {
+  var N = CUBE_N, s = (N - 1) / 255, N2 = N * N;
+  for (var i = 0; i < d.length; i += 4) {
+    var fr = d[i]*s, fg = d[i+1]*s, fb = d[i+2]*s;
+    var r0 = fr|0, g0 = fg|0, b0 = fb|0;
+    var r1 = r0 < N-1 ? r0+1 : r0, g1 = g0 < N-1 ? g0+1 : g0, b1 = b0 < N-1 ? b0+1 : b0;
+    var dr = fr-r0, dg = fg-g0, db = fb-b0;
+    for (var c = 0; c < 3; c++) {
+      var c00 = T[(r0+g0*N+b0*N2)*3+c]*(1-dr) + T[(r1+g0*N+b0*N2)*3+c]*dr;
+      var c10 = T[(r0+g1*N+b0*N2)*3+c]*(1-dr) + T[(r1+g1*N+b0*N2)*3+c]*dr;
+      var c01 = T[(r0+g0*N+b1*N2)*3+c]*(1-dr) + T[(r1+g0*N+b1*N2)*3+c]*dr;
+      var c11 = T[(r0+g1*N+b1*N2)*3+c]*(1-dr) + T[(r1+g1*N+b1*N2)*3+c]*dr;
+      d[i+c] = ((c00*(1-dg) + c10*dg)*(1-db) + (c01*(1-dg) + c11*dg)*db + 0.5) | 0;
+    }
+  }
+}
 function _gradeData(d, L) {
+  if (L.cube) { _cubeData(d, L.cube); return; }
   _lookLuts(L);
   var R = L._r, G = L._g, B = L._b, sat = L.sat, sk = L.skin;
   for (var i = 0; i < d.length; i += 4) {
@@ -1378,21 +1416,21 @@ function boothCloseQR() {
 var WD_GAP = 12; // 다른 작품 카드와 화면 하단 사이 간격(px)
 function fitWorkDesc(resize) {
   // 데스크탑: 정보는 위에 고정, "다른 작품" 카드는 원래 크기로 화면 하단에 고정.
-  // 설명이 남은 공간보다 길면 보이는 만큼만 보여주고 「더보기」로 전체를 팝업에 띄움
   var info = document.querySelector('.wd-info'), more = document.querySelector('.wd-more-wrap'), body = document.querySelector('.wd-body');
   if (!info || !more || !body) return;
   info.style.minHeight = '';
   if (more.parentNode !== body) body.insertBefore(more, info.nextSibling);
-  var desc = document.getElementById('wd-desc'), txt = desc && desc.querySelector('.wd-txt');
-  if (!txt) return;
-  txt.style.maxHeight = ''; desc.classList.remove('clamped', 'expanded'); body.classList.remove('wd-expanded');
-  var mbtn = desc.querySelector('.wd-desc-more'); if (mbtn) mbtn.textContent = '더보기 +';
+  body.classList.remove('wd-expanded');
   if (window.innerWidth <= 920) return;
-  // 페이지 맨 위 상태 기준(가장 좁은 경우)으로 설명이 쓸 수 있는 높이 계산
-  var txtTop0 = txt.getBoundingClientRect().top + window.scrollY;
-  var avail = window.innerHeight - WD_GAP - more.getBoundingClientRect().height - 28 - txtTop0;
-  avail = Math.max(72, Math.floor(avail / 22) * 22); // 줄 단위로 자름
-  if (txt.scrollHeight > avail + 2) { txt.style.maxHeight = avail + 'px'; desc.classList.add('clamped'); }
+  // 설명이 길어 카드와 겹칠 만큼 화면이 낮으면, 카드를 설명 아래로 이어서 배치 (더보기 없음)
+  var desc = document.getElementById('wd-desc');
+  if (!desc) return;
+  var cur = desc.getAttribute('data-show'), infoH = 0;
+  (cur ? ['kr', 'en'] : [null]).forEach(function(l) { if (l) desc.setAttribute('data-show', l); infoH = Math.max(infoH, info.getBoundingClientRect().height); });
+  if (cur) desc.setAttribute('data-show', cur);
+  var infoTop0 = info.getBoundingClientRect().top + window.scrollY;
+  var room = window.innerHeight - WD_GAP - (infoTop0 + infoH + 24);
+  if (more.getBoundingClientRect().height > room) body.classList.add('wd-expanded');
 }
 /* 「더보기」: 팝업 없이 그 자리에서 펼침/접기 */
 function wdOpenDesc() {
@@ -1405,11 +1443,17 @@ function wdOpenDesc() {
 document.addEventListener('click', function(e) { if (e.target.closest('.wd-lang')) fitWorkDesc(); });
 window.addEventListener('resize', fitWorkDesc);
 
-/* WORK 검색창 폭 = 작품 카드 한 칸 폭 */
+/* WORK 검색창 폭 = 작품 카드 두 칸 폭 */
 function syncWorkSearchWidth() {
   var card = document.querySelector('#work-grid .wk-card'), box = document.querySelector('.wk-search');
   if (!box) return;
-  box.style.width = (card && window.innerWidth > 920) ? card.getBoundingClientRect().width + 'px' : '';
+  // 작품 카드 두 칸(카드 2개 + 사이 간격) 폭에 맞춤
+  var cards = document.querySelectorAll('#work-grid .wk-card'), w = '';
+  if (card && window.innerWidth > 920) {
+    var r1 = cards[0].getBoundingClientRect(), r2 = cards[1] && cards[1].getBoundingClientRect();
+    w = (r2 && Math.abs(r2.top - r1.top) < 2 ? (r2.right - r1.left) : r1.width) + 'px';
+  }
+  box.style.width = w;
 }
 window.addEventListener('resize', syncWorkSearchWidth);
 document.addEventListener('click', function(e) { if (e.target.closest('.nav-links button, .wk-filter')) setTimeout(syncWorkSearchWidth, 50); });
@@ -1431,15 +1475,32 @@ function wkFitMobile() {
   if (!svg || !search) return;
   svg.style.maxWidth = ''; svg.style.maxHeight = ''; svg.style.width = ''; svg.style.marginLeft = svg.style.marginRight = '';
   box.style.height = ''; box.classList.remove('wk-map-fixed');
-  if (window.innerWidth > 920 || !document.getElementById('page-work').classList.contains('active')) return;
-  var w = box.getBoundingClientRect().width, mapH = box.getBoundingClientRect().height;
-  var rest = (search.getBoundingClientRect().bottom + window.scrollY) - mapH; // 지도 칸을 뺀 나머지 높이
-  var MAX_ASPECT = 1.49; // 가장 세로로 긴 층(3층, 범례 포함)의 높이/폭 비율
-  var H = Math.max(180, Math.min(window.innerHeight - 16 - rest, w * MAX_ASPECT));
-  box.style.height = Math.round(H) + 'px'; box.classList.add('wk-map-fixed');
-  svg.style.maxHeight = Math.round(H) + 'px'; svg.style.width = 'auto'; svg.style.maxWidth = '100%';
+  if (!document.getElementById('page-work').classList.contains('active')) return;
+  if (window.innerWidth > 920) {
+    // PC: 왼쪽 파란 칸 안에 지도+범례가 다 들어오도록 지도 크기 제한.
+    // 지도가 작아지면 파란 칸 폭도 그만큼 줄임 (최소 400px, 최대 540px)
+    var side = box.closest('.wk-side');
+    side.style.flexBasis = '';
+    var sr = side.getBoundingClientRect(), br = svg.getBoundingClientRect();
+    var pad = parseFloat(getComputedStyle(side).paddingBottom) || 0, padX = (parseFloat(getComputedStyle(side).paddingLeft) || 0) * 2;
+    var avail = sr.bottom - pad - 4 - br.top; // 범례 아래 여백 살짝만 (패딩 + 4px)
+    if (br.height > avail && avail > 200) {
+      svg.style.maxHeight = Math.floor(avail) + 'px'; svg.style.width = 'auto'; svg.style.maxWidth = '100%';
+      var needW = avail * 0.82; // 가장 가로로 넓은 층(2층) 비율 기준 → 층을 바꿔도 칸 폭 일정
+      side.style.flexBasis = Math.round(Math.max(400, Math.min(540, needW + padX + 20))) + 'px';
+    }
+    svg.style.marginLeft = svg.style.marginRight = 'auto'; // 파란 칸 가운데 정렬
+    setTimeout(syncWorkSearchWidth, 0);
+    return;
+  }
+  // 모바일: 지도는 화면 폭 가득. 층을 바꿔도 파란 영역 높이가 같도록 지도 칸 높이 고정
+  var w = box.getBoundingClientRect().width, MAX_ASPECT = 1.27; // 가장 세로로 긴 층(범례 제외)의 높이/폭
+  var H = Math.round(w * MAX_ASPECT);
+  box.style.height = H + 'px'; box.classList.add('wk-map-fixed');
+  svg.style.maxHeight = H + 'px'; svg.style.width = 'auto'; svg.style.maxWidth = '100%';
 }
 window.addEventListener('resize', wkFitMobile);
+window.addEventListener('DOMContentLoaded', function(){ document.addEventListener('click', function(e){ if (e.target.closest('#nav-work')) setTimeout(wkFitMobile, 60); }); });
 
 /* 층·부스 태그(예: 3F E43)에 마우스를 올리면 해당 층 지도를 팝업으로 보여주고 부스를 강조 */
 var _wkPop = null;
@@ -1501,3 +1562,14 @@ window.addEventListener('scroll', function() {
   if (!list || !head || window.innerWidth > 640) return;
   list.classList.toggle('handle-stuck', list.getBoundingClientRect().top < head.getBoundingClientRect().bottom - 4);
 }, { passive: true });
+
+/* 주소 #work / #designer / #message 로 바로 해당 페이지 열기 */
+(function(){
+  function fromHash(){
+    var h = (location.hash || '').replace('#','').toLowerCase();
+    if (h && document.getElementById('page-' + h)) { showPage(h); if (h === 'work') setTimeout(wkFitMobile, 60); }
+  }
+  window.addEventListener('load', fromHash);
+  window.addEventListener('hashchange', fromHash);
+})();
+document.body.classList.add('bg-over'); // 3D 배경을 카드 위로(사진·지도는 그 위)
