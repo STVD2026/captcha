@@ -1111,3 +1111,4 @@ body.bg-over .dz-kr,body.bg-over .dz-en,body.bg-over .wk-grid .wk-card-body,body
 body.bg-over .wk-toolbar{z-index:35}
 body.bg-over .wk-list::before{z-index:36}
 body.bg-over .dz-img,body.bg-over .wk-card-img{z-index:32}
+body.bg-over #wk-mpreview,body.bg-over #wk-preview,body.bg-over .wk-near-label{position:relative;z-index:33}

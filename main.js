@@ -536,7 +536,7 @@ function wkShowPreview(code, hit) {
     if (near.length) pv.innerHTML += '<div class="wk-pv-near"><div class="wk-pv-near-t">근처 작품</div><div class="wk-grid">' + near.map(function(x){ return workCardHTML(x.i, x.j); }).join('') + '</div></div>';
   }
   pv.hidden = false;
-  if (pv.id === 'wk-mpreview') { _wkNearCode = { L: code[0], n: +code.slice(1), i: hit[0], wi: hit[1] }; renderWorks(); setTimeout(function(){ pv.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 30); }
+  if (pv.id === 'wk-mpreview') { _wkNearCode = { L: code[0], n: +code.slice(1), i: hit[0], wi: hit[1] }; renderWorks(); setTimeout(function(){ var hd = document.querySelector('.wk-side-head'), off = hd ? hd.getBoundingClientRect().bottom : 43; window.scrollTo({ top: pv.getBoundingClientRect().top + window.scrollY - off - 44, behavior: 'smooth' }); }, 30); }
   if (pv.id === 'wk-preview') pv.parentNode.classList.add('previewing');
 }
 function wkHidePreview() {
