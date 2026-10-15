@@ -1101,3 +1101,13 @@ body.bg-over #page-designer img,body.bg-over #page-work img{position:relative;z-
   .wk-list::before{content:"";display:block;position:sticky;top:43px;z-index:32;height:76px;margin:-12px -30px -44px;pointer-events:none;background:linear-gradient(#8E90DA,#8E90DA) center 8px/44px 5px no-repeat}
   .wk-list.handle-stuck::before{background:linear-gradient(#8E90DA,#8E90DA) center 8px/44px 5px no-repeat,linear-gradient(#fff 0,#fff 42%,rgba(255,255,255,0) 100%)}
 }
+/* 격자 칸 안에서는 3D가 더 연하게: 칸 위에 반투명 흰 막(3D 위), 사진·글자는 그 위 */
+body.bg-over .dz-card,body.bg-over .wk-grid .wk-card{position:relative}
+body.bg-over .dz-card::after,body.bg-over .wk-grid .wk-card::after{content:"";position:absolute;inset:0;background:rgba(255,255,255,.6);z-index:31;pointer-events:none;transition:opacity .14s}
+body.bg-over .dz-card:hover::after,body.bg-over .dz-card.sel::after,body.bg-over .wk-grid .wk-card:hover::after{opacity:0}
+body.bg-over #page-designer img,body.bg-over #page-work img{z-index:32}
+body.bg-over .dz-kr,body.bg-over .dz-en,body.bg-over .wk-grid .wk-card-body,body.bg-over .wk-grid .wk-card-tags{position:relative;z-index:32}
+/* 스크롤 시 사진이 검색·필터 위로 올라오지 않게 */
+body.bg-over .wk-toolbar{z-index:35}
+body.bg-over .wk-list::before{z-index:36}
+body.bg-over .dz-img,body.bg-over .wk-card-img{z-index:32}
