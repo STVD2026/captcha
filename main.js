@@ -1564,8 +1564,9 @@ window.addEventListener('resize', wdReleaseCheck);
 /* 모바일: 핸들바가 상단에 붙었는지 표시 (붙었을 때만 그라데이션) */
 window.addEventListener('scroll', function() {
   var list = document.querySelector('#page-work.active .wk-list'), head = document.querySelector('.wk-side-head');
-  if (!list || !head || window.innerWidth > 640) return;
-  list.classList.toggle('handle-stuck', list.getBoundingClientRect().top < head.getBoundingClientRect().bottom - 4);
+  if (!list || window.innerWidth > 920) return;
+  var lim = (window.innerWidth <= 640 && head) ? head.getBoundingClientRect().bottom : 43;
+  list.classList.toggle('handle-stuck', list.getBoundingClientRect().top < lim - 4);
 }, { passive: true });
 
 /* 페이지마다 다른 주소 + 브라우저 뒤로/앞으로 가기 지원

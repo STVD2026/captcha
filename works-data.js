@@ -222,7 +222,7 @@ window.WORKS_DATA = [
     "descEn": "A dream does not directly reproduce reality. It is created as the brain interprets and synthesizes random signals during sleep, so a dream is less an existing scene than an image newly built each time from signals. This resembles generative images, producing a diﬀerent result each time from the same prompt ― a single input drawn from countless possibilities. A dream never remains one clear scene; what we recall after waking is closer to an afterimage blending several scenes. This book explains dreams and generative images in three stages, and in its final chapter, generates and selects multiple images from one dream and prompt, then layers them over one another outside the book. This process is not a search for one correct answer, but an attempt to approach dreams through multiple possibilities.",
     "video": "",
     "tags": [],
-    "booth": "3F C10",
+    "booth": "3F C21",
     "thumb": "images/works/Thumbnail/22100973_THE DREAMY INFINITY_Thumbnail.webp",
     "imgs": [
      "images/works/webportfolio/22100973_THE DREAMY INFINITY_work1.webp",
@@ -259,7 +259,7 @@ window.WORKS_DATA = [
     "descEn": "Today, many trips revolve around a handful of attractions ranked online or marked on maps, leading even different travelers to follow the same places and skim only the surface of a region. Yet every place holds layers of stories, perspectives, and unexpected moments that maps alone cannot reveal. Pinplore plants these discoveries as “pins” throughout a region, opening new layers of the physical world as travelers walk. Instead of moving only toward predetermined attractions, travelers follow the pins that appear before them, reading alleys, objects, and landscapes through varied perspectives as they shape a journey of their own. In this way, even ordinary places become explorable content, expanding travel into every corner of a region.",
     "video": "",
     "tags": [],
-    "booth": "3F E07",
+    "booth": "3F E08",
     "thumb": "images/works/Thumbnail/22100974_Pinplore_Thumbnail.webp",
     "imgs": [
      "images/works/webportfolio/22100974_Pinplore_work1.webp",
@@ -277,7 +277,7 @@ window.WORKS_DATA = [
     "descEn": "SPINEX is a graphic design project inspired by the spine’s evolutionary diversity: a strong central axis that supports the body, yet has taken different forms across environments and modes of movement. The study began with a fascination for this combination of structural strength and the capacity for change. It interprets the spine through graphics, exploring how its forms, proportions, and connections open up possibilities for expansion.\nThe forms of each spinal region are simplified into modules, and differences in animal spinal composition become rules for generating patterns. This project records how repetition and transformation produce distinct graphics from shared structural principles.",
     "video": "",
     "tags": [],
-    "booth": "3F C20",
+    "booth": "3F C18",
     "thumb": "images/works/Thumbnail/22100974_Spinex_Thumbnail.webp",
     "imgs": [
      "images/works/webportfolio/22100974_Spinex_work1.webp",
@@ -318,7 +318,7 @@ window.WORKS_DATA = [
      "#아토피",
      "#스킨케어"
     ],
-    "booth": "3F E38",
+    "booth": "3F E35",
     "thumb": "images/works/Thumbnail/22100976_dayzen_Thumbnail.webp",
     "imgs": [
      "images/works/webportfolio/22100976_dayzen_work1.webp",
@@ -339,7 +339,7 @@ window.WORKS_DATA = [
      "#포토북",
      "#편집"
     ],
-    "booth": "3F C11",
+    "booth": "3F C09",
     "thumb": "images/works/Thumbnail/22100976_DALMOORI Village_Thumbnail.webp",
     "imgs": [
      "images/works/webportfolio/22100976_DALMOORI Village_work1.webp",
@@ -524,7 +524,7 @@ window.WORKS_DATA = [
      "#BX",
      "#브랜딩"
     ],
-    "booth": "3F E03",
+    "booth": "3F E04",
     "thumb": "images/works/Thumbnail/22100980_MORAK_Thumbnail.webp",
     "imgs": [
      "images/works/webportfolio/22100980_MORAK_work1.webp",
@@ -564,7 +564,7 @@ window.WORKS_DATA = [
      "#브랜딩",
      "#독서"
     ],
-    "booth": "3F E04",
+    "booth": "3F E05",
     "thumb": "images/works/Thumbnail/22100981_Palak_Thumbnail.webp",
     "imgs": [
      "images/works/webportfolio/22100981_Palak_work1.webp",
@@ -655,7 +655,7 @@ window.WORKS_DATA = [
      "#series",
      "#system"
     ],
-    "booth": "3F C22",
+    "booth": "3F C20",
     "thumb": "images/works/Thumbnail/22101110_Performative Posters_Thumbnail.webp",
     "imgs": [
      "images/works/webportfolio/22101110_Performative Posters_work1.webp",
@@ -754,7 +754,7 @@ window.WORKS_DATA = [
      "#아이덴티티",
      "#체험"
     ],
-    "booth": "3F E35",
+    "booth": "3F E06",
     "thumb": "images/works/Thumbnail/21100986_dadada_Thumbnail.webp",
     "imgs": [
      "images/works/webportfolio/21100986_dadada_work1.webp",
@@ -822,7 +822,7 @@ window.WORKS_DATA = [
      "#UXUIDesign",
      "#ServiceDesign"
     ],
-    "booth": "3F E08",
+    "booth": "3F E09",
     "thumb": "images/works/Thumbnail/20100998_Gilttara Dorun-Dorun_thumbnail.webp",
     "imgs": [
      "images/works/webportfolio/20100998_Gilttara Dorun-Dorun_work1.webp",
@@ -913,7 +913,7 @@ window.WORKS_DATA = [
      "#타이포그래피",
      "#음악"
     ],
-    "booth": "3F C12",
+    "booth": "3F C10",
     "thumb": "images/works/Thumbnail/23100983_Note Grammar_Thumbnail.webp",
     "imgs": [
      "images/works/webportfolio/23100983_Note Grammar_work1.webp",
@@ -974,7 +974,7 @@ window.WORKS_DATA = [
      "#cosmetic",
      "#브랜드북"
     ],
-    "booth": "3F C09",
+    "booth": "3F C07",
     "thumb": "images/works/Thumbnail/22101119_Autumetic_Thumbnail.webp",
     "imgs": [
      "images/works/webportfolio/22101119_Autumetic_work1.webp",
@@ -1086,7 +1086,7 @@ window.WORKS_DATA = [
     "descEn": "An art book based on H.P. Lovecraft's Cthulhu Mythos. \"Outer Dark\" denotes the realm beyond human perception — not a space abandoned by god, but one that never recognized humanity to begin with.\nThe book is structured as a fake documentary: a classified field guide presenting the mythos's entities, organizations, and events as real and dangerous records. Encyclopedia entries, interrogation transcripts, and incident timelines are layered into a single archive. Redaction marks and footnotes build a structure that grows more unsettling as one reads. Fluorescent pink anchors the visual identity against archival black-and-white.",
     "video": "",
     "tags": [],
-    "booth": "3F C13",
+    "booth": "3F C23",
     "thumb": "images/works/Thumbnail/23102207_OuterDark_Thumbnail.webp",
     "imgs": [
      "images/works/webportfolio/23102207_OuterDark_work1.webp"
@@ -1318,7 +1318,7 @@ window.WORKS_DATA = [
     "descEn": "BIRDBATH is a private bath brand designed for one guest at a time, reimagining bathing as a ritual of emotional care.\nJust as a bird smooths its feathers in a birdbath and takes flight again, each guest washes away emotional weight through bathing and regains the lightness to return to everyday life.\nBIRDBATH carefully coordinates scent, texture, and tools according to each guest’s emotional state, creating a care journey tailored to the individual. Throughout the journey, guests gently observe and settle their emotions, gaining a deeper understanding of themselves and experiencing a true sense of rest.",
     "video": "",
     "tags": [],
-    "booth": "3F E36",
+    "booth": "3F E37",
     "thumb": "images/works/Thumbnail/21100872_BIRDBATH_Thumbnail.webp",
     "imgs": [
      "images/works/webportfolio/21100872_BIRDBATH_work1.webp"
@@ -1353,7 +1353,7 @@ window.WORKS_DATA = [
     "descEn": "A woman's body changes constantly within a monthly cycle — yet we've long dismissed those changes as mere \"sensitivity\" or \"mood swings.\" Mente, Latin for \"mind,\" is a women-only mental care app that reads hormonal shifts across your menstrual cycle and suggests care tailored to how you feel that day. Linked with wearables for real-time hormone tracking, it helps you understand the language your body repeats every month. A pomegranate holds hundreds of seeds within a single skin — much like the layered inner world of women. Using the pomegranate as Mente's visual language, each cycle's shifting light and motion reflects who you are right now. Listen to your body, fully, for the first time.",
     "video": "",
     "tags": [],
-    "booth": "3F E05",
+    "booth": "3F E40",
     "thumb": "images/works/Thumbnail/22100993_Mente_Thumbnail.webp",
     "imgs": [
      "images/works/webportfolio/22100993_Mente_work1.webp",
@@ -1402,8 +1402,8 @@ window.WORKS_DATA = [
     "titleEn": "Olways: On your way, All the way",
     "track": "경험디자인",
     "cat": "UX/UI",
-    "descKr": "체어 사용자는 처음 가는 곳에 가기 전, 먼저 전화를 건다. 경사로는 있는지, 입구 폭은 몇 cm인지, 화장실은 쓸 수 있는지 묻기 위해서다. 그렇게 확인하고도 한 달 동안 새로운 곳에 한 번도 가보지 못한 사람이 58%에 이른다.\nolways는 그 전화를 안경이 대신하는 길안내 서비스다. 출발 전에는 '입구 폭 92cm, 최대 경사 8도, 단차 1곳'처럼 경사와 계단, 입구 너비를 한눈에 보여준다. 이동 중에는 뒤에서 다가오는 자전거와 앞의 턱을 먼저 감지해 시야에 띄우고, 가파른 경사로 앞에서는 우회로를 제안한다. 건물 문 앞에서는 내 휠체어 폭과 입구 너비를 비교해 지나갈 수 있는지 알려준다. 휠체어 사용자에게 확인은 늘 멈춰 서서 해야 하는 일이었다면 가는 길 위에서 멈추지 않고 목적지를 향해 갈 수 있도록 돕는 서비스다.",
-    "descEn": "Wheelchair users make phone calls before going anywhere new, asking whether there is a ramp, how many centimetres the entrance is, whether the restroom can be used. Even so, 58 percent visited no new place at all last month. olways is a navigation service where the glasses make those calls for you. Before you leave, it turns the route into numbers you can judge quickly: entrance 92cm, maximum slope 8 degrees, one drop-off. On the way, it puts the bike behind you and the curb ahead into view before you notice them, and offers a detour before a ramp. At a building door, it compares the opening with your own chair and tells you whether you fit. And the route you took is saved as measured ground, guiding the next person. For wheelchair users, checking has always meant stopping. olways lets you check while moving.",
+    "descKr": "휠체어 사용자는 낯선 곳에 가기 전 늘 전화를 겁니다. 입구 폭과 경사로를 묻고도 가는 길이 두렵고 막막해서 휠체어 사용자 58%는 결국 새로운 곳 방문을 포기합니다.\n'olways'는 이 번거로운 확인을 대신하는 스마트글래스 AR 길안내 서비스입니다.\n출발 전 목적지의 단차와 경사, 입구 너비를 직관적으로 보여주고, 이동 중엔 전방의 턱이나 다가오는 자전거를 감지해 안전한 우회로를 제안합니다. 건물 앞에서는 내 휠체어 폭과 입구를 비교해 진입 가능 여부를 바로 알려줍니다. 이렇게 지나온 길은 실측 데이터가 되어 다음 사람을 위한 길잡이가 됩니다.\n멈춰 서서 확인해야 했던 길, 이제 olways와 함께 멈춤 없이 나아가세요.",
+    "descEn": "Before visiting a new place, wheelchair users always have to make phone calls. Yet, due to the anxiety and uncertainty of the journey, 58% still give up on exploring new destinations.\n'olways' is a smart glass AR navigation service that eliminates this burdensome process. Before departure, it intuitively displays steps, slopes, and entrance widths. On the move, it detects upcoming obstacles or approaching bicycles to suggest safe detours. Upon arrival, it instantly compares the user's wheelchair width with the door to confirm accessibility.\nEvery journey traveled becomes precise data, guiding the next person's path.\nStop pausing to check. Keep moving forward with olways.",
     "video": "",
     "tags": [
      "#UXUI",
@@ -1475,7 +1475,7 @@ window.WORKS_DATA = [
      "#그래픽",
      "#박제"
     ],
-    "booth": "3F C16",
+    "booth": "3F C14",
     "thumb": "images/works/Thumbnail/21101002_Pinned_Thumbnail.webp",
     "imgs": [
      "images/works/webportfolio/21101002_Pinned_work1.webp",
@@ -1532,7 +1532,7 @@ window.WORKS_DATA = [
     "descEn": "Beyond the simple symbols and numbers, each element in the periodic table holds its own unique story. This editorial design project translates these diverse narratives—their history and discovery, name origins, and everyday uses—into a single book. Visually, I focused on the structural beauty of the atomic shell model, utilizing its repeating concentric circles as a core graphic element. Furthermore, inspired by how microscopic atoms combine to form the material world, I applied a halftone technique—where tiny dots merge into a complete image—to represent each element. By assembling these individual halftone images into a single poster, the distinct stories of each element organically connect within the complete periodic table.",
     "video": "",
     "tags": [],
-    "booth": "3F C07",
+    "booth": "3F C05",
     "thumb": "images/works/Thumbnail/20101018_The Periodic Table- Stories from the Smallest_Thumbnail .webp",
     "imgs": [
      "images/works/webportfolio/20101018_The Periodic Table- Stories from the Smallest_work1.webp",
@@ -1661,7 +1661,7 @@ window.WORKS_DATA = [
      "#그림자",
      "#편집"
     ],
-    "booth": "3F C08",
+    "booth": "3F C06",
     "thumb": "images/works/Thumbnail/22100999_THE MODERN CAVE WALL_Thumbnail.webp",
     "imgs": [
      "images/works/webportfolio/22100999_THE MODERN CAVE WALL_work2.webp",
@@ -1766,7 +1766,7 @@ window.WORKS_DATA = [
      "#티",
      "#그래픽"
     ],
-    "booth": "3F E39",
+    "booth": "3F E34",
     "thumb": "images/works/Thumbnail/22101001_leave.leaves_Thumbnail.webp",
     "imgs": [
      "images/works/webportfolio/22101001_leave.leaves_work2.webp",
@@ -1789,7 +1789,7 @@ window.WORKS_DATA = [
      "#실험",
      "#이미지"
     ],
-    "booth": "3F C21",
+    "booth": "3F C19",
     "thumb": "images/works/Thumbnail/22101001_deflesh_Thumbnail.webp",
     "imgs": [
      "images/works/webportfolio/22101001_deflesh_work1.webp",
@@ -1963,7 +1963,7 @@ window.WORKS_DATA = [
      "#편집",
      "#교육"
     ],
-    "booth": "3F C17",
+    "booth": "3F C15",
     "thumb": "images/works/Thumbnail/22101003_100Spazi100Sguardi100Linguaggi_Thumbnail.webp",
     "imgs": [
      "images/works/webportfolio/22101003_100Spazi100Sguardi100Linguaggi_work1.webp",
@@ -2007,7 +2007,7 @@ window.WORKS_DATA = [
      "#DigitalIntermediate",
      "#ProductionDesign"
     ],
-    "booth": "3F E34",
+    "booth": "3F E01",
     "thumb": "images/works/Thumbnail/22101004_Room.403_Thumbnail.webp",
     "imgs": [
      "images/works/webportfolio/22101004_Room.403_work3.webp",
@@ -2069,7 +2069,7 @@ window.WORKS_DATA = [
      "#그래픽",
      "#디자인"
     ],
-    "booth": "3F C15",
+    "booth": "3F C13",
     "thumb": "images/works/Thumbnail/22101005_Detected Moment_Thumbnail.webp",
     "imgs": [
      "images/works/webportfolio/22101005_Detected Moment_work1.webp",
@@ -2196,7 +2196,7 @@ window.WORKS_DATA = [
     "descEn": "Languages at the Edge examines endangered languages through the ways in which speech sounds are physically produced. The loss of a language involves not only the disappearance of vocabulary and grammar, but also the loss of distinctive phonological systems and articulatory practices transmitted within a community. Focusing on clicks and ejectives—consonants produced without relying on pulmonic airflow—this project visualizes the movements of the tongue and glottis, as well as changes in oral pressure and airflow, while comparing the degree of endangerment among the languages that use these sounds. It approaches language loss beyond the disappearance of words and meanings, considering it in relation to the diversity of human sound production and speech.",
     "video": "",
     "tags": [],
-    "booth": "3F C14",
+    "booth": "3F C12",
     "thumb": "images/works/Thumbnail/22101009_LanguagesattheEdge_Thumnail.webp",
     "imgs": [
      "images/works/webportfolio/22101009_LanguagesattheEdge_work1.webp",
@@ -2328,7 +2328,7 @@ window.WORKS_DATA = [
      "#타이포그래피",
      "#책"
     ],
-    "booth": "3F C23",
+    "booth": "3F C22",
     "thumb": "images/works/webportfolio/23101003_Floating Objectivity_Thumbnail.webp",
     "imgs": [
      "images/works/webportfolio/23101003_Floating Objectivity_work1.webp"
@@ -2363,7 +2363,7 @@ window.WORKS_DATA = [
     "descEn": "SISUN is an AI-powered mobile application that transforms everyday moments and emotions into poetry. It makes writing and appreciating poetry more accessible, helping users create with their own experiences and words. Users begin by recording a memorable moment or reflecting on their feelings. AI generates poems based on their words and choices, combining images, video, and spoken narration into an experience of reading, viewing, and listening. Completed works are saved in a personal library, allowing users to revisit past moments and emotions. SISUN helps users discover feelings left unexpressed in the rush of daily life, see familiar moments from a new perspective, and express and preserve their emotions.",
     "video": "",
     "tags": [],
-    "booth": "3F E09",
+    "booth": "3F E39",
     "thumb": "images/works/Thumbnail/21101012_Sisun_Thumbnail.webp",
     "imgs": [
      "images/works/webportfolio/21101012_Sisun_work1.webp",
@@ -2416,7 +2416,7 @@ window.WORKS_DATA = [
      "#브랜딩",
      "#다이어리"
     ],
-    "booth": "3F E01",
+    "booth": "3F E02",
     "thumb": "images/works/Thumbnail/22101014_BIUMZIP_Thumbnail.webp",
     "imgs": [
      "images/works/webportfolio/22101014_BIUMZIP_work1.webp",
@@ -2437,7 +2437,7 @@ window.WORKS_DATA = [
      "#식물",
      "#감정"
     ],
-    "booth": "3F C06",
+    "booth": "3F C11",
     "thumb": "images/works/Thumbnail/22101014_Specimens of Survival_Thumbnail.webp",
     "imgs": [
      "images/works/webportfolio/22101014_Specimens of Survival_work1.webp",
@@ -2555,7 +2555,7 @@ window.WORKS_DATA = [
      "#인포그래픽",
      "#아카이브"
     ],
-    "booth": "3F C19",
+    "booth": "3F C17",
     "thumb": "images/works/Thumbnail/22101015_GlobalConflictArchive_Thumbnail.webp",
     "imgs": [
      "images/works/webportfolio/22101015_GlobalConflictArchive_work1.webp",
@@ -2605,7 +2605,7 @@ window.WORKS_DATA = [
     "descEn": "The physical properties of a fabric—such as its thickness, flexibility, and strength—are determined by the characteristics of the threads that form its structure. Interacing Variable is a typeface that reinterprets these qualities by adopting the concepts of EPI (Ends Per Inch) and PPI (Picks Per Inch), two key measurements that define fabric density.\nInteracing Variable consists of 15 styles, built from five EPI-based styles, each further divided into three PPI variations. As the EPI and PPI values change, the density and form of each letterform gradually transform, allowing the structural characteristics and material qualities of woven fabrics to be experienced through a typographic system.",
     "video": "",
     "tags": [],
-    "booth": "3F C05",
+    "booth": "3F C08",
     "thumb": "images/works/Thumbnail/22101017_InteracingVariable_Thumbnail.webp",
     "imgs": [
      "images/works/webportfolio/22101017_InteracingVariable_work1.webp"
@@ -2719,7 +2719,7 @@ window.WORKS_DATA = [
     "descEn": "Despite the continued interest in wellness and inner beauty, many people still struggle to find supplements that suit their needs. The overwhelming amount of information and the commitment required for consistent intake can make it difficult to get started.\n􏘩What if taking supplements could be as light and enjoyable as eating candy?􏘪\nInspired by this question, nonotri was created to provide personalized combinations of nutrients while taking each customer􏘧s individual preferences and tastes into consideration, creating a more personal and enjoyable experience.\nThrough the service provided by nonotri, we hope you can move beyond the task of studying and researching supplements and instead discover a more enjoyable way to experience and incorporate them into your daily life.",
     "video": "",
     "tags": [],
-    "booth": "3F E37",
+    "booth": "3F E36",
     "thumb": "images/works/Thumbnail/18100899_NONOtri_Thumbnail.webp",
     "imgs": [
      "images/works/webportfolio/18100899_NONOtri_work1.webp",
@@ -2944,7 +2944,7 @@ window.WORKS_DATA = [
      "#3.1운동",
      "#캠페인"
     ],
-    "booth": "3F E40",
+    "booth": "3F E38",
     "thumb": "images/works/Thumbnail/21101023_still,1919_Thumbnail.webp",
     "imgs": [
      "images/works/webportfolio/21101023_still,1919_work1.webp",
@@ -3147,7 +3147,7 @@ window.WORKS_DATA = [
      "#브랜딩",
      "#ÉCLORE"
     ],
-    "booth": "3F E02",
+    "booth": "3F E03",
     "thumb": "images/works/Thumbnail/22101021_ÉCLORE_Thumbnail.jpg",
     "imgs": [
      "images/works/webportfolio/22101021_ÉCLORE_work1.jpg"
@@ -3243,7 +3243,7 @@ window.WORKS_DATA = [
     "descEn": "Around 80% of people with developmental disabilities in Korea experience communication difficulties and use AAC, a visual language that supports or replaces speech and writing. Yet AAC has remained largely an assistive tool rather than a language for everyday relationships. Left on Read brings AAC into daily life through emoticons. By distributing AAC emoticons on KakaoTalk and encouraging everyone to use and respond with them, the campaign expands AAC into a shared form of communication that anyone can understand and use.",
     "video": "",
     "tags": [],
-    "booth": "3F E06",
+    "booth": "3F E07",
     "thumb": "images/works/Thumbnail/22101022_Unspoken Words_Thumbnail.webp",
     "imgs": [
      "images/works/webportfolio/22101022_Unspoken Words_Work1.webp",
@@ -3684,7 +3684,7 @@ window.WORKS_DATA = [
     "descEn": "Every architectural drawing has areas where nothing may be placed. They are left open so that people can move, pass through, and get out. These areas work only while they stay empty, and their size and direction are set by the dimensions of the human body, evacuation routes, and building codes. This book classifies the void spaces that architecture leaves empty on purpose by their geometric form, and traces through dimensions and regulations why each form takes the size and direction it does. The empty space that drawings reduce to conventional symbols is placed at the center of the page, with text, diagrams, and code excerpts arranged around it. In a finished building, these areas are invisible. People cross them every day, yet the fact that they were designed to be empty remains only in the drawings.",
     "video": "",
     "tags": [],
-    "booth": "3F C18",
+    "booth": "3F C16",
     "thumb": "images/works/Thumbnail/22102430_Geometric Void_Thumbnail.webp",
     "imgs": [
      "images/works/webportfolio/22102430_Geometric Void_work1.webp"

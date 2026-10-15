@@ -1093,3 +1093,11 @@ body.bg-over .dz-toolbar{z-index:34}
   .wk-side .wk-map{margin-top:0!important;margin-bottom:0!important}
   .wk-legend-m{margin-top:4px}
 }
+/* 디자이너·WORK 페이지의 모든 사진은 3D보다 위 */
+body.bg-over #page-designer img,body.bg-over #page-work img{position:relative;z-index:31}
+/* 태블릿(641~920): 지도 아래로 작품이 내려오면 핸들바 표시 */
+@media (min-width:641px) and (max-width:920px){
+  .wk-list{padding-top:12px}
+  .wk-list::before{content:"";display:block;position:sticky;top:43px;z-index:32;height:76px;margin:-12px -30px -44px;pointer-events:none;background:linear-gradient(#8E90DA,#8E90DA) center 8px/44px 5px no-repeat}
+  .wk-list.handle-stuck::before{background:linear-gradient(#8E90DA,#8E90DA) center 8px/44px 5px no-repeat,linear-gradient(#fff 0,#fff 42%,rgba(255,255,255,0) 100%)}
+}
