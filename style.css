@@ -1112,3 +1112,6 @@ body.bg-over .wk-toolbar{z-index:35}
 body.bg-over .wk-list::before{z-index:36}
 body.bg-over .dz-img,body.bg-over .wk-card-img{z-index:32}
 body.bg-over #wk-mpreview,body.bg-over #wk-preview,body.bg-over .wk-near-label{position:relative;z-index:33}
+/* 푸터: 3D는 파란 배경 위·글자 아래로만 */
+body.bg-over footer[data-shared-foot]{z-index:auto}
+body.bg-over footer[data-shared-foot] .m-info>*{position:relative;z-index:31}
