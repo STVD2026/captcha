@@ -1568,13 +1568,32 @@ window.addEventListener('scroll', function() {
   list.classList.toggle('handle-stuck', list.getBoundingClientRect().top < head.getBoundingClientRect().bottom - 4);
 }, { passive: true });
 
-/* 주소 #work / #designer / #message 로 바로 해당 페이지 열기 */
+/* 페이지마다 다른 주소 + 브라우저 뒤로/앞으로 가기 지원
+   #main · #designer · #designer/3(디자이너 상세) · #work · #work/3-0(작품 상세) · #message */
+var _routing = false;
+function _routePush(h) {
+  if (_routing || location.hash === h) return;
+  try { history.replaceState({ y: window.scrollY }, '', location.href); } catch (e) {}
+  history.pushState({ y: 0 }, '', h);
+}
 (function(){
-  function fromHash(){
-    var h = (location.hash || '').replace('#','').toLowerCase();
-    if (h && document.getElementById('page-' + h)) { showPage(h); if (h === 'work') setTimeout(wkFitMobile, 60); }
+  var _show = showPage, _openD = openDesigner, _closeD = closeDesignerDetail, _openW = openWorkDirect;
+  showPage = function(name) { _show(name); _routePush('#' + name); };
+  openDesigner = function(idx) { _openD(idx); if (document.getElementById('page-designer').classList.contains('active')) _routePush('#designer/' + idx); };
+  closeDesignerDetail = function() { var ov = document.getElementById('dz-detail').classList.contains('as-overlay'); _closeD(); if (!ov) _routePush('#designer'); };
+  openWorkDirect = function(d, w) { _openW(d, w); _routePush('#work/' + d + '-' + (w || 0)); };
+  function route(y) {
+    var h = (location.hash || '').replace('#', ''), m;
+    _routing = true;
+    try {
+      if ((m = h.match(/^designer\/(\d+)$/))) { if (!document.getElementById('page-designer').classList.contains('active')) _show('designer'); _openD(+m[1]); }
+      else if ((m = h.match(/^work\/(\d+)-(\d+)$/))) _openW(+m[1], +m[2]);
+      else if (h && document.getElementById('page-' + h)) { _show(h); if (h === 'work') setTimeout(wkFitMobile, 60); }
+      else _show('main');
+    } finally { _routing = false; }
+    if (y) setTimeout(function(){ window.scrollTo({ top: y, behavior: 'instant' }); }, 80);
   }
-  window.addEventListener('load', fromHash);
-  window.addEventListener('hashchange', fromHash);
+  window.addEventListener('popstate', function(e) { route(e.state && e.state.y); });
+  window.addEventListener('load', function() { if (location.hash) route(0); try { history.replaceState({ y: 0 }, '', location.href); } catch (e) {} });
 })();
 document.body.classList.add('bg-over'); // 3D 배경을 카드 위로(사진·지도는 그 위)
