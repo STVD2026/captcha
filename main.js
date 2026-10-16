@@ -68,6 +68,7 @@ function contactHTML(c) {
 }
 
 function showPage(name) {
+  if (name === 'message' && window.innerWidth <= 640) name = 'main'; // 모바일: 포토부스(MESSAGE) 미제공
   document.querySelectorAll('.page').forEach(function(p){ p.classList.remove('active'); });
   document.querySelectorAll('.nav-links button').forEach(function(b){ b.classList.remove('active'); });
   document.getElementById('designer-detail').classList.remove('active');
@@ -1579,7 +1580,7 @@ function _routePush(h) {
 }
 (function(){
   var _show = showPage, _openD = openDesigner, _closeD = closeDesignerDetail, _openW = openWorkDirect;
-  showPage = function(name) { _show(name); _routePush('#' + name); };
+  showPage = function(name) { _show(name); var a = document.querySelector('.page.active'); _routePush('#' + (a ? a.id.replace('page-', '') : name)); };
   openDesigner = function(idx) { _openD(idx); if (document.getElementById('page-designer').classList.contains('active')) _routePush('#designer/' + idx); };
   closeDesignerDetail = function() { var ov = document.getElementById('dz-detail').classList.contains('as-overlay'); _closeD(); if (!ov) _routePush('#designer'); };
   openWorkDirect = function(d, w) { _openW(d, w); _routePush('#work/' + d + '-' + (w || 0)); };
@@ -1589,7 +1590,7 @@ function _routePush(h) {
     try {
       if ((m = h.match(/^designer\/(\d+)$/))) { if (!document.getElementById('page-designer').classList.contains('active')) _show('designer'); _openD(+m[1]); }
       else if ((m = h.match(/^work\/(\d+)-(\d+)$/))) _openW(+m[1], +m[2]);
-      else if (h && document.getElementById('page-' + h)) { _show(h); if (h === 'work') setTimeout(wkFitMobile, 60); }
+      else if (h && document.getElementById('page-' + h)) { _show(h); if (h === 'work') setTimeout(wkFitMobile, 60); if (!document.getElementById('page-' + h).classList.contains('active')) try { history.replaceState({ y: 0 }, '', '#main'); } catch (e) {} }
       else _show('main');
     } finally { _routing = false; }
     if (y) setTimeout(function(){ window.scrollTo({ top: y, behavior: 'instant' }); }, 80);
