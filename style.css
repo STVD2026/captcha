@@ -1116,3 +1116,5 @@ body.bg-over #wk-mpreview,body.bg-over #wk-preview,body.bg-over .wk-near-label{p
 /* 푸터: 3D는 파란 배경 위·글자 아래로만 */
 body.bg-over footer[data-shared-foot]{z-index:auto}
 body.bg-over footer[data-shared-foot] .m-info>*{position:relative;z-index:31}
+/* 모바일·태블릿 디자이너 상세(전체화면)는 검색·필터보다 위 */
+@media (max-width:920px){body.bg-over .dz-detail{z-index:150}}
