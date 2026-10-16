@@ -598,9 +598,8 @@ nav{
 /* ── 반응형: 태블릿 ── */
 @media (max-width:1024px){
   .nav-logo{padding:0 20px;font-size:20px}
-  .nav-logo{flex:1 1 auto}
-  .nav-links{flex:0 0 auto;margin-left:auto;justify-content:flex-end;gap:0} /* 메뉴 버튼은 글자 폭만큼만, 남는 공간은 로고 쪽 */
-  .nav-links li{flex:0 0 auto}
+  .nav-links{flex:1}
+  .nav-links li{flex:1}
   .nav-links button{width:100%;font-size:11px}
   .m-title{left:40px;right:40px;top:calc(42px + 32px)}
   .m-meta{padding:0 40px;bottom:36px;flex-wrap:wrap;gap:16px 24px}
@@ -621,8 +620,9 @@ nav{
 /* ── 반응형: 모바일 ── */
 @media (max-width:640px){
   .nav-logo{font-size:17px;padding:0 28px 0 16px;letter-spacing:.02em} /* 로고는 크게, 오른쪽 여백 넉넉히 (로고 = 메인 이동) */
-  .nav-links{flex:1}
-  .nav-links li{flex:1}
+  .nav-logo{flex:1 1 auto}
+  .nav-links{flex:0 0 auto;margin-left:auto;justify-content:flex-end;gap:0} /* 메뉴 버튼은 글자 폭만큼만, 남는 공간은 로고 쪽 */
+  .nav-links li{flex:0 0 auto}
   .nav-links li:has(#nav-main),.nav-links li:has(#nav-message){display:none} /* 모바일: MAIN·MESSAGE 버튼 숨김 */
   .nav-links button{width:auto;padding:0 18px;font-size:11px;letter-spacing:0}
   .m-title{left:20px;right:20px;letter-spacing:.5px;top:calc(42px + 22px)}
