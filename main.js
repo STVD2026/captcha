@@ -1501,7 +1501,7 @@ function wkFitMobile() {
   var side2 = box.closest('.wk-side');
   var other = side2 ? side2.offsetHeight - box.offsetHeight : 0;
   // 첫 화면에 핸들바·검색·필터가 보이도록(약 150px) 지도 높이를 화면 높이에 맞춰 줄임
-  var H = Math.round(Math.max(Math.min(w * MAX_ASPECT, window.innerHeight - 43 - other - 70), w * 1.2));
+  var H = Math.round(Math.max(Math.min(w * MAX_ASPECT, window.innerHeight - 43 - other - 150), w * 0.95)); // iOS 하단 주소창(약 80px)까지 고려해 핸들바·검색이 첫 화면에 보이게
   box.style.height = H + 'px'; box.classList.add('wk-map-fixed');
   svg.style.maxHeight = H + 'px'; svg.style.width = 'auto'; svg.style.maxWidth = '100%';
 }
