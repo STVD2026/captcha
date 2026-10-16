@@ -436,7 +436,7 @@ function wkLoadMap(floor) {
       if (best) { e.stopPropagation(); best.dispatchEvent(new MouseEvent('click', { bubbles: true })); }
     });
   }
-  else fetch('images/work/map-' + floor + 'f.svg?v=5').then(function(r){ return r.text(); }).then(function(t){ _wkMaps[floor] = t; apply(t); });
+  else fetch('images/work/map-' + floor + 'f.svg?v=6').then(function(r){ return r.text(); }).then(function(t){ _wkMaps[floor] = t; apply(t); });
 }
 /* 강조용 흰 알약: 화면에 보일 때 글자 크기에 맞춰 생성 (Figma E12 비율) */
 var WK_PILL_W = 42, WK_PILL_H = 23; // 모든 층 동일한 강조 알약 크기 (SVG 단위)
@@ -1511,7 +1511,7 @@ window.addEventListener('DOMContentLoaded', function(){ document.addEventListene
 var _wkPop = null;
 function wkGetMap(floor, cb) {
   if (_wkMaps[floor]) return cb(_wkMaps[floor]);
-  fetch('images/work/map-' + floor + 'f.svg?v=5').then(function(r){ return r.text(); }).then(function(t){ _wkMaps[floor] = t; cb(t); });
+  fetch('images/work/map-' + floor + 'f.svg?v=6').then(function(r){ return r.text(); }).then(function(t){ _wkMaps[floor] = t; cb(t); });
 }
 function wkShowMapPop(tag) {
   var m = (tag.textContent || '').replace(/\s+/g, '').match(/^(\d)F([CE]\d\d)$/);
