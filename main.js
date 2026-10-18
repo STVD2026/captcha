@@ -1636,8 +1636,7 @@ function _esc(t) { return String(t || '').replace(/[&<>"]/g, function(c){ return
 function emptyHTML(kind, q) {
   q = (q || '').trim();
   return '<div class="nr">'
-    + '<div class="nr-box"><span class="nr-check" aria-hidden="true"></span><span class="nr-robot">I\'m not a robot</span></div>'
-    + '<h3 class="nr-title">No Match</h3>'
+    + '<div class="nr-box"><span class="nr-check" aria-hidden="true"></span><span class="nr-robot">No match found</span></div>'
     + '<p class="nr-sub">' + (q ? '‘' + _esc(q) + '’에 맞는 ' : '조건에 맞는 ') + (kind === 'work' ? '작품이' : '디자이너가') + ' 없어요. 다른 단어로 다시 찾아보세요.</p>'
     + '<button type="button" class="nr-reset" onclick="emptyReset(\'' + kind + '\')">전체 보기</button>'
     + '</div>';

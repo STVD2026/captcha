@@ -1174,7 +1174,8 @@ a,button,[onclick],label,summary,.wk-bt,.wk-bt *,[role=button]{cursor:var(--cur-
 .nr-check::before{transform:translate(-50%,-50%) rotate(45deg)}
 .nr-check::after{transform:translate(-50%,-50%) rotate(-45deg)}
 .nr-title{font-family:var(--gal);font-weight:700;font-size:44px;letter-spacing:.04em;text-transform:uppercase;color:var(--blue);line-height:1;margin-top:6px}
-.nr-sub{font-family:var(--noto);font-size:14px;color:var(--blue);line-height:1.6;word-break:keep-all}
+.nr-sub{font-family:var(--noto);font-weight:600;font-size:15px;color:var(--blue);line-height:1.6;word-break:keep-all}
 .nr-reset{height:36px;padding:0 18px;background:var(--blue);color:#fff;border:none;font-family:var(--noto);font-weight:500;font-size:13px}
 .nr-reset:hover{background:#3a3cff}
 @media (max-width:640px){.nr-title{font-size:34px}.nr{padding:32px 0 60px}}
+.nr-robot{font-family:var(--sg);font-weight:700;font-size:15px;letter-spacing:.02em}
