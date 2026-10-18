@@ -712,7 +712,7 @@ nav{
 .dz-card{margin:0!important;padding:8px;border-right:2px solid var(--blue);border-bottom:2px solid var(--blue)}
 .dz-card .dz-img{margin-bottom:8px}
 .dz-card:hover .dz-img img{transform:none}
-.dz-card:hover{background:#7C7EFF}
+.dz-card:hover{background:var(--blue)}
 .dz-card.sel{background:var(--blue)}
 .dz-card:hover .dz-kr,.dz-card:hover .dz-en{color:#fff}
 @media (max-width:640px){.dz-grid{margin:0}}
