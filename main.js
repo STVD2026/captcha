@@ -100,7 +100,7 @@ function renderGrid() {
       + '</div>';
   }
 
-  if (!html) html = '<p class="no-result">검색 결과가 없습니다.</p>';
+  if (!html) html = emptyHTML('designer', curSearch);
   document.getElementById('designer-grid').innerHTML = html;
 }
 
@@ -312,7 +312,7 @@ function renderWorks() {
     list.sort(function(a, b){ return a.d - b.d || (a.k < b.k ? -1 : 1); });
   } else list.sort(function(a, b){ return a.k < b.k ? -1 : a.k > b.k ? 1 : 0; });
   var html = list.map(function(x){ return workCardHTML(x.i, x.wi); }).join('');
-  if(!html) html = '<div class="wk-empty">검색 결과가 없습니다.</div>';
+  if(!html) html = emptyHTML('work', q);
   document.getElementById('work-grid').innerHTML = html;
   // 모바일: 부스를 골랐을 때 "근처 작품" 안내 표시
   var grid = document.getElementById('work-grid'), lab = document.getElementById('wk-near-label');
@@ -1630,3 +1630,28 @@ document.body.classList.add('bg-over'); // 3D 배경을 카드 위로(사진·�
   document.addEventListener('click', function(e) { if (inHandle(e.clientY)) { e.stopPropagation(); e.preventDefault(); toMap(); } }, true);
 })();
 
+
+/* 검색 결과 없음: 캡챠 인증 실패 화면처럼 */
+function _esc(t) { return String(t || '').replace(/[&<>"]/g, function(c){ return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+function emptyHTML(kind, q) {
+  q = (q || '').trim();
+  return '<div class="nr">'
+    + '<div class="nr-box"><span class="nr-check" aria-hidden="true"></span><span class="nr-robot">I\'m not a robot</span></div>'
+    + '<h3 class="nr-title">No Match</h3>'
+    + '<p class="nr-sub">' + (q ? '‘' + _esc(q) + '’에 맞는 ' : '조건에 맞는 ') + (kind === 'work' ? '작품이' : '디자이너가') + ' 없어요. 다른 단어로 다시 찾아보세요.</p>'
+    + '<button type="button" class="nr-reset" onclick="emptyReset(\'' + kind + '\')">전체 보기</button>'
+    + '</div>';
+}
+function emptyReset(kind) {
+  if (kind === 'work') {
+    var i = document.querySelector('.wk-search input'); if (i) i.value = '';
+    var all = document.querySelector('.wk-filter[onclick*="\'all\'"]');
+    if (all) filterWork(all, 'all'); else searchWork('');
+    searchWork('');
+  } else {
+    var d = document.querySelector('.dz-search input'); if (d) d.value = '';
+    var a = document.querySelector('.dz-filter[onclick*="\'all\'"]');
+    if (a) filterInitial(a, 'all');
+    searchDesigner('');
+  }
+}

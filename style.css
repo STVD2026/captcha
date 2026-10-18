@@ -1165,3 +1165,16 @@ html,body{cursor:var(--cur-arrow)}
 *,*::before,*::after{cursor:inherit}
 input,textarea,select{cursor:var(--cur-arrow)}
 a,button,[onclick],label,summary,.wk-bt,.wk-bt *,[role=button]{cursor:var(--cur-hand)}
+/* 검색 결과 없음 */
+.dz-grid:has(.nr),.wk-grid:has(.nr){border:none}
+.nr{grid-column:1/-1;display:flex;flex-direction:column;align-items:flex-start;gap:14px;padding:48px 0 80px;position:relative;z-index:32}
+.nr-box{display:flex;align-items:center;gap:12px;border:2px solid var(--blue);background:#fff;padding:12px 16px;font-family:var(--sg);font-size:14px;color:var(--blue)}
+.nr-check{width:20px;height:20px;border:2px solid var(--blue);position:relative;background:#fff}
+.nr-check::before,.nr-check::after{content:"";position:absolute;left:50%;top:50%;width:18px;height:2px;background:var(--blue)}
+.nr-check::before{transform:translate(-50%,-50%) rotate(45deg)}
+.nr-check::after{transform:translate(-50%,-50%) rotate(-45deg)}
+.nr-title{font-family:var(--gal);font-weight:700;font-size:44px;letter-spacing:.04em;text-transform:uppercase;color:var(--blue);line-height:1;margin-top:6px}
+.nr-sub{font-family:var(--noto);font-size:14px;color:var(--blue);line-height:1.6;word-break:keep-all}
+.nr-reset{height:36px;padding:0 18px;background:var(--blue);color:#fff;border:none;font-family:var(--noto);font-weight:500;font-size:13px}
+.nr-reset:hover{background:#3a3cff}
+@media (max-width:640px){.nr-title{font-size:34px}.nr{padding:32px 0 60px}}
