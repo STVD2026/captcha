@@ -307,7 +307,8 @@ function renderWorks() {
   var near = (typeof _wkNearCode !== 'undefined' && _wkNearCode && !q) ? _wkNearCode : null;
   if (near) {
     list = list.filter(function(x){ return !(x.i === near.i && x.wi === near.wi); });
-    list.forEach(function(x){ var c = x.k.slice(1, 2), n = +x.k.slice(2); x.d = (c === near.L ? 0 : 1000) + Math.abs(n - near.n); });
+    var nc = near.L + ('0' + near.n).slice(-2), np = wkBoothXY(nc);
+    list.forEach(function(x){ var c = x.k.slice(1, 2) + x.k.slice(-2); x.d = wkDist(np, wkBoothXY(c), nc, c); });
     list.sort(function(a, b){ return a.d - b.d || (a.k < b.k ? -1 : 1); });
   } else list.sort(function(a, b){ return a.k < b.k ? -1 : a.k > b.k ? 1 : 0; });
   var html = list.map(function(x){ return workCardHTML(x.i, x.wi); }).join('');
@@ -508,14 +509,24 @@ function wkEnsurePill(g) {
   g.insertBefore(rect, g.firstChild);
   g._pill = rect;
 }
+/* 지도에서 부스 번호의 실제 위치(중심점). 지도에 없으면 null */
+function wkBoothXY(code) {
+  var g = document.querySelector('#wk-map g[id="' + code + '"]'); if (!g) return null;
+  var r = g.getBoundingClientRect(); if (!r.width && !r.height) return null;
+  return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
+}
+function wkDist(a, b, codeA, codeB) {
+  if (a && b) return Math.hypot(a.x - b.x, a.y - b.y);
+  return (codeA[0] === codeB[0] ? 0 : 1000) + Math.abs(+codeA.slice(1) - +codeB.slice(1)); // 위치를 모르면 번호 기준
+}
 function wkNearby(floor, code, self) {
-  var L = code[0], n = +code.slice(1), out = [];
+  var o = wkBoothXY(code), out = [];
   DESIGNERS.forEach(function(d, i) { d.works.forEach(function(w, j) {
     var m = (w.booth || '').replace(/\s+/g, '').match(/^(\d)F([CE])(\d\d)$/);
     if (!m || m[1] !== floor || (i === self[0] && j === self[1])) return;
-    out.push({ i: i, j: j, dist: (m[2] === L ? 0 : 100) + Math.abs(+m[3] - n) });
+    out.push({ i: i, j: j, dist: wkDist(o, wkBoothXY(m[2] + m[3]), code, m[2] + m[3]) });
   }); });
-  return out.sort(function(a, b){ return a.dist - b.dist; }); // 같은 층 작품 전부, 가까운 순
+  return out.sort(function(a, b){ return a.dist - b.dist; }); // 같은 층 작품 전부, 지도상 실제 거리 가까운 순
 }
 function wkShowPreview(code, hit) {
   var gg = document.querySelector('#wk-map g[id="' + code + '"]'); if (gg) wkEnsurePill(gg);
