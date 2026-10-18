@@ -1607,11 +1607,20 @@ document.body.classList.add('bg-over'); // 3D 배경을 카드 위로(사진·�
     var list = document.querySelector('#page-work.active .wk-list');
     if (!list || window.innerWidth > 920 || !list.classList.contains('handle-stuck')) return false;
     var hd = document.querySelector('.wk-side-head'), top = (window.innerWidth <= 640 && hd) ? hd.getBoundingClientRect().bottom : 43;
-    return y >= top - 4 && y <= top + 40;
+    return y >= top - 4 && y <= top + 56;
   }
   function toMap() { window.scrollTo({ top: 0, behavior: 'smooth' }); }
-  document.addEventListener('touchstart', function(e) { var t = e.touches[0]; sy = inHandle(t.clientY) ? t.clientY : null; }, { passive: true });
-  document.addEventListener('touchmove', function(e) { if (sy !== null && e.touches[0].clientY - sy > 24) { sy = null; toMap(); } }, { passive: true });
+  var moved = 0;
+  document.addEventListener('touchstart', function(e) { var t = e.touches[0]; moved = 0; sy = inHandle(t.clientY) ? t.clientY : null; }, { passive: true });
+  document.addEventListener('touchmove', function(e) { if (sy !== null) moved = e.touches[0].clientY - sy; }, { passive: true });
+  // 손을 뗄 때 실행 (iOS는 터치 중 스크롤 이동을 무시함)
+  document.addEventListener('touchend', function() { if (sy !== null && moved > 20) toMap(); sy = null; }, { passive: true });
   // 핸들바 자리를 누르면 그 아래 작품 카드가 열리지 않게 먼저 가로챔
   document.addEventListener('click', function(e) { if (inHandle(e.clientY)) { e.stopPropagation(); e.preventDefault(); toMap(); } }, true);
 })();
+
+/* 디자이너: 검색·필터가 위에 붙었을 때만 아래 그라데이션 */
+window.addEventListener('scroll', function() {
+  var tb = document.querySelector('#page-designer.active .dz-toolbar'); if (!tb) return;
+  tb.classList.toggle('stuck', tb.getBoundingClientRect().top <= 44 && window.scrollY > 40);
+}, { passive: true });
