@@ -1599,3 +1599,19 @@ function _routePush(h) {
   window.addEventListener('load', function() { if (location.hash) route(0); try { history.replaceState({ y: 0 }, '', location.href); } catch (e) {} });
 })();
 document.body.classList.add('bg-over'); // 3D 배경을 카드 위로(사진·지도는 그 위)
+
+/* WORK 모바일·태블릿: 위에 붙은 핸들바를 아래로 끌거나 누르면 바로 지도(맨 위)로 */
+(function(){
+  var sy = null;
+  function inHandle(y) {
+    var list = document.querySelector('#page-work.active .wk-list');
+    if (!list || window.innerWidth > 920 || !list.classList.contains('handle-stuck')) return false;
+    var hd = document.querySelector('.wk-side-head'), top = (window.innerWidth <= 640 && hd) ? hd.getBoundingClientRect().bottom : 43;
+    return y >= top - 4 && y <= top + 40;
+  }
+  function toMap() { window.scrollTo({ top: 0, behavior: 'smooth' }); }
+  document.addEventListener('touchstart', function(e) { var t = e.touches[0]; sy = inHandle(t.clientY) ? t.clientY : null; }, { passive: true });
+  document.addEventListener('touchmove', function(e) { if (sy !== null && e.touches[0].clientY - sy > 24) { sy = null; toMap(); } }, { passive: true });
+  // 핸들바 자리를 누르면 그 아래 작품 카드가 열리지 않게 먼저 가로챔
+  document.addEventListener('click', function(e) { if (inHandle(e.clientY)) { e.stopPropagation(); e.preventDefault(); toMap(); } }, true);
+})();
