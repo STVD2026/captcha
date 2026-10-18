@@ -18,12 +18,13 @@ html{scroll-behavior:smooth}
 body{background:var(--bg);color:var(--white);font-family:var(--font);font-weight:300;-webkit-font-smoothing:antialiased;overflow-x:hidden}
 /* 스크롤바: 라운딩 없는 파랑 */
 html{scrollbar-color:#5254FF transparent;scrollbar-width:thin}
-::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar{width:8px;height:8px}
 ::-webkit-scrollbar-track{background:transparent}
-::-webkit-scrollbar-thumb{background:#5254FF;border-radius:0}
+/* 픽셀 느낌: 2px 체커 디더 + 양옆 2px 진한 테두리 */
+::-webkit-scrollbar-thumb{border-radius:0;background:repeating-conic-gradient(#5254FF 0 25%,#8E90FF 0 50%) 0 0/4px 4px;box-shadow:inset 2px 0 0 #5254FF,inset -2px 0 0 #5254FF,inset 0 2px 0 #5254FF,inset 0 -2px 0 #5254FF}
 ::-webkit-scrollbar-corner{background:transparent}
 .nav-links{list-style:none}
-.nav-links button{background:none;border:none;cursor:pointer;font-family:var(--font);transition:color var(--ease),background var(--ease)}
+.nav-links button{background:none;border:none;cursor:var(--cur-hand);font-family:var(--font);transition:color var(--ease),background var(--ease)}
 .page{display:none;padding-top:43px;min-height:100vh}
 .page.active{display:block}
 @keyframes fadeUp{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:translateY(0)}}
@@ -98,7 +99,7 @@ html{scrollbar-color:#5254FF transparent;scrollbar-width:thin}
 }
 
 .designer-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(158px,1fr));gap:2px;padding:2px 40px 80px}
-.d-card{background:var(--bg2);padding:24px 18px 22px;cursor:pointer;transition:background var(--ease);position:relative}
+.d-card{background:var(--bg2);padding:24px 18px 22px;cursor:var(--cur-hand);transition:background var(--ease);position:relative}
 .d-card:hover{background:var(--white);color:var(--bg)}
 .d-card:hover .d-en{color:rgba(11,11,15,.4)}
 .d-card:hover .d-avatar{background:rgba(11,11,15,.08)}
@@ -110,7 +111,7 @@ html{scrollbar-color:#5254FF transparent;scrollbar-width:thin}
 #designer-detail,#work-detail{display:none;padding-top:43px;min-height:100vh;background:var(--bg)}
 #designer-detail.active,#work-detail.active{display:block}
 .back-bar{padding:0 40px;height:48px;display:flex;align-items:center;border-bottom:1px solid var(--g800)}
-.back-btn{font-size:11px;font-weight:500;color:var(--g500);cursor:pointer;background:none;border:none;font-family:var(--font);transition:color var(--ease)}
+.back-btn{font-size:11px;font-weight:500;color:var(--g500);cursor:var(--cur-hand);background:none;border:none;font-family:var(--font);transition:color var(--ease)}
 .back-btn:hover{color:var(--white)}
 .detail-strip{display:grid;grid-template-columns:260px 280px 1fr;border-bottom:1px solid var(--g800);min-height:260px}
 .strip-avatar{padding:48px 40px;border-right:1px solid var(--g800);display:flex;flex-direction:column;gap:12px;justify-content:center}
@@ -126,7 +127,7 @@ html{scrollbar-color:#5254FF transparent;scrollbar-width:thin}
 .det-works-section{padding:56px 40px 80px}
 .det-works-label{font-size:9px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--g500);margin-bottom:32px}
 .det-works-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:2px}
-.work-card{background:var(--bg2);cursor:pointer;transition:background var(--ease);overflow:hidden}
+.work-card{background:var(--bg2);cursor:var(--cur-hand);transition:background var(--ease);overflow:hidden}
 .work-card:hover{background:var(--bg3)}
 .work-thumb{aspect-ratio:4/3;background:var(--bg3);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;transition:background var(--ease)}
 .work-card:hover .work-thumb{background:var(--bg4)}
@@ -136,12 +137,12 @@ html{scrollbar-color:#5254FF transparent;scrollbar-width:thin}
 .work-title{font-size:15px;font-weight:700;letter-spacing:-.01em;margin-bottom:5px;line-height:1.3}
 .work-by{font-size:10px;color:var(--g500)}
 .filter-row{padding:0 40px 28px;display:flex;gap:6px;flex-wrap:wrap}
-.filter-btn{font-size:10px;font-weight:600;letter-spacing:.06em;padding:7px 16px;background:var(--bg3);border:none;cursor:pointer;color:var(--g300);font-family:var(--font);transition:all var(--ease)}
+.filter-btn{font-size:10px;font-weight:600;letter-spacing:.06em;padding:7px 16px;background:var(--bg3);border:none;cursor:var(--cur-hand);color:var(--g300);font-family:var(--font);transition:all var(--ease)}
 .filter-btn:hover,.filter-btn.active{background:var(--white);color:var(--bg)}
 .booth-section{padding:0 40px 56px}
 .booth-note{font-size:11px;color:var(--g500);margin-bottom:24px}
 .booth-map{display:grid;grid-template-columns:repeat(8,1fr);gap:3px;max-width:720px}
-.booth-cell{aspect-ratio:1;background:var(--bg3);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:7px;font-weight:500;color:var(--g500);position:relative;transition:background var(--ease);text-align:center;line-height:1.3;padding:2px}
+.booth-cell{aspect-ratio:1;background:var(--bg3);cursor:var(--cur-hand);display:flex;align-items:center;justify-content:center;font-size:7px;font-weight:500;color:var(--g500);position:relative;transition:background var(--ease);text-align:center;line-height:1.3;padding:2px}
 .booth-cell:hover{background:var(--white);color:var(--bg)}
 .booth-tooltip{position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);background:var(--white);color:var(--bg);padding:5px 10px;font-size:10px;font-weight:600;white-space:nowrap;pointer-events:none;opacity:0;transition:opacity .12s;z-index:50}
 .booth-cell:hover .booth-tooltip{opacity:1}
@@ -163,7 +164,7 @@ html{scrollbar-color:#5254FF transparent;scrollbar-width:thin}
 .wd-desc{font-size:13px;font-weight:300;line-height:1.95;color:var(--g300)}
 .wd-meta-label{font-size:9px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--g500);margin-bottom:5px}
 .wd-meta-value{font-size:14px;font-weight:600}
-.wd-dlink{display:block;background:var(--white);color:var(--bg);padding:14px 20px;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;border:none;width:100%;text-align:left;font-family:var(--font);transition:opacity var(--ease);margin-top:8px}
+.wd-dlink{display:block;background:var(--white);color:var(--bg);padding:14px 20px;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;cursor:var(--cur-hand);border:none;width:100%;text-align:left;font-family:var(--font);transition:opacity var(--ease);margin-top:8px}
 .wd-dlink:hover{opacity:.7}
 /* 갤러리: 최대 1400px 중앙 정렬, 양 옆 검정, 9:16 고정 비율 */
 .wdv-gallery{display:flex;flex-direction:column;gap:0;padding:0;padding-top:112px;background:var(--bg)}
@@ -177,7 +178,7 @@ html{scrollbar-color:#5254FF transparent;scrollbar-width:thin}
 input[type=text],textarea{background:var(--bg4);border:none;border-bottom:1px solid var(--g700);padding:10px 14px;font-family:var(--font);font-size:13px;font-weight:300;color:var(--white);width:100%;outline:none;resize:none;transition:border-color var(--ease)}
 input[type=text]:focus,textarea:focus{border-bottom-color:var(--g300)}
 input::placeholder,textarea::placeholder{color:var(--g500)}
-.msg-submit{background:var(--white);color:var(--bg);border:none;padding:12px 28px;font-family:var(--font);font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;white-space:nowrap}
+.msg-submit{background:var(--white);color:var(--bg);border:none;padding:12px 28px;font-family:var(--font);font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;cursor:var(--cur-hand);white-space:nowrap}
 .msg-submit:hover{opacity:.75}
 .msg-list{padding:0 40px 80px}
 .msg-item{padding:28px 0;display:grid;grid-template-columns:180px 1fr;gap:24px}
@@ -267,7 +268,7 @@ footer{padding:28px 40px;background:var(--bg2);border-top:1px solid var(--g800);
 .pb-start-btn{position:absolute;left:50%;bottom:14%;transform:translateX(-50%);
   background:var(--blue);color:#fff;border:2px solid var(--blue);
   padding:13px 30px;font-family:var(--noto);font-size:14px;font-weight:700;letter-spacing:.01em;
-  cursor:pointer;transition:background var(--ease),color var(--ease);white-space:nowrap;z-index:4;
+  cursor:var(--cur-hand);transition:background var(--ease),color var(--ease);white-space:nowrap;z-index:4;
   display:flex;align-items:center;gap:10px}
 .pb-start-btn .en{font-family:var(--gal);font-weight:700;text-transform:uppercase;letter-spacing:.06em}
 .pb-start-btn .pb-rec{width:9px;height:9px;border-radius:50%;background:currentColor;flex:0 0 auto;transition:transform var(--ease)}
@@ -276,10 +277,10 @@ footer{padding:28px 40px;background:var(--bg2);border-top:1px solid var(--g800);
 .booth-countdown{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:min(18vw,120px);font-weight:900;color:#fff;opacity:0;pointer-events:none;letter-spacing:-.06em;z-index:5}
 .booth-countdown.show{opacity:1}
 .pb-hint{font-size:11px;color:rgba(255,255,255,.75);line-height:1.6;text-align:center}
-.pb-cam-change{background:none;border:none;color:#fff;font-family:var(--noto);font-size:11px;font-weight:600;cursor:pointer;text-decoration:underline;padding:0;text-underline-offset:2px}
+.pb-cam-change{background:none;border:none;color:#fff;font-family:var(--noto);font-size:11px;font-weight:600;cursor:var(--cur-hand);text-decoration:underline;padding:0;text-underline-offset:2px}
 .pb-cam-change:hover{opacity:.8}
 /* 뒤로 가기 */
-.pb-back{align-self:center;display:inline-flex;align-items:center;gap:8px;background:transparent;color:#fff;border:1.5px solid #fff;padding:8px 16px;font-family:var(--noto);font-size:13px;font-weight:700;cursor:pointer;margin-bottom:12px;transition:background var(--ease),color var(--ease)}
+.pb-back{align-self:center;display:inline-flex;align-items:center;gap:8px;background:transparent;color:#fff;border:1.5px solid #fff;padding:8px 16px;font-family:var(--noto);font-size:13px;font-weight:700;cursor:var(--cur-hand);margin-bottom:12px;transition:background var(--ease),color var(--ease)}
 .pb-back:hover{background:#fff;color:var(--blue)}
 .pb.shooting .pb-back{visibility:hidden}
 
@@ -288,7 +289,7 @@ footer{padding:28px 40px;background:var(--bg2);border-top:1px solid var(--g800);
 .pb-pick-title{font-family:var(--gal);font-weight:700;font-size:clamp(22px,3vw,32px);color:#fff;text-transform:uppercase;letter-spacing:.05em}
 .pb-pick-sub{font-family:var(--noto);font-size:12px;color:rgba(255,255,255,.82);margin-bottom:24px}
 .pb-cams{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;width:100%}
-.pb-cam{background:rgba(255,255,255,.95);border:2px solid transparent;padding:14px 14px 16px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:9px;transition:transform var(--ease),border-color var(--ease)}
+.pb-cam{background:rgba(255,255,255,.95);border:2px solid transparent;padding:14px 14px 16px;cursor:var(--cur-hand);display:flex;flex-direction:column;align-items:center;gap:9px;transition:transform var(--ease),border-color var(--ease)}
 .pb-cam:hover{transform:translateY(-4px);border-color:#fff}
 .pb-cam-img{width:100%;aspect-ratio:4/5;background-size:cover;background-position:center;display:block}
 .pb-cam-name{font-family:var(--gal);font-weight:700;font-size:20px;color:var(--blue);letter-spacing:.04em}
@@ -303,12 +304,12 @@ footer{padding:28px 40px;background:var(--bg2);border-top:1px solid var(--g800);
 .pb-panel-t+.pb-panel-t{margin-top:10px}
 /* 스티커 */
 .pb-stickers{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
-.pb-sticker{aspect-ratio:1;min-width:0;overflow:hidden;background:#fff;border:1px solid var(--blue);padding:6px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background var(--ease)}
+.pb-sticker{aspect-ratio:1;min-width:0;overflow:hidden;background:#fff;border:1px solid var(--blue);padding:6px;cursor:var(--cur-hand);display:flex;align-items:center;justify-content:center;transition:background var(--ease)}
 .pb-sticker.is-on,.pb-sticker:hover{background:var(--blue)}
 .pb-sticker img{max-width:100%;max-height:100%;object-fit:contain}
 /* 프레임 색 */
 .pb-frames{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
-.pb-fswatch{aspect-ratio:1;border:1px solid var(--blue);cursor:pointer;transition:outline var(--ease)}
+.pb-fswatch{aspect-ratio:1;border:1px solid var(--blue);cursor:var(--cur-hand);transition:outline var(--ease)}
 .pb-fswatch.is-on{outline:3px solid var(--blue);outline-offset:2px}
 /* 중앙 스트립 */
 .pb-stripwrap{display:flex;justify-content:center}
@@ -327,7 +328,7 @@ footer{padding:28px 40px;background:var(--bg2);border-top:1px solid var(--g800);
 .booth-bubble::after{content:'';position:absolute;bottom:-6px;left:14px;width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;border-top:6px solid var(--blue)}
 /* 메시지 패널 */
 .pb-swatches{display:flex;gap:10px}
-.pb-swatch{width:38px;height:38px;border:1px solid var(--blue);cursor:pointer;transition:outline var(--ease)}
+.pb-swatch{width:38px;height:38px;border:1px solid var(--blue);cursor:var(--cur-hand);transition:outline var(--ease)}
 .pb-swatch.is-on{outline:3px solid var(--blue);outline-offset:2px}
 .pb-msgbox{border:1px solid var(--blue);background:#fff;padding:10px 12px}
 .pb-msgbox textarea{width:100%;border:none;outline:none;resize:none;background:transparent;font-family:var(--noto);font-size:13px;font-weight:500;color:var(--blue);line-height:1.5;min-height:64px}
@@ -339,9 +340,9 @@ footer{padding:28px 40px;background:var(--bg2);border-top:1px solid var(--g800);
 .pb-sec{display:flex;flex-direction:column;gap:14px}
 .pb-actions{display:flex;flex-direction:column;gap:14px;margin-top:auto}
 .pb-mtabs{display:none}
-.pb-done{background:#C9CAF2;color:var(--blue);border:none;padding:12px 0;width:100%;font-family:var(--noto);font-size:14px;font-weight:600;cursor:pointer;transition:opacity var(--ease)}
+.pb-done{background:#C9CAF2;color:var(--blue);border:none;padding:12px 0;width:100%;font-family:var(--noto);font-size:14px;font-weight:600;cursor:var(--cur-hand);transition:opacity var(--ease)}
 .pb-done:hover{opacity:.82}
-.pb-qr{background:var(--blue);color:#fff;border:none;padding:14px 0;width:100%;font-family:var(--noto);font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:opacity var(--ease)}
+.pb-qr{background:var(--blue);color:#fff;border:none;padding:14px 0;width:100%;font-family:var(--noto);font-size:14px;font-weight:600;cursor:var(--cur-hand);display:flex;align-items:center;justify-content:center;gap:8px;transition:opacity var(--ease)}
 .pb-qr:hover:not(:disabled){opacity:.85}
 .pb-qr:disabled{opacity:.4;cursor:not-allowed}
 .pb-qr svg{width:15px;height:15px}
@@ -369,7 +370,7 @@ footer{padding:28px 40px;background:var(--bg2);border-top:1px solid var(--g800);
   .pb-mtabs{order:2;position:static;display:flex;flex:0 0 auto}
   .pb-mtabs button{flex:1;background:rgba(255,255,255,.9);color:var(--blue);
     border:1px solid var(--blue);border-right:none;padding:12px 0;
-    font-family:var(--noto);font-weight:700;font-size:13px;cursor:pointer;transition:background var(--ease),color var(--ease)}
+    font-family:var(--noto);font-weight:700;font-size:13px;cursor:var(--cur-hand);transition:background var(--ease),color var(--ease)}
   .pb-mtabs button:last-child{border-right:1px solid var(--blue)}
   .pb-mtabs button.is-on{background:var(--blue);color:#fff}
   /* 3) 활성 섹션만 표시 (스크롤 영역) */
@@ -410,7 +411,7 @@ footer{padding:28px 40px;background:var(--bg2);border-top:1px solid var(--g800);
 .booth-qr-box img{width:220px;height:220px;background:var(--white);display:block}
 .booth-qr-direct{font-size:10px;font-weight:600;letter-spacing:.08em;color:var(--g300);text-decoration:none;text-transform:uppercase}
 .booth-qr-direct:hover{color:var(--white)}
-.booth-qr-close{background:none;border:1px solid var(--g700);color:var(--g500);font-family:var(--font);font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;padding:9px 24px;cursor:pointer;transition:all var(--ease)}
+.booth-qr-close{background:none;border:1px solid var(--g700);color:var(--g500);font-family:var(--font);font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;padding:9px 24px;cursor:var(--cur-hand);transition:all var(--ease)}
 .booth-qr-close:hover{border-color:var(--white);color:var(--white)}
 
 
@@ -433,7 +434,7 @@ nav{
 .nav-logo{
   font-family:var(--gal);font-weight:900;font-size:24px;letter-spacing:.06em;
   text-transform:uppercase;color:var(--blue);padding:0 40px;line-height:1;
-  cursor:pointer;text-decoration:none;white-space:nowrap;
+  cursor:var(--cur-hand);text-decoration:none;white-space:nowrap;
 }
 .nav-links{display:flex;gap:0;height:100%}
 .nav-links li{height:100%}
@@ -689,7 +690,7 @@ nav{
 .dz-filters{display:flex;flex-wrap:wrap;gap:8px}
 .dz-filter{min-width:3px;height:24px;padding:0 12px;display:flex;align-items:center;justify-content:center;
   border:1px solid var(--blue);background:#fff;color:var(--blue);
-  font-family:var(--sg);font-size:14px;font-weight:600;cursor:pointer;border-radius:0px;line-height:1;
+  font-family:var(--sg);font-size:14px;font-weight:600;cursor:var(--cur-hand);border-radius:0px;line-height:1;
   transition:background var(--ease),color var(--ease)}
 .dz-filter:first-child{padding:0 16px}
 .dz-filter.active,.dz-filter:hover{background:var(--blue);color:#fff}
@@ -706,7 +707,7 @@ nav{
 
 /* 최대 8명/행: auto-fill + max() 로 열 수를 8개로 상한 (좁아지면 자동 감소) */
 .dz-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(max(150px,(100% - 140px)/8),1fr));gap:0 8px}
-.dz-card{cursor:pointer;padding:0 0 18px;margin-bottom:26px;display:flex;flex-direction:column;background:#fff}
+.dz-card{cursor:var(--cur-hand);padding:0 0 18px;margin-bottom:26px;display:flex;flex-direction:column;background:#fff}
 .dz-img{width:100%;aspect-ratio:4/5;background:#EDEDF5;overflow:hidden;margin-bottom:12px;transition:transform .12s ease}
 .dz-img img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .3s ease}
 .dz-card:hover .dz-img img{transform:scale(1.05)}
@@ -739,7 +740,7 @@ nav{
 .dz-detail{flex:1 1 0;min-width:0;position:sticky;top:43px;height:calc(100vh - 43px);overflow-y:auto;border-left:3px solid var(--blue);display:none;flex-direction:column}
 .dz-detail.open{display:flex}
 .dz-detail-head{flex:none;background:var(--blue);color:#fff;position:relative;padding:52px 30px 36px 40px;display:flex;gap:32px;flex-wrap:wrap}
-.dz-x{position:absolute;top:56px;left:10px;z-index:2;background:none;border:none;color:#fff;font-family:var(--sg);font-weight:500;font-size:22px;line-height:1;cursor:pointer;padding:4px}
+.dz-x{position:absolute;top:56px;left:10px;z-index:2;background:none;border:none;color:#fff;font-family:var(--sg);font-weight:500;font-size:22px;line-height:1;cursor:var(--cur-hand);padding:4px}
 .dz-dh-photo{flex:none;width:150px}
 .dz-dh-photo img{width:150px;height:195px;object-fit:cover;background:#EDEDF5;display:block}
 .dz-dh-info{flex:1;min-width:180px;display:flex;flex-direction:column;justify-content:center}
@@ -785,12 +786,12 @@ nav{
 .wk-sub{font-family:var(--noto);font-weight:700;font-size:15px}
 .wk-sub span{font-family:var(--sg);font-weight:500;opacity:.85;margin-left:6px}
 .wk-floors{display:flex;gap:14px}
-.wk-floor{width:53px;height:26px;border:none;background:rgba(255,255,255,.4);color:rgba(255,255,255,.85);font-family:var(--sg);font-weight:600;font-size:13px;cursor:pointer;transition:background .12s,color .12s}
+.wk-floor{width:53px;height:26px;border:none;background:rgba(255,255,255,.4);color:rgba(255,255,255,.85);font-family:var(--sg);font-weight:600;font-size:13px;cursor:var(--cur-hand);transition:background .12s,color .12s}
 .wk-floor.active,.wk-floor:hover{background:#fff;color:var(--blue)}
 .wk-map{margin-top:28px} /* F3/F2/F1 버튼과 지도 사이 여백 */
 .wk-map svg{width:100%;height:auto;display:block;overflow:visible}
 /* 부스 번호: 데이터 있는 곳만 반응, 호버/선택 시 흰 알약 + 파란 글자 */
-.wk-map .wk-bt:not(.empty){cursor:pointer}
+.wk-map .wk-bt:not(.empty){cursor:var(--cur-hand)}
 .wk-map .wk-bt .wk-pill{fill:transparent;transition:fill .12s}
 .wk-map .wk-bt path{fill:#fff;transition:fill .12s} /* Figma에서 E12가 선택 상태(파란 글자)로 export돼서 기본은 흰 글자로 통일 */
 .wk-map .wk-bt.on .wk-pill,.wk-map .wk-bt:not(.empty):hover .wk-pill{fill:#fff}
@@ -811,7 +812,7 @@ nav{
 .wk-filters{display:flex;gap:6px;flex-wrap:wrap}
 /* 스크롤로 상단에 붙었을 때만 흰 배경 */
 .dz-toolbar.is-stuck,.wk-toolbar.is-stuck{background:#fff}
-.wk-filter{height:30px;padding:0 12px;border:1px solid var(--blue);background:#fff;color:var(--blue);font-family:var(--noto);font-weight:500;font-size:13px;cursor:pointer;transition:background .12s,color .12s}
+.wk-filter{height:30px;padding:0 12px;border:1px solid var(--blue);background:#fff;color:var(--blue);font-family:var(--noto);font-weight:500;font-size:13px;cursor:var(--cur-hand);transition:background .12s,color .12s}
 .wk-filter.active,.wk-filter:hover{background:var(--blue);color:#fff}
 .wk-search{position:relative;width:280px;max-width:100%}
 .wk-search input{width:100%;height:32px;background:var(--blue);border:none;padding:0 42px 0 14px;color:#fff;font-family:var(--sg);font-size:14px;letter-spacing:.06em}
@@ -820,7 +821,7 @@ nav{
 .wk-search-ic{position:absolute;right:12px;top:50%;transform:translateY(-50%);width:18px;height:18px;color:#fff;pointer-events:none}
 .wk-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:16px}
 .wk-empty{grid-column:1/-1;padding:60px 0;color:#8A8A8A;font-family:var(--noto)}
-.wk-card{border:2px solid var(--blue);display:flex;flex-direction:column;cursor:pointer;background:#fff;transition:background .14s ease}
+.wk-card{border:2px solid var(--blue);display:flex;flex-direction:column;cursor:var(--cur-hand);background:#fff;transition:background .14s ease}
 .wk-card-img{position:relative;aspect-ratio:3/2;background:#111;overflow:hidden}
 .wk-card-img img{width:100%;height:100%;object-fit:cover;display:block}
 /* 제목 영역이 늘어나 옆 카드와 높이 맞춤(태그는 하단 정렬) */
@@ -852,7 +853,7 @@ nav{
 .wd-head{background:#fff;color:var(--blue);padding:32px 30px 18px;border-bottom:1px solid var(--blue)}
 .wd-head-top{display:flex;align-items:center;gap:14px}
 /* 백 화살표: Galapagos 폰트 + 타이틀과 세로 중앙 정렬 */
-.wd-back{background:none;border:none;color:var(--blue);font-family:var(--gal);font-weight:700;font-size:26px;line-height:1;cursor:pointer;padding:0;flex:none;transform:translateY(-0.38em)}
+.wd-back{background:none;border:none;color:var(--blue);font-family:var(--gal);font-weight:700;font-size:26px;line-height:1;cursor:var(--cur-hand);padding:0;flex:none;transform:translateY(-0.38em)}
 .wd-title{font-family:var(--noto);font-weight:700;font-size:26px;line-height:1.25;color:var(--blue);word-break:keep-all}
 .wd-en{font-family:var(--sg);font-weight:600;font-size:19px;color:var(--blue);margin-top:8px}
 /* 태그: 외곽선 스타일 (Figma 148-2620) */
@@ -872,7 +873,7 @@ nav{
 /* 디자이너 바로가기: 회색 박스 없이 밑줄 텍스트 + 화살표 (Figma 148-2595) */
 a.wd-dlink{display:inline-flex;align-items:center;gap:6px;background:none;width:auto;padding:0;margin:0;
   text-transform:none;letter-spacing:0;text-decoration:none;
-  color:var(--blue);font-family:var(--noto);font-weight:700;font-size:14px;cursor:pointer}
+  color:var(--blue);font-family:var(--noto);font-weight:700;font-size:14px;cursor:var(--cur-hand)}
 a.wd-dlink .wd-name{text-decoration:underline;text-underline-offset:3px}
 a.wd-dlink:hover{opacity:.75}
 /* 화살표: ABC Galapagos 폰트 텍스트, 타이틀과 중심선 정렬 */
@@ -881,7 +882,7 @@ a.wd-dlink:hover{opacity:.75}
 .wd-desc p{margin:0 0 1em;white-space:pre-line}
 /* 국문/영문 설명 탭 */
 .wd-lang{display:flex;gap:0;margin:14px 0 14px}
-.wd-lang button{font-family:var(--sg);font-weight:600;font-size:12px;letter-spacing:.04em;padding:5px 12px;border:1px solid var(--blue);background:#fff;color:var(--blue);cursor:pointer}
+.wd-lang button{font-family:var(--sg);font-weight:600;font-size:12px;letter-spacing:.04em;padding:5px 12px;border:1px solid var(--blue);background:#fff;color:var(--blue);cursor:var(--cur-hand)}
 .wd-lang button+button{border-left:none}
 .wd-lang button.on{background:var(--blue);color:#fff}
 .wd-desc [data-lang]{display:none}
@@ -900,8 +901,8 @@ a.wd-dlink:hover{opacity:.75}
 .wd-video:hover{background:var(--blue);color:#fff}
 /* 디자이너 다른 작품: 좌측 하단, 화면에 고정 (하단 30px 여유) */
 .wd-more-wrap{grid-area:more;align-self:end;position:sticky;bottom:12px;display:flex;flex-direction:column;gap:14px;margin-top:24px}
-.wd-more{align-self:flex-start;background:var(--blue);color:#fff;border:none;font-family:var(--noto);font-weight:500;font-size:13px;padding:8px 12px;cursor:pointer}
-.wd-more-card{border:1px solid var(--blue);cursor:pointer;background:#fff;max-width:360px}
+.wd-more{align-self:flex-start;background:var(--blue);color:#fff;border:none;font-family:var(--noto);font-weight:500;font-size:13px;padding:8px 12px;cursor:var(--cur-hand)}
+.wd-more-card{border:1px solid var(--blue);cursor:var(--cur-hand);background:#fff;max-width:360px}
 .wd-more-card .wd-mc-img{aspect-ratio:3/2;background:#111;overflow:hidden}
 .wd-more-card .wd-mc-img img{width:100%;height:100%;object-fit:cover;display:block}
 .wd-more-card .wd-mc-body{padding:10px 12px;display:flex;flex-direction:column;gap:3px;border-top:1px solid var(--blue);text-align:left}
@@ -1028,7 +1029,7 @@ footer[data-shared-foot]{position:relative;z-index:1;display:block;padding:0;bor
 .wd-desc-more{display:none}
 @media (min-width:921px){
   .wd-desc.clamped .wd-txt{overflow:hidden;position:relative;-webkit-mask-image:linear-gradient(#000 calc(100% - 44px),transparent);mask-image:linear-gradient(#000 calc(100% - 44px),transparent)}
-  .wd-desc.clamped .wd-desc-more{display:inline-block;margin-top:6px;background:none;border:none;padding:0;color:var(--blue);font-family:var(--noto);font-weight:700;font-size:13px;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+  .wd-desc.clamped .wd-desc-more{display:inline-block;margin-top:6px;background:none;border:none;padding:0;color:var(--blue);font-family:var(--noto);font-weight:700;font-size:13px;cursor:var(--cur-hand);text-decoration:underline;text-underline-offset:3px}
 }
 /* 펼친 상태: 설명 전부 표시, 카드는 설명 아래로 이어서 */
 @media (min-width:921px){
@@ -1155,3 +1156,7 @@ body.bg-over footer[data-shared-foot] .m-info>*{position:relative;z-index:31}
 /* WORK 상세 → 디자이너 오버레이: 음영 없음 (바깥 클릭 닫기는 유지), 패널은 항상 맨 위 */
 .dz-overlay-bd{background:transparent}
 body.bg-over .dz-detail.as-overlay{z-index:400}
+
+/* 픽셀 아트 커서 (파랑 외곽선 + 디더 채움) */
+:root{--cur-arrow:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2222%22%20height%3D%2232%22%20shape-rendering%3D%22crispEdges%22%3E%3Crect%20x%3D%220%22%20y%3D%220%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%235254FF%22/%3E%3Crect%20x%3D%220%22%20y%3D%222%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%235254FF%22/%3E%3Crect%20x%3D%222%22%20y%3D%222%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%235254FF%22/%3E%3Crect%20x%3D%220%22%20y%3D%224%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%235254FF%22/%3E%3Crect%20x%3D%222%22%20y%3D%224%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23FFFFFF%22/%3E%3Crect%20x%3D%224%22%20y%3D%224%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%235254FF%22/%3E%3Crect%20x%3D%220%22%20y%3D%226%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%235254FF%22/%3E%3Crect%20x%3D%222%22%20y%3D%226%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23DCDDFF%22/%3E%3Crect%20x%3D%224%22%20y%3D%226%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23FFFFFF%22/%3E%3Crect%20x%3D%226%22%20y%3D%226%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%235254FF%22/%3E%3Crect%20x%3D%220%22%20y%3D%228%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%235254FF%22/%3E%3Crect%20x%3D%222%22%20y%3D%228%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23FFFFFF%22/%3E%3Crect%20x%3D%224%22%20y%3D%228%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23DCDDFF%22/%3E%3Crect%20x%3D%226%22%20y%3D%228%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23FFFFFF%22/%3E%3Crect%20x%3D%228%22%20y%3D%228%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%235254FF%22/%3E%3Crect%20x%3D%220%22%20y%3D%2210%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%235254FF%22/%3E%3Crect%20x%3D%222%22%20y%3D%2210%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23DCDDFF%22/%3E%3Crect%20x%3D%224%22%20y%3D%2210%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23FFFFFF%22/%3E%3Crect%20x%3D%226%22%20y%3D%2210%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23DCDDFF%22/%3E%3Crect%20x%3D%228%22%20y%3D%2210%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23FFFFFF%22/%3E%3Crect%20x%3D%2210%22%20y%3D%2210%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%235254FF%22/%3E%3Crect%20x%3D%220%22%20y%3D%2212%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%235254FF%22/%3E%3Crect%20x%3D%222%22%20y%3D%2212%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23FFFFFF%22/%3E%3Crect%20x%3D%224%22%20y%3D%2212%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23DCDDFF%22/%3E%3Crect%20x%3D%226%22%20y%3D%2212%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23FFFFFF%22/%3E%3Crect%20x%3D%228%22%20y%3D%2212%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23DCDDFF%22/%3E%3Crect%20x%3D%2210%22%20y%3D%2212%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23FFFFFF%22/%3E%3Crect%20x%3D%2212%22%20y%3D%2212%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%235254FF%22/%3E%3Crect%20x%3D%220%22%20y%3D%2214%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%235254FF%22/%3E%3Crect%20x%3D%222%22%20y%3D%2214%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23DCDDFF%22/%3E%3Crect%20x%3D%224%22%20y%3D%2214%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23FFFFFF%22/%3E%3Crect%20x%3D%226%22%20y%3D%2214%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23DCDDFF%22/%3E%3Crect%20x%3D%228%22%20y%3D%2214%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23FFFFFF%22/%3E%3Crect%20x%3D%2210%22%20y%3D%2214%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23DCDDFF%22/%3E%3Crect%20x%3D%2212%22%20y%3D%2214%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23FFFFFF%22/%3E%3Crect%20x%3D%2214%22%20y%3D%2214%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%235254FF%22/%3E%3Crect%20x%3D%220%22%20y%3D%2216%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%235254FF%22/%3E%3Crect%20x%3D%222%22%20y%3D%2216%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23FFFFFF%22/%3E%3Crect%20x%3D%224%22%20y%3D%2216%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23DCDDFF%22/%3E%3Crect%20x%3D%226%22%20y%3D%2216%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23FFFFFF%22/%3E%3Crect%20x%3D%228%22%20y%3D%2216%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23DCDDFF%22/%3E%3Crect%20x%3D%2210%22%20y%3D%2216%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23FFFFFF%22/%3E%3Crect%20x%3D%2212%22%20y%3D%2216%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23DCDDFF%22/%3E%3Crect%20x%3D%2214%22%20y%3D%2216%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23FFFFFF%22/%3E%3Crect%20x%3D%2216%22%20y%3D%2216%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%235254FF%22/%3E%3Crect%20x%3D%220%22%20y%3D%2218%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%235254FF%22/%3E%3Crect%20x%3D%222%22%20y%3D%2218%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23DCDDFF%22/%3E%3Crect%20x%3D%224%22%20y%3D%2218%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23FFFFFF%22/%3E%3Crect%20x%3D%226%22%20y%3D%2218%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23DCDDFF%22/%3E%3Crect%20x%3D%228%22%20y%3D%2218%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23FFFFFF%22/%3E%3Crect%20x%3D%2210%22%20y%3D%2218%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23DCDDFF%22/%3E%3Crect%20x%3D%2212%22%20y%3D%2218%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23FFFFFF%22/%3E%3Crect%20x%3D%2214%22%20y%3D%2218%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23DCDDFF%22/%3E%3Crect%20x%3D%2216%22%20y%3D%2218%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23FFFFFF%22/%3E%3Crect%20x%3D%2218%22%20y%3D%2218%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%235254FF%22/%3E%3Crect%20x%3D%220%22%20y%3D%2220%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%235254FF%22/%3E%3Crect%20x%3D%222%22%20y%3D%2220%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23FFFFFF%22/%3E%3Crect%20x%3D%224%22%20y%3D%2220%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23DCDDFF%22/%3E%3Crect%20x%3D%226%22%20y%3D%2220%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23FFFFFF%22/%3E%3Crect%20x%3D%228%22%20y%3D%2220%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23DCDDFF%22/%3E%3Crect%20x%3D%2210%22%20y%3D%2220%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23FFFFFF%22/%3E%3Crect%20x%3D%2212%22%20y%3D%2220%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%235254FF%22/%3E%3Crect%20x%3D%2214%22%20y%3D%2220%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%235254FF%22/%3E%3Crect%20x%3D%2216%22%20y%3D%2220%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%235254FF%22/%3E%3Crect%20x%3D%2218%22%20y%3D%2220%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%235254FF%22/%3E%3Crect%20x%3D%2220%22%20y%3D%2220%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%235254FF%22/%3E%3Crect%20x%3D%220%22%20y%3D%2222%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%235254FF%22/%3E%3Crect%20x%3D%222%22%20y%3D%2222%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23DCDDFF%22/%3E%3Crect%20x%3D%224%22%20y%3D%2222%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23FFFFFF%22/%3E%3Crect%20x%3D%226%22%20y%3D%2222%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%235254FF%22/%3E%3Crect%20x%3D%228%22%20y%3D%2222%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23FFFFFF%22/%3E%3Crect%20x%3D%2210%22%20y%3D%2222%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23DCDDFF%22/%3E%3Crect%20x%3D%2212%22%20y%3D%2222%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%235254FF%22/%3E%3Crect%20x%3D%220%22%20y%3D%2224%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%235254FF%22/%3E%3Crect%20x%3D%222%22%20y%3D%2224%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23FFFFFF%22/%3E%3Crect%20x%3D%224%22%20y%3D%2224%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%235254FF%22/%3E%3Crect%20x%3D%228%22%20y%3D%2224%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%235254FF%22/%3E%3Crect%20x%3D%2210%22%20y%3D%2224%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23FFFFFF%22/%3E%3Crect%20x%3D%2212%22%20y%3D%2224%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23DCDDFF%22/%3E%3Crect%20x%3D%2214%22%20y%3D%2224%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%235254FF%22/%3E%3Crect%20x%3D%220%22%20y%3D%2226%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%235254FF%22/%3E%3Crect%20x%3D%222%22%20y%3D%2226%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%235254FF%22/%3E%3Crect%20x%3D%228%22%20y%3D%2226%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%235254FF%22/%3E%3Crect%20x%3D%2210%22%20y%3D%2226%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23DCDDFF%22/%3E%3Crect%20x%3D%2212%22%20y%3D%2226%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23FFFFFF%22/%3E%3Crect%20x%3D%2214%22%20y%3D%2226%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%235254FF%22/%3E%3Crect%20x%3D%220%22%20y%3D%2228%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%235254FF%22/%3E%3Crect%20x%3D%2210%22%20y%3D%2228%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%235254FF%22/%3E%3Crect%20x%3D%2212%22%20y%3D%2228%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23DCDDFF%22/%3E%3Crect%20x%3D%2214%22%20y%3D%2228%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23FFFFFF%22/%3E%3Crect%20x%3D%2216%22%20y%3D%2228%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%235254FF%22/%3E%3Crect%20x%3D%2212%22%20y%3D%2230%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%235254FF%22/%3E%3Crect%20x%3D%2214%22%20y%3D%2230%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%235254FF%22/%3E%3C/svg%3E") 0 0, auto;--cur-hand:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2224%22%20height%3D%2232%22%20shape-rendering%3D%22crispEdges%22%3E%3Crect%20x%3D%228%22%20y%3D%220%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%235254FF%22/%3E%3Crect%20x%3D%2210%22%20y%3D%220%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%235254FF%22/%3E%3Crect%20x%3D%226%22%20y%3D%222%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%235254FF%22/%3E%3Crect%20x%3D%228%22%20y%3D%222%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23FFFFFF%22/%3E%3Crect%20x%3D%2210%22%20y%3D%222%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23DCDDFF%22/%3E%3Crect%20x%3D%2212%22%20y%3D%222%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%235254FF%22/%3E%3Crect%20x%3D%226%22%20y%3D%224%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%235254FF%22/%3E%3Crect%20x%3D%228%22%20y%3D%224%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23DCDDFF%22/%3E%3Crect%20x%3D%2210%22%20y%3D%224%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23FFFFFF%22/%3E%3Crect%20x%3D%2212%22%20y%3D%224%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%235254FF%22/%3E%3Crect%20x%3D%226%22%20y%3D%226%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%235254FF%22/%3E%3Crect%20x%3D%228%22%20y%3D%226%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23FFFFFF%22/%3E%3Crect%20x%3D%2210%22%20y%3D%226%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23DCDDFF%22/%3E%3Crect%20x%3D%2212%22%20y%3D%226%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%235254FF%22/%3E%3Crect%20x%3D%226%22%20y%3D%228%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%235254FF%22/%3E%3Crect%20x%3D%228%22%20y%3D%228%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23DCDDFF%22/%3E%3Crect%20x%3D%2210%22%20y%3D%228%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23FFFFFF%22/%3E%3Crect%20x%3D%2212%22%20y%3D%228%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%235254FF%22/%3E%3Crect%20x%3D%2214%22%20y%3D%228%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%235254FF%22/%3E%3Crect%20x%3D%2216%22%20y%3D%228%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%235254FF%22/%3E%3Crect%20x%3D%226%22%20y%3D%2210%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%235254FF%22/%3E%3Crect%20x%3D%228%22%20y%3D%2210%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23FFFFFF%22/%3E%3Crect%20x%3D%2210%22%20y%3D%2210%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23DCDDFF%22/%3E%3Crect%20x%3D%2212%22%20y%3D%2210%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%235254FF%22/%3E%3Crect%20x%3D%2214%22%20y%3D%2210%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23DCDDFF%22/%3E%3Crect%20x%3D%2216%22%20y%3D%2210%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23FFFFFF%22/%3E%3Crect%20x%3D%2218%22%20y%3D%2210%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%235254FF%22/%3E%3Crect%20x%3D%2220%22%20y%3D%2210%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%235254FF%22/%3E%3Crect%20x%3D%226%22%20y%3D%2212%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%235254FF%22/%3E%3Crect%20x%3D%228%22%20y%3D%2212%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23DCDDFF%22/%3E%3Crect%20x%3D%2210%22%20y%3D%2212%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23FFFFFF%22/%3E%3Crect%20x%3D%2212%22%20y%3D%2212%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%235254FF%22/%3E%3Crect%20x%3D%2214%22%20y%3D%2212%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23FFFFFF%22/%3E%3Crect%20x%3D%2216%22%20y%3D%2212%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23DCDDFF%22/%3E%3Crect%20x%3D%2218%22%20y%3D%2212%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%235254FF%22/%3E%3Crect%20x%3D%2220%22%20y%3D%2212%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23DCDDFF%22/%3E%3Crect%20x%3D%2222%22%20y%3D%2212%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%235254FF%22/%3E%3Crect%20x%3D%220%22%20y%3D%2214%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%235254FF%22/%3E%3Crect%20x%3D%222%22%20y%3D%2214%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%235254FF%22/%3E%3Crect%20x%3D%226%22%20y%3D%2214%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%235254FF%22/%3E%3Crect%20x%3D%228%22%20y%3D%2214%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23FFFFFF%22/%3E%3Crect%20x%3D%2210%22%20y%3D%2214%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23DCDDFF%22/%3E%3Crect%20x%3D%2212%22%20y%3D%2214%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%235254FF%22/%3E%3Crect%20x%3D%2214%22%20y%3D%2214%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23DCDDFF%22/%3E%3Crect%20x%3D%2216%22%20y%3D%2214%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23FFFFFF%22/%3E%3Crect%20x%3D%2218%22%20y%3D%2214%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%235254FF%22/%3E%3Crect%20x%3D%2220%22%20y%3D%2214%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23FFFFFF%22/%3E%3Crect%20x%3D%2222%22%20y%3D%2214%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%235254FF%22/%3E%3Crect%20x%3D%220%22%20y%3D%2216%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%235254FF%22/%3E%3Crect%20x%3D%222%22%20y%3D%2216%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23FFFFFF%22/%3E%3Crect%20x%3D%224%22%20y%3D%2216%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%235254FF%22/%3E%3Crect%20x%3D%226%22%20y%3D%2216%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%235254FF%22/%3E%3Crect%20x%3D%228%22%20y%3D%2216%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23DCDDFF%22/%3E%3Crect%20x%3D%2210%22%20y%3D%2216%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23FFFFFF%22/%3E%3Crect%20x%3D%2212%22%20y%3D%2216%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23DCDDFF%22/%3E%3Crect%20x%3D%2214%22%20y%3D%2216%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23FFFFFF%22/%3E%3Crect%20x%3D%2216%22%20y%3D%2216%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23DCDDFF%22/%3E%3Crect%20x%3D%2218%22%20y%3D%2216%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23FFFFFF%22/%3E%3Crect%20x%3D%2220%22%20y%3D%2216%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23DCDDFF%22/%3E%3Crect%20x%3D%2222%22%20y%3D%2216%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%235254FF%22/%3E%3Crect%20x%3D%220%22%20y%3D%2218%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%235254FF%22/%3E%3Crect%20x%3D%222%22%20y%3D%2218%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23DCDDFF%22/%3E%3Crect%20x%3D%224%22%20y%3D%2218%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23FFFFFF%22/%3E%3Crect%20x%3D%226%22%20y%3D%2218%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%235254FF%22/%3E%3Crect%20x%3D%228%22%20y%3D%2218%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23FFFFFF%22/%3E%3Crect%20x%3D%2210%22%20y%3D%2218%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23DCDDFF%22/%3E%3Crect%20x%3D%2212%22%20y%3D%2218%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23FFFFFF%22/%3E%3Crect%20x%3D%2214%22%20y%3D%2218%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23DCDDFF%22/%3E%3Crect%20x%3D%2216%22%20y%3D%2218%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23FFFFFF%22/%3E%3Crect%20x%3D%2218%22%20y%3D%2218%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23DCDDFF%22/%3E%3Crect%20x%3D%2220%22%20y%3D%2218%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23FFFFFF%22/%3E%3Crect%20x%3D%2222%22%20y%3D%2218%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%235254FF%22/%3E%3Crect%20x%3D%222%22%20y%3D%2220%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%235254FF%22/%3E%3Crect%20x%3D%224%22%20y%3D%2220%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23DCDDFF%22/%3E%3Crect%20x%3D%226%22%20y%3D%2220%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23FFFFFF%22/%3E%3Crect%20x%3D%228%22%20y%3D%2220%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23DCDDFF%22/%3E%3Crect%20x%3D%2210%22%20y%3D%2220%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23FFFFFF%22/%3E%3Crect%20x%3D%2212%22%20y%3D%2220%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23DCDDFF%22/%3E%3Crect%20x%3D%2214%22%20y%3D%2220%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23FFFFFF%22/%3E%3Crect%20x%3D%2216%22%20y%3D%2220%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23DCDDFF%22/%3E%3Crect%20x%3D%2218%22%20y%3D%2220%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23FFFFFF%22/%3E%3Crect%20x%3D%2220%22%20y%3D%2220%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23DCDDFF%22/%3E%3Crect%20x%3D%2222%22%20y%3D%2220%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%235254FF%22/%3E%3Crect%20x%3D%222%22%20y%3D%2222%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%235254FF%22/%3E%3Crect%20x%3D%224%22%20y%3D%2222%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23FFFFFF%22/%3E%3Crect%20x%3D%226%22%20y%3D%2222%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23DCDDFF%22/%3E%3Crect%20x%3D%228%22%20y%3D%2222%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23FFFFFF%22/%3E%3Crect%20x%3D%2210%22%20y%3D%2222%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23DCDDFF%22/%3E%3Crect%20x%3D%2212%22%20y%3D%2222%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23FFFFFF%22/%3E%3Crect%20x%3D%2214%22%20y%3D%2222%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23DCDDFF%22/%3E%3Crect%20x%3D%2216%22%20y%3D%2222%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23FFFFFF%22/%3E%3Crect%20x%3D%2218%22%20y%3D%2222%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23DCDDFF%22/%3E%3Crect%20x%3D%2220%22%20y%3D%2222%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%235254FF%22/%3E%3Crect%20x%3D%224%22%20y%3D%2224%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%235254FF%22/%3E%3Crect%20x%3D%226%22%20y%3D%2224%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23FFFFFF%22/%3E%3Crect%20x%3D%228%22%20y%3D%2224%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23DCDDFF%22/%3E%3Crect%20x%3D%2210%22%20y%3D%2224%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23FFFFFF%22/%3E%3Crect%20x%3D%2212%22%20y%3D%2224%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23DCDDFF%22/%3E%3Crect%20x%3D%2214%22%20y%3D%2224%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23FFFFFF%22/%3E%3Crect%20x%3D%2216%22%20y%3D%2224%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23DCDDFF%22/%3E%3Crect%20x%3D%2218%22%20y%3D%2224%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23FFFFFF%22/%3E%3Crect%20x%3D%2220%22%20y%3D%2224%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%235254FF%22/%3E%3Crect%20x%3D%224%22%20y%3D%2226%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%235254FF%22/%3E%3Crect%20x%3D%226%22%20y%3D%2226%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23DCDDFF%22/%3E%3Crect%20x%3D%228%22%20y%3D%2226%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23FFFFFF%22/%3E%3Crect%20x%3D%2210%22%20y%3D%2226%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23DCDDFF%22/%3E%3Crect%20x%3D%2212%22%20y%3D%2226%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23FFFFFF%22/%3E%3Crect%20x%3D%2214%22%20y%3D%2226%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23DCDDFF%22/%3E%3Crect%20x%3D%2216%22%20y%3D%2226%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23FFFFFF%22/%3E%3Crect%20x%3D%2218%22%20y%3D%2226%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%235254FF%22/%3E%3Crect%20x%3D%226%22%20y%3D%2228%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%235254FF%22/%3E%3Crect%20x%3D%228%22%20y%3D%2228%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23DCDDFF%22/%3E%3Crect%20x%3D%2210%22%20y%3D%2228%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23FFFFFF%22/%3E%3Crect%20x%3D%2212%22%20y%3D%2228%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23DCDDFF%22/%3E%3Crect%20x%3D%2214%22%20y%3D%2228%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23FFFFFF%22/%3E%3Crect%20x%3D%2216%22%20y%3D%2228%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%23DCDDFF%22/%3E%3Crect%20x%3D%2218%22%20y%3D%2228%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%235254FF%22/%3E%3Crect%20x%3D%226%22%20y%3D%2230%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%235254FF%22/%3E%3Crect%20x%3D%228%22%20y%3D%2230%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%235254FF%22/%3E%3Crect%20x%3D%2210%22%20y%3D%2230%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%235254FF%22/%3E%3Crect%20x%3D%2212%22%20y%3D%2230%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%235254FF%22/%3E%3Crect%20x%3D%2214%22%20y%3D%2230%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%235254FF%22/%3E%3Crect%20x%3D%2216%22%20y%3D%2230%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%235254FF%22/%3E%3Crect%20x%3D%2218%22%20y%3D%2230%22%20width%3D%222%22%20height%3D%222%22%20fill%3D%22%235254FF%22/%3E%3C/svg%3E") 9 1, pointer}
+html,body{cursor:var(--cur-arrow)}
