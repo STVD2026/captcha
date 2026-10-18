@@ -16,8 +16,12 @@ body.theme-light{--bg:#FFFFFF;--bg2:#F5F5F5;--bg3:#EBEBFF;--bg4:#DFE0F2;--white:
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth}
 body{background:var(--bg);color:var(--white);font-family:var(--font);font-weight:300;-webkit-font-smoothing:antialiased;overflow-x:hidden}
-::-webkit-scrollbar{width:2px}
-::-webkit-scrollbar-thumb{background:var(--g500)}
+/* 스크롤바: 라운딩 없는 파랑 */
+html{scrollbar-color:#5254FF transparent;scrollbar-width:thin}
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:#5254FF;border-radius:0}
+::-webkit-scrollbar-corner{background:transparent}
 .nav-links{list-style:none}
 .nav-links button{background:none;border:none;cursor:pointer;font-family:var(--font);transition:color var(--ease),background var(--ease)}
 .page{display:none;padding-top:43px;min-height:100vh}
