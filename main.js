@@ -1654,3 +1654,13 @@ function emptyReset(kind) {
     searchDesigner('');
   }
 }
+
+/* 디자이너 초성 필터: 해당하는 디자이너가 없는 초성 버튼은 숨김 */
+window.addEventListener('load', function() {
+  if (typeof DESIGNERS === 'undefined' || typeof getChoseong !== 'function') return;
+  var has = {}; DESIGNERS.forEach(function(d){ has[getChoseong(d.kr)] = true; });
+  document.querySelectorAll('.dz-filter').forEach(function(b) {
+    var m = (b.getAttribute('onclick') || '').match(/'([^']+)'\)/);
+    if (m && m[1] !== 'all' && !has[m[1]]) b.hidden = true;
+  });
+});

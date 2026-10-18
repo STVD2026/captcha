@@ -1179,3 +1179,6 @@ a,button,[onclick],label,summary,.wk-bt,.wk-bt *,[role=button]{cursor:var(--cur-
 .nr-reset:hover{background:#3a3cff}
 @media (max-width:640px){.nr-title{font-size:34px}.nr{padding:32px 0 60px}}
 .nr-robot{font-family:var(--sg);font-weight:700;font-size:15px;letter-spacing:.02em}
+/* 격자 윗선은 카드에만 (카드가 1~2개여도 선이 오른쪽 끝까지 이어지지 않게) */
+.dz-grid,.wk-grid{border-top:none!important;padding-top:2px}
+.dz-grid .dz-card,.wk-grid .wk-card{border-top:2px solid var(--blue)!important;margin-top:-2px!important}
