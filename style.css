@@ -1148,3 +1148,6 @@ body.bg-over footer[data-shared-foot] .m-info>*{position:relative;z-index:31}
   .dz-dh-links{flex-direction:column;gap:14px}
   .dz-dh-link{flex-direction:column;align-items:flex-start;gap:6px;word-break:normal;overflow-wrap:anywhere;font-size:14px}
 }
+/* WORK 상세 → 디자이너 오버레이: 음영 없음 (바깥 클릭 닫기는 유지), 패널은 항상 맨 위 */
+.dz-overlay-bd{background:transparent}
+body.bg-over .dz-detail.as-overlay{z-index:400}
