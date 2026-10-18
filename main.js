@@ -1619,8 +1619,3 @@ document.body.classList.add('bg-over'); // 3D 배경을 카드 위로(사진·�
   document.addEventListener('click', function(e) { if (inHandle(e.clientY)) { e.stopPropagation(); e.preventDefault(); toMap(); } }, true);
 })();
 
-/* 디자이너: 검색·필터가 위에 붙었을 때만 아래 그라데이션 */
-window.addEventListener('scroll', function() {
-  var tb = document.querySelector('#page-designer.active .dz-toolbar'); if (!tb) return;
-  tb.classList.toggle('stuck', tb.getBoundingClientRect().top <= 44 && window.scrollY > 40);
-}, { passive: true });
