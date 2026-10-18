@@ -1129,3 +1129,9 @@ body.bg-over footer[data-shared-foot] .m-info>*{position:relative;z-index:31}
 @media (max-width:640px){.dz-search input,.wk-search input{height:44px;font-size:15px}}
 /* PC·태블릿: 흰 영역은 격자 양쪽 세로선 사이까지만 (격자와 같은 폭) */
 @media (min-width:641px){.dz-toolbar,.wk-toolbar{margin-left:-10px;margin-right:-10px;padding-left:10px;padding-right:10px}}
+/* PC·태블릿: 검색창·필터 높이 키움 (디자이너·WORK 통일) */
+@media (min-width:641px){
+  .dz-search input,.wk-search input{height:40px;font-size:15px}
+  .dz-filter,.wk-filter{height:32px}
+  .dz-filter{min-width:40px;font-size:13px}
+}
