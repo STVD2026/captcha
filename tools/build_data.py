@@ -64,7 +64,7 @@ for r in rows:
         me = max(difflib.SequenceMatcher(None, k, t).ratio() for t in [tkey] + targets if t)
         ot = max([difflib.SequenceMatcher(None, k, o).ratio() for o in others] or [0])
         return me >= ot
-    imgs = sorted([f for k, f in imgs if mine(k)], key=lambda f: (re.findall(r'(\d)\D*$', f.split('.')[0]) or ['9'])[-1])
+    imgs = sorted([f for k, f in imgs if mine(k)], key=lambda f: (re.findall(r'(\d)\D*$', os.path.splitext(f)[0]) or ['9'])[-1])
     w = dict(no=r[10].strip(), title=r[11].strip(), titleEn=title_en, track=r[4].strip(), cat=r[5].strip(),
              descKr=r[13].strip(), descEn=r[14].strip(), video=r[19].strip(),
              tags=[t for t in re.split(r'\s+', r[20].replace('#', ' #')) if t.startswith('#') and len(t) > 1],

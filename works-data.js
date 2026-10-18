@@ -855,8 +855,8 @@ window.WORKS_DATA = [
     "thumb": "images/works/Thumbnail/20100998_D.D.D_thumbnail.webp",
     "imgs": [
      "images/works/webportfolio/20100998_D.D.D_work1.webp",
-     "images/works/webportfolio/20100998_D.D.D_work3.webp",
-     "images/works/webportfolio/20100998_D.D.D_work2.webp"
+     "images/works/webportfolio/20100998_D.D.D_work2.webp",
+     "images/works/webportfolio/20100998_D.D.D_work3.webp"
     ]
    }
   ]
@@ -1664,9 +1664,9 @@ window.WORKS_DATA = [
     "booth": "3F C06",
     "thumb": "images/works/Thumbnail/22100999_THE MODERN CAVE WALL_Thumbnail.webp",
     "imgs": [
+     "images/works/webportfolio/22100999_THE MODERN CAVE WALL_.work1webp.webp",
      "images/works/webportfolio/22100999_THE MODERN CAVE WALL_work2.webp",
-     "images/works/webportfolio/22100999_THE MODERN CAVE WALL_work3.webp",
-     "images/works/webportfolio/22100999_THE MODERN CAVE WALL_.work1webp.webp"
+     "images/works/webportfolio/22100999_THE MODERN CAVE WALL_work3.webp"
     ]
    }
   ]
@@ -1769,9 +1769,9 @@ window.WORKS_DATA = [
     "booth": "3F E34",
     "thumb": "images/works/Thumbnail/22101001_leave.leaves_Thumbnail.webp",
     "imgs": [
+     "images/works/webportfolio/22101001_leave.leaves_work1.webp",
      "images/works/webportfolio/22101001_leave.leaves_work2.webp",
-     "images/works/webportfolio/22101001_leave.leaves_work3.webp",
-     "images/works/webportfolio/22101001_leave.leaves_work1.webp"
+     "images/works/webportfolio/22101001_leave.leaves_work3.webp"
     ]
    },
    {
@@ -2010,9 +2010,9 @@ window.WORKS_DATA = [
     "booth": "3F E01",
     "thumb": "images/works/Thumbnail/22101004_Room.403_Thumbnail.webp",
     "imgs": [
-     "images/works/webportfolio/22101004_Room.403_work3.webp",
+     "images/works/webportfolio/22101004_Room.403_work1.webp",
      "images/works/webportfolio/22101004_Room.403_work2.webp",
-     "images/works/webportfolio/22101004_Room.403_work1.webp"
+     "images/works/webportfolio/22101004_Room.403_work3.webp"
     ]
    },
    {
