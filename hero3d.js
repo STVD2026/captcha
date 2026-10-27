@@ -21,14 +21,14 @@ if (designerBg) initHero(designerBg, { withRoom: false, layout: DESIGNER_BG_LAYO
 const workBg = document.getElementById('work-bg');
 if (workBg) initHero(workBg, { withRoom: false, layout: WORK_BG_LAYOUT, sizeMode: 'viewport', bg: true });
 // 포토부스 배경: 파란 배경 위를 떠다니는 오브제
-const MESSAGE_BG_LAYOUT = [
-  { key: 'steps',         nx: -0.66, ny:  0.46, hf: 0.38, d: 30, rx: 0.26, ry:  0.95, rz:  0.20, mScale: 1.1, mnx: -0.6, mny:  0.6 },
-  { key: 'traffic_light', nx:  0.70, ny:  0.40, hf: 0.42, d: 24, rx: 0.10, ry: -0.48, rz:  1.42, mScale: 1.1, mnx:  0.6, mny:  0.6 },
-  { key: 'fire_hydrant',  nx: -0.68, ny: -0.46, hf: 0.44, d: 22, rx: 0.10, ry:  0.30, rz:  2.19, mScale: 1.1, mnx: -0.6, mny: -0.6 },
-  { key: 'road_narrows',  nx:  0.66, ny: -0.48, hf: 0.47, d: 22, rx: 0.15, ry:  0.25, rz: -2.30, mScale: 1.1, mnx:  0.6, mny: -0.6 },
+const MESSAGE_BG_LAYOUT = [ // 화면 바깥(특히 아래쪽)으로 걸치게
+  { key: 'steps',         nx: -0.74, ny:  0.52, hf: 0.38, d: 30, rx: 0.26, ry:  0.95, rz:  0.20, mScale: 1.1, mnx: -0.65, mny:  0.6 },
+  { key: 'traffic_light', nx:  0.78, ny:  0.46, hf: 0.42, d: 24, rx: 0.10, ry: -0.48, rz:  1.42, mScale: 1.1, mnx:  0.65, mny:  0.6 },
+  { key: 'fire_hydrant',  nx: -0.70, ny: -0.66, hf: 0.44, d: 22, rx: 0.10, ry:  0.30, rz:  2.19, mScale: 1.1, mnx: -0.6, mny: -0.75 },
+  { key: 'road_narrows',  nx:  0.66, ny: -0.70, hf: 0.47, d: 22, rx: 0.15, ry:  0.25, rz: -2.30, mScale: 1.1, mnx:  0.6, mny: -0.75 },
 ];
 const messageBg = document.getElementById('message-bg');
-if (messageBg) initHero(messageBg, { withRoom: false, layout: MESSAGE_BG_LAYOUT, sizeMode: 'viewport', bg: true, noMouse: true, floatK: 0.3, speed: 0.45 }); // 카메라가 있는 가운데는 비우고 네 모서리에서만, 마우스 반응 없음
+if (messageBg) initHero(messageBg, { withRoom: false, layout: MESSAGE_BG_LAYOUT, sizeMode: 'viewport', bg: true, noMouse: true, floatK: 0.55, speed: 0.85 }); // 카메라가 있는 가운데는 비우고 네 모서리에서만, 마우스 반응 없음
 // 포토부스 카메라 선택: 카메라별 필터 느낌으로 렌더한 3D 오브제 (ccd / film / pixel)
 document.querySelectorAll('canvas.pb-cam-3d').forEach(c => initCamObj(c, c.dataset.key, c.dataset.look));
 
