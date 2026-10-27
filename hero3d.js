@@ -314,21 +314,14 @@ function initCamObj(canvas, key, look) {
   const mat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.35, metalness: 0 });
   const pivot = new THREE.Group(); scene.add(pivot);
 
-  const draco = new DRACOLoader(); draco.setDecoderPath('./vendor/draco/');
-  const loader = new GLTFLoader(); loader.setDRACOLoader(draco);
-  const buf = (window.CAPTCHA_MODELS || {})[key];
-  if (buf) {
-    const s = atob(buf), a = new Uint8Array(s.length); for (let i = 0; i < s.length; i++) a[i] = s.charCodeAt(i);
-    loader.parse(a.buffer, '', gltf => {
-      const box = new THREE.Box3().setFromObject(gltf.scene), c = box.getCenter(new THREE.Vector3()), sz = box.getSize(new THREE.Vector3());
-      gltf.scene.position.sub(c);
-      gltf.scene.traverse(o => { if (o.isMesh) o.material = mat; });
-      const inner = new THREE.Group(); inner.add(gltf.scene);
-      inner.scale.setScalar(3.6 / Math.max(sz.x, sz.y, sz.z));
-      inner.rotation.set(0.25, 0.6, look === 'ccd' ? -0.5 : look === 'film' ? 0.35 : 0.15);
-      pivot.add(inner);
-    });
-  }
+  // 카메라 3D 모형 (코드로 생성): CCD = 납작한 컴팩트 디카, FILM = 프리즘 달린 필름 SLR, PIXEL = 복셀 블록 카메라
+  const cam = buildCamera(look, mat);
+  const box = new THREE.Box3().setFromObject(cam), c = box.getCenter(new THREE.Vector3()), sz = box.getSize(new THREE.Vector3());
+  cam.position.sub(c);
+  const inner = new THREE.Group(); inner.add(cam);
+  inner.scale.setScalar(4.2 / Math.max(sz.x, sz.y, sz.z));
+  inner.rotation.set(0.18, -0.55, 0.04);
+  pivot.add(inner);
 
   const rt = new THREE.WebGLRenderTarget(2, 2, { minFilter: THREE.NearestFilter, magFilter: THREE.NearestFilter });
   const LOOK = { ccd: 0, film: 1, pixel: 2 }[look] || 0;
@@ -386,11 +379,62 @@ function initCamObj(canvas, key, look) {
     if (canvas.getClientRects().length === 0) { requestAnimationFrame(loop); return; }
     const t = clock.getElapsedTime();
     hv += (hover - hv) * 0.08;
-    pivot.rotation.y = t * (0.35 + hv * 0.9);
+    pivot.rotation.y = Math.sin(t * 0.6) * 0.55 + hv * Math.sin(t * 2.2) * 0.25; // 렌즈가 앞을 보도록 좌우로 흔들림
     pivot.position.y = Math.sin(t * 1.1) * 0.15;
     post.uniforms.uTime.value = t;
     renderer.setRenderTarget(rt); renderer.setClearColor(0x000000, 0); renderer.clear(); renderer.render(scene, camera);
     renderer.setRenderTarget(null); renderer.clear(); renderer.render(postScene, postCam);
     requestAnimationFrame(loop);
   })();
+}
+
+/* 포토부스 카메라 모형 3종 — 렌즈는 +z(화면 쪽) */
+function buildCamera(look, body) {
+  const g = new THREE.Group();
+  const dark = new THREE.MeshStandardMaterial({ color: 0x15151c, roughness: 0.25 });
+  const mid  = new THREE.MeshStandardMaterial({ color: 0x777788, roughness: 0.4 });
+  const glass = new THREE.MeshStandardMaterial({ color: 0x0a0a12, roughness: 0.05, metalness: 0.2 });
+  const add = (geo, m, x, y, z, rx = 0, ry = 0, rz = 0) => { const o = new THREE.Mesh(geo, m); o.position.set(x, y, z); o.rotation.set(rx, ry, rz); g.add(o); return o; };
+  const cyl = (r, h, seg = 40) => new THREE.CylinderGeometry(r, r, h, seg);
+  const RX = Math.PI / 2;
+  if (look === 'ccd') {
+    // 컴팩트 디카: 납작한 둥근 몸체, 작은 줌렌즈, 플래시, 셔터 버튼
+    const shape = new THREE.Shape(); const W = 3.2, H = 2.0, R = 0.35;
+    shape.moveTo(-W/2+R, -H/2); shape.lineTo(W/2-R, -H/2); shape.quadraticCurveTo(W/2, -H/2, W/2, -H/2+R);
+    shape.lineTo(W/2, H/2-R); shape.quadraticCurveTo(W/2, H/2, W/2-R, H/2); shape.lineTo(-W/2+R, H/2);
+    shape.quadraticCurveTo(-W/2, H/2, -W/2, H/2-R); shape.lineTo(-W/2, -H/2+R); shape.quadraticCurveTo(-W/2, -H/2, -W/2+R, -H/2);
+    const bodyGeo = new THREE.ExtrudeGeometry(shape, { depth: 0.75, bevelEnabled: true, bevelSize: 0.08, bevelThickness: 0.08, bevelSegments: 3 });
+    bodyGeo.translate(0, 0, -0.375); add(bodyGeo, body, 0, 0, 0);
+    add(cyl(0.72, 0.25), mid, 0.25, -0.05, 0.5, RX);
+    add(cyl(0.58, 0.3), body, 0.25, -0.05, 0.7, RX);
+    add(cyl(0.42, 0.06), glass, 0.25, -0.05, 0.86, RX);
+    add(new THREE.BoxGeometry(0.6, 0.28, 0.06), mid, -1.05, 0.6, 0.47);   // 플래시
+    add(new THREE.BoxGeometry(0.22, 0.22, 0.06), dark, 1.15, 0.65, 0.47); // 뷰파인더
+    add(cyl(0.18, 0.14), mid, 1.0, 1.1, 0);                                // 셔터
+    add(new THREE.BoxGeometry(0.5, 0.08, 0.3), dark, -0.6, 1.08, 0);       // 전원 버튼
+  } else if (look === 'film') {
+    // 필름 SLR: 각진 몸체 + 가운데 펜타프리즘 + 큰 렌즈 경통 + 와인더
+    add(new THREE.BoxGeometry(3.6, 1.9, 1.1), body, 0, 0, 0);
+    add(new THREE.BoxGeometry(3.6, 0.5, 1.12), dark, 0, -0.55, 0);           // 가죽 띠
+    const prism = new THREE.CylinderGeometry(0.0, 0.95, 0.9, 4, 1); prism.rotateY(Math.PI / 4);
+    add(prism, body, 0, 1.35, 0); add(new THREE.BoxGeometry(1.34, 0.25, 0.95), body, 0, 1.0, 0);
+    add(cyl(0.85, 0.5), mid, 0, -0.1, 0.8, RX);
+    add(cyl(0.75, 0.9), dark, 0, -0.1, 1.45, RX);
+    add(cyl(0.8, 0.12), mid, 0, -0.1, 1.55, RX);                             // 초점 링
+    add(cyl(0.55, 0.06), glass, 0, -0.1, 1.92, RX);
+    add(cyl(0.25, 0.3), dark, -1.25, 1.1, 0);                                // 되감기 노브
+    add(cyl(0.3, 0.25), mid, 1.2, 1.08, 0);                                  // 셔터 다이얼
+    add(new THREE.BoxGeometry(0.35, 0.08, 0.5), mid, 1.55, 1.25, 0.1, 0, 0, -0.3); // 와인더 레버
+  } else {
+    // 픽셀 카메라: 복셀(정육면체) 블록으로 쌓은 레트로 카메라
+    const V = 0.42, vox = new THREE.BoxGeometry(V, V, V);
+    const put = (x, y, z, m) => add(vox, m, x * V, y * V, z * V);
+    for (let x = -4; x <= 4; x++) for (let y = -2; y <= 2; y++) for (let z = -1; z <= 1; z++) put(x, y, z, y === -1 ? dark : body);
+    for (let x = -2; x <= -1; x++) put(x, 3, 0, body);                       // 셔터 블록
+    put(3, 3, 0, dark);                                                       // 버튼
+    for (let x = -1; x <= 1; x++) for (let y = -1; y <= 1; y++) { put(x, y, 2, (x === 0 && y === 0) ? glass : mid); }
+    put(0, 0, 3, dark); put(-1, 0, 3, mid); put(1, 0, 3, mid); put(0, 1, 3, mid); put(0, -1, 3, mid); // 렌즈 돌출
+    put(3, 1, 2, mid);                                                        // 플래시
+  }
+  return g;
 }
