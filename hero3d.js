@@ -28,7 +28,7 @@ const MESSAGE_BG_LAYOUT = [
   { key: 'road_narrows',  nx:  0.66, ny: -0.48, hf: 0.47, d: 22, rx: 0.15, ry:  0.25, rz: -2.30, mScale: 1.1, mnx:  0.6, mny: -0.6 },
 ];
 const messageBg = document.getElementById('message-bg');
-if (messageBg) initHero(messageBg, { withRoom: false, layout: MESSAGE_BG_LAYOUT, sizeMode: 'viewport', bg: true, noMouse: true, floatK: 0.5 }); // 카메라가 있는 가운데는 비우고 네 모서리에서만, 마우스 반응 없음
+if (messageBg) initHero(messageBg, { withRoom: false, layout: MESSAGE_BG_LAYOUT, sizeMode: 'viewport', bg: true, noMouse: true, floatK: 0.3, speed: 0.45 }); // 카메라가 있는 가운데는 비우고 네 모서리에서만, 마우스 반응 없음
 // 포토부스 카메라 선택: 카메라별 필터 느낌으로 렌더한 3D 오브제 (ccd / film / pixel)
 document.querySelectorAll('canvas.pb-cam-3d').forEach(c => initCamObj(c, c.dataset.key, c.dataset.look));
 
@@ -268,7 +268,7 @@ function initHero(canvas, opts = {}) {
   (function loop() {
     // 페이지가 숨겨져 있으면(비활성) 렌더 생략 — 성능 절약
     if (canvas.getClientRects().length === 0) { requestAnimationFrame(loop); return; }
-    const t = clock.getElapsedTime();
+    const t = clock.getElapsedTime() * (opts.speed || 1); // 배경용은 느리게
     cur.x += (target.x - cur.x) * 0.06;
     cur.y += (target.y - cur.y) * 0.06;
     const mx = (reduce || opts.noMouse) ? 0 : cur.x, my = (reduce || opts.noMouse) ? 0 : cur.y;
