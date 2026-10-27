@@ -1182,3 +1182,14 @@ a,button,[onclick],label,summary,.wk-bt,.wk-bt *,[role=button]{cursor:var(--cur-
 /* 격자 윗선은 카드에만 (카드가 1~2개여도 선이 오른쪽 끝까지 이어지지 않게) */
 .dz-grid,.wk-grid{border-top:none!important;padding-top:2px}
 .dz-grid .dz-card,.wk-grid .wk-card{border-top:2px solid var(--blue)!important;margin-top:-2px!important}
+/* 포토부스: 배경 3D (파란 배경 위·UI 아래), 정보 푸터 숨김 */
+.pb-bg3d{position:absolute;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
+#page-message footer[data-shared-foot]{display:none}
+/* 카메라 선택: 흰 카드 대신 필터가 적용된 3D 오브제 */
+.pb-cam{background:transparent;border:none;padding:0}
+.pb-cam:hover{transform:translateY(-6px);border-color:transparent}
+.pb-cam-3d{width:100%;aspect-ratio:4/5;display:block}
+.pb-cam-name{color:#fff;font-size:22px}
+.pb-cam-desc{color:#fff;opacity:.85}
+.pb-cam:hover .pb-cam-name{text-decoration:underline;text-underline-offset:6px}
+@media (max-width:640px){.pb-cam-3d{width:110px;flex:0 0 auto}}

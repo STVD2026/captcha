@@ -20,6 +20,17 @@ const designerBg = document.getElementById('designer-bg');
 if (designerBg) initHero(designerBg, { withRoom: false, layout: DESIGNER_BG_LAYOUT, sizeMode: 'viewport', bg: true });
 const workBg = document.getElementById('work-bg');
 if (workBg) initHero(workBg, { withRoom: false, layout: WORK_BG_LAYOUT, sizeMode: 'viewport', bg: true });
+// 포토부스 배경: 파란 배경 위를 떠다니는 오브제
+const MESSAGE_BG_LAYOUT = [
+  { key: 'traffic_light', nx: -0.50, ny:  0.36, hf: 0.24, d: 26, rx: 0.10, ry: -0.48, rz:  1.42, mScale: 1.0, mnx: -0.5, mny:  0.5 },
+  { key: 'fire_hydrant',  nx:  0.50, ny: -0.38, hf: 0.24, d: 26, rx: 0.10, ry:  0.30, rz:  2.19, mScale: 1.0, mnx:  0.5, mny: -0.5 },
+  { key: 'steps',         nx:  0.50, ny:  0.34, hf: 0.22, d: 28, rx: 0.26, ry:  0.95, rz:  0.20, mScale: 1.0, mnx:  0.5, mny:  0.5 },
+  { key: 'road_narrows',  nx: -0.50, ny: -0.36, hf: 0.26, d: 26, rx: 0.15, ry:  0.25, rz: -2.30, mScale: 1.0, mnx: -0.5, mny: -0.5 },
+];
+const messageBg = document.getElementById('message-bg');
+if (messageBg) initHero(messageBg, { withRoom: false, layout: MESSAGE_BG_LAYOUT, sizeMode: 'viewport', bg: true });
+// 포토부스 카메라 선택: 카메라별 필터 느낌으로 렌더한 3D 오브제 (ccd / film / pixel)
+document.querySelectorAll('canvas.pb-cam-3d').forEach(c => initCamObj(c, c.dataset.key, c.dataset.look));
 
 function initHero(canvas, opts = {}) {
   const withRoom = opts.withRoom !== false;
@@ -284,6 +295,102 @@ function initHero(canvas, opts = {}) {
     renderer.clear();
     renderer.render(postScene, postCam);
 
+    requestAnimationFrame(loop);
+  })();
+}
+function initCamObj(canvas, key, look) {
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: look !== 'pixel', alpha: true });
+  renderer.setClearColor(0x000000, 0);
+  renderer.outputColorSpace = THREE.SRGBColorSpace;
+  renderer.autoClear = false;
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(35, 0.8, 0.1, 100);
+  camera.position.set(0, 0, 12);
+  const pmrem = new THREE.PMREMGenerator(renderer);
+  scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+  scene.add(new THREE.HemisphereLight(0xffffff, 0x8080a0, 1.0));
+  const key1 = new THREE.DirectionalLight(0xffffff, 3.2); key1.position.set(5, 8, 9); scene.add(key1);
+  const rim = new THREE.DirectionalLight(0xffffff, 1.6); rim.position.set(-6, 3, 4); scene.add(rim);
+  const mat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.35, metalness: 0 });
+  const pivot = new THREE.Group(); scene.add(pivot);
+
+  const draco = new DRACOLoader(); draco.setDecoderPath('./vendor/draco/');
+  const loader = new GLTFLoader(); loader.setDRACOLoader(draco);
+  const buf = (window.CAPTCHA_MODELS || {})[key];
+  if (buf) {
+    const s = atob(buf), a = new Uint8Array(s.length); for (let i = 0; i < s.length; i++) a[i] = s.charCodeAt(i);
+    loader.parse(a.buffer, '', gltf => {
+      const box = new THREE.Box3().setFromObject(gltf.scene), c = box.getCenter(new THREE.Vector3()), sz = box.getSize(new THREE.Vector3());
+      gltf.scene.position.sub(c);
+      gltf.scene.traverse(o => { if (o.isMesh) o.material = mat; });
+      const inner = new THREE.Group(); inner.add(gltf.scene);
+      inner.scale.setScalar(3.6 / Math.max(sz.x, sz.y, sz.z));
+      inner.rotation.set(0.25, 0.6, look === 'ccd' ? -0.5 : look === 'film' ? 0.35 : 0.15);
+      pivot.add(inner);
+    });
+  }
+
+  const rt = new THREE.WebGLRenderTarget(2, 2, { minFilter: THREE.NearestFilter, magFilter: THREE.NearestFilter });
+  const LOOK = { ccd: 0, film: 1, pixel: 2 }[look] || 0;
+  const post = new THREE.ShaderMaterial({
+    transparent: true,
+    uniforms: { tDiffuse: { value: rt.texture }, uRes: { value: new THREE.Vector2(2, 2) }, uTime: { value: 0 }, uLook: { value: LOOK } },
+    vertexShader: `varying vec2 vUv; void main(){ vUv=uv; gl_Position=vec4(position.xy,0.0,1.0); }`,
+    fragmentShader: `
+      precision highp float;
+      uniform sampler2D tDiffuse; uniform vec2 uRes; uniform float uTime; uniform int uLook;
+      varying vec2 vUv;
+      float rnd(vec2 p){ return fract(sin(dot(p, vec2(12.9898,78.233))) * 43758.5453); }
+      float bayer(vec2 p){
+        mat4 B = mat4(0.0,8.0,2.0,10.0, 12.0,4.0,14.0,6.0, 3.0,11.0,1.0,9.0, 15.0,7.0,13.0,5.0)/16.0;
+        int x = int(mod(p.x,4.0)); int y = int(mod(p.y,4.0)); vec4 r = B[y];
+        return x==0 ? r.x : x==1 ? r.y : x==2 ? r.z : r.w;
+      }
+      void main(){
+        vec2 uv = vUv;
+        if (uLook == 2) { vec2 b = floor(gl_FragCoord.xy / 4.0); uv = (b + 0.5) * 4.0 / uRes; }
+        vec4 c = texture2D(tDiffuse, uv);
+        if (c.a < 0.05) discard;
+        float l = dot(c.rgb / max(c.a, 0.01), vec3(0.299,0.587,0.114));
+        vec3 col;
+        if (uLook == 0) {            // CCD: 차갑고 쨍한 디카 — 청록 섀도, 날아간 하이라이트
+          l = clamp((l - 0.62) * 2.2 + 0.5, 0.0, 1.0);
+          col = mix(vec3(0.05,0.12,0.38), vec3(0.72,0.90,1.0), l);
+          col += smoothstep(0.85, 1.0, l) * 0.3;
+        } else if (uLook == 1) {     // FILM: 바랜 블랙, 따뜻한 하이라이트, 움직이는 그레인
+          col = mix(vec3(0.22,0.20,0.24), vec3(1.0,0.90,0.76), smoothstep(0.05, 0.95, l));
+          col += (rnd(floor(gl_FragCoord.xy / 1.5) + fract(uTime * 7.0)) - 0.5) * 0.16;
+        } else {                     // PIXEL: 파랑 디더
+          vec2 b = floor(gl_FragCoord.xy / 4.0);
+          if ((1.0 - l) * 1.6 + 0.15 < bayer(b)) col = vec3(1.0); else col = vec3(0.322,0.329,1.0);
+        }
+        gl_FragColor = vec4(col, 1.0);
+      }`
+  });
+  const postScene = new THREE.Scene(), postCam = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+  postScene.add(new THREE.Mesh(new THREE.PlaneGeometry(2, 2), post));
+
+  function resize() {
+    const w = Math.max(canvas.clientWidth, 1), h = Math.max(canvas.clientHeight, 1), pr = Math.min(window.devicePixelRatio, 2);
+    renderer.setPixelRatio(pr); renderer.setSize(w, h, false);
+    rt.setSize(Math.ceil(w * pr), Math.ceil(h * pr)); post.uniforms.uRes.value.set(Math.ceil(w * pr), Math.ceil(h * pr));
+    camera.aspect = w / h; camera.updateProjectionMatrix();
+  }
+  new ResizeObserver(resize).observe(canvas); resize();
+
+  let hover = 0, hv = 0;
+  const btn = canvas.closest('button');
+  if (btn) { btn.addEventListener('pointerenter', () => hover = 1); btn.addEventListener('pointerleave', () => hover = 0); }
+  const clock = new THREE.Clock();
+  (function loop() {
+    if (canvas.getClientRects().length === 0) { requestAnimationFrame(loop); return; }
+    const t = clock.getElapsedTime();
+    hv += (hover - hv) * 0.08;
+    pivot.rotation.y = t * (0.35 + hv * 0.9);
+    pivot.position.y = Math.sin(t * 1.1) * 0.15;
+    post.uniforms.uTime.value = t;
+    renderer.setRenderTarget(rt); renderer.setClearColor(0x000000, 0); renderer.clear(); renderer.render(scene, camera);
+    renderer.setRenderTarget(null); renderer.clear(); renderer.render(postScene, postCam);
     requestAnimationFrame(loop);
   })();
 }

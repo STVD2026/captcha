@@ -14,7 +14,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" onload="this.rel='stylesheet'">
 <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap"></noscript>
-<link rel="stylesheet" href="style.css?v=216">
+<link rel="stylesheet" href="style.css?v=217">
 </head>
 <body class="theme-light">
 
@@ -294,25 +294,25 @@
 <div id="page-message" class="page">
   <section class="pb" id="pb">
     <div class="pb-grid" id="pb-grid" aria-hidden="true"></div>
+    <canvas id="message-bg" class="pb-bg3d" aria-hidden="true"></canvas>
     <div class="pb-inner">
       <h2 class="pb-title">PHOTOBOOTH</h2>
 
       <!-- STAGE 0 · 카메라 선택 -->
       <div class="pb-stage pb-pick" id="pb-pick">
-        <h3 class="pb-pick-title">카메라를 골라보세요</h3>
         <div class="pb-cams">
           <button class="pb-cam" type="button" onclick="boothPickCam('ccd')">
-            <span class="pb-cam-img" style="background-image:url('images/booth/cam-ccd.png')"></span>
+            <canvas class="pb-cam-3d" data-look="ccd" data-key="road_narrows" aria-hidden="true"></canvas>
             <span class="pb-cam-name">CCD</span>
             <span class="pb-cam-desc">쿨 · 클린 디카룩</span>
           </button>
           <button class="pb-cam" type="button" onclick="boothPickCam('fuji')">
-            <span class="pb-cam-img" style="background-image:url('images/booth/cam-fuji.png')"></span>
+            <canvas class="pb-cam-3d" data-look="film" data-key="fire_hydrant" aria-hidden="true"></canvas>
             <span class="pb-cam-name">FILM</span>
             <span class="pb-cam-desc">필름 · 그레인 웜톤</span>
           </button>
           <button class="pb-cam" type="button" onclick="boothPickCam('pixel')">
-            <span class="pb-cam-img" style="background-image:url('images/booth/cam-pixel.png');image-rendering:pixelated"></span>
+            <canvas class="pb-cam-3d" data-look="pixel" data-key="steps" aria-hidden="true"></canvas>
             <span class="pb-cam-name">PIXEL</span>
             <span class="pb-cam-desc">픽셀 아트 · 레트로</span>
           </button>
@@ -464,6 +464,6 @@
 <script type="importmap">
 {"imports":{"three":"./vendor/three/three.module.js","three/addons/":"./vendor/three/addons/"}}
 </script>
-<script type="module" src="hero3d.js?v=16"></script>
+<script type="module" src="hero3d.js?v=19"></script>
 </body>
 </html>
