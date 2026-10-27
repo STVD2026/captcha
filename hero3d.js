@@ -22,10 +22,10 @@ const workBg = document.getElementById('work-bg');
 if (workBg) initHero(workBg, { withRoom: false, layout: WORK_BG_LAYOUT, sizeMode: 'viewport', bg: true });
 // 포토부스 배경: 파란 배경 위를 떠다니는 오브제
 const MESSAGE_BG_LAYOUT = [
-  { key: 'traffic_light', nx: -0.50, ny:  0.36, hf: 0.24, d: 26, rx: 0.10, ry: -0.48, rz:  1.42, mScale: 1.0, mnx: -0.5, mny:  0.5 },
-  { key: 'fire_hydrant',  nx:  0.50, ny: -0.38, hf: 0.24, d: 26, rx: 0.10, ry:  0.30, rz:  2.19, mScale: 1.0, mnx:  0.5, mny: -0.5 },
-  { key: 'steps',         nx:  0.50, ny:  0.34, hf: 0.22, d: 28, rx: 0.26, ry:  0.95, rz:  0.20, mScale: 1.0, mnx:  0.5, mny:  0.5 },
-  { key: 'road_narrows',  nx: -0.50, ny: -0.36, hf: 0.26, d: 26, rx: 0.15, ry:  0.25, rz: -2.30, mScale: 1.0, mnx: -0.5, mny: -0.5 },
+  { key: 'traffic_light', nx: -0.48, ny:  0.34, hf: 0.40, d: 22, rx: 0.10, ry: -0.48, rz:  1.42, mScale: 1.0, mnx: -0.5, mny:  0.5 },
+  { key: 'fire_hydrant',  nx:  0.48, ny: -0.34, hf: 0.42, d: 22, rx: 0.10, ry:  0.30, rz:  2.19, mScale: 1.0, mnx:  0.5, mny: -0.5 },
+  { key: 'steps',         nx:  0.50, ny:  0.32, hf: 0.40, d: 24, rx: 0.26, ry:  0.95, rz:  0.20, mScale: 1.0, mnx:  0.5, mny:  0.5 },
+  { key: 'road_narrows',  nx: -0.48, ny: -0.34, hf: 0.44, d: 22, rx: 0.15, ry:  0.25, rz: -2.30, mScale: 1.0, mnx: -0.5, mny: -0.5 },
 ];
 const messageBg = document.getElementById('message-bg');
 if (messageBg) initHero(messageBg, { withRoom: false, layout: MESSAGE_BG_LAYOUT, sizeMode: 'viewport', bg: true });
@@ -319,7 +319,8 @@ function initCamObj(canvas, key, look) {
   const box = new THREE.Box3().setFromObject(cam), c = box.getCenter(new THREE.Vector3()), sz = box.getSize(new THREE.Vector3());
   cam.position.sub(c);
   const inner = new THREE.Group(); inner.add(cam);
-  inner.scale.setScalar(4.2 / Math.max(sz.x, sz.y, sz.z));
+  const rad = box.getBoundingSphere(new THREE.Sphere()).radius;
+  inner.scale.setScalar(3.1 / rad); // 회전해도 캔버스 밖으로 잘리지 않게 구 기준으로 맞춤
   inner.rotation.set(0.18, -0.55, 0.04);
   pivot.add(inner);
 
@@ -347,12 +348,14 @@ function initCamObj(canvas, key, look) {
         float l = dot(c.rgb / max(c.a, 0.01), vec3(0.299,0.587,0.114));
         vec3 col;
         if (uLook == 0) {            // CCD: 차갑고 쨍한 디카 — 청록 섀도, 날아간 하이라이트
-          l = clamp((l - 0.62) * 2.2 + 0.5, 0.0, 1.0);
-          col = mix(vec3(0.05,0.12,0.38), vec3(0.72,0.90,1.0), l);
-          col += smoothstep(0.85, 1.0, l) * 0.3;
+          l = clamp((l - 0.45) * 1.6 + 0.5, 0.0, 1.0);
+          col = mix(vec3(0.10,0.12,0.18), vec3(0.90,0.94,1.0), l);   // 차가운 스틸
+          col += smoothstep(0.88, 1.0, l) * 0.25;                       // 날아간 반사
+          col *= 0.96 + 0.04 * rnd(vec2(0.0, floor(gl_FragCoord.y)));  // 헤어라인(브러시드) 결
         } else if (uLook == 1) {     // FILM: 바랜 블랙, 따뜻한 하이라이트, 움직이는 그레인
-          col = mix(vec3(0.22,0.20,0.24), vec3(1.0,0.90,0.76), smoothstep(0.05, 0.95, l));
-          col += (rnd(floor(gl_FragCoord.xy / 1.5) + fract(uTime * 7.0)) - 0.5) * 0.16;
+          col = mix(vec3(0.16,0.14,0.15), vec3(1.0,0.91,0.78), smoothstep(0.04, 0.96, l));
+          col = mix(col, col * vec3(1.05,0.95,0.82), 0.35);              // 세피아 기운
+          col += (rnd(floor(gl_FragCoord.xy / 1.5) + fract(uTime * 7.0)) - 0.5) * 0.18;
         } else {                     // PIXEL: 파랑 디더
           vec2 b = floor(gl_FragCoord.xy / 4.0);
           if ((1.0 - l) * 1.6 + 0.15 < bayer(b)) col = vec3(1.0); else col = vec3(0.322,0.329,1.0);
@@ -389,7 +392,7 @@ function initCamObj(canvas, key, look) {
 }
 
 /* 포토부스 카메라 모형 3종 — 렌즈는 +z(화면 쪽) */
-function buildCamera(look, body) {
+function buildCamera(look, body) { // body: 기본 재질 (CCD는 쇠로 교체)
   const g = new THREE.Group();
   const dark = new THREE.MeshStandardMaterial({ color: 0x15151c, roughness: 0.25 });
   const mid  = new THREE.MeshStandardMaterial({ color: 0x777788, roughness: 0.4 });
@@ -404,7 +407,9 @@ function buildCamera(look, body) {
     shape.lineTo(W/2, H/2-R); shape.quadraticCurveTo(W/2, H/2, W/2-R, H/2); shape.lineTo(-W/2+R, H/2);
     shape.quadraticCurveTo(-W/2, H/2, -W/2, H/2-R); shape.lineTo(-W/2, -H/2+R); shape.quadraticCurveTo(-W/2, -H/2, -W/2+R, -H/2);
     const bodyGeo = new THREE.ExtrudeGeometry(shape, { depth: 0.75, bevelEnabled: true, bevelSize: 0.08, bevelThickness: 0.08, bevelSegments: 3 });
-    bodyGeo.translate(0, 0, -0.375); add(bodyGeo, body, 0, 0, 0);
+    bodyGeo.translate(0, 0, -0.375);
+    const steel = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.32, metalness: 0.75, envMapIntensity: 3.2 }); // 쇠 질감
+    add(bodyGeo, steel, 0, 0, 0); body = steel;
     add(cyl(0.72, 0.25), mid, 0.25, -0.05, 0.5, RX);
     add(cyl(0.58, 0.3), body, 0.25, -0.05, 0.7, RX);
     add(cyl(0.42, 0.06), glass, 0.25, -0.05, 0.86, RX);
@@ -413,18 +418,32 @@ function buildCamera(look, body) {
     add(cyl(0.18, 0.14), mid, 1.0, 1.1, 0);                                // 셔터
     add(new THREE.BoxGeometry(0.5, 0.08, 0.3), dark, -0.6, 1.08, 0);       // 전원 버튼
   } else if (look === 'film') {
-    // 필름 SLR: 각진 몸체 + 가운데 펜타프리즘 + 큰 렌즈 경통 + 와인더
-    add(new THREE.BoxGeometry(3.6, 1.9, 1.1), body, 0, 0, 0);
-    add(new THREE.BoxGeometry(3.6, 0.5, 1.12), dark, 0, -0.55, 0);           // 가죽 띠
-    const prism = new THREE.CylinderGeometry(0.0, 0.95, 0.9, 4, 1); prism.rotateY(Math.PI / 4);
-    add(prism, body, 0, 1.35, 0); add(new THREE.BoxGeometry(1.34, 0.25, 0.95), body, 0, 1.0, 0);
-    add(cyl(0.85, 0.5), mid, 0, -0.1, 0.8, RX);
-    add(cyl(0.75, 0.9), dark, 0, -0.1, 1.45, RX);
-    add(cyl(0.8, 0.12), mid, 0, -0.1, 1.55, RX);                             // 초점 링
-    add(cyl(0.55, 0.06), glass, 0, -0.1, 1.92, RX);
-    add(cyl(0.25, 0.3), dark, -1.25, 1.1, 0);                                // 되감기 노브
-    add(cyl(0.3, 0.25), mid, 1.2, 1.08, 0);                                  // 셔터 다이얼
-    add(new THREE.BoxGeometry(0.35, 0.08, 0.5), mid, 1.55, 1.25, 0.1, 0, 0, -0.3); // 와인더 레버
+    // 옛날 필름 SLR: 크롬 윗판·밑판 + 검정 가죽 몸체 + 펜타프리즘 + 크롬 링 렌즈 + 노브·레버 디테일
+    const chrome = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.3, metalness: 0.8, envMapIntensity: 3.0 });
+    const leather = new THREE.MeshStandardMaterial({ color: 0x3a3330, roughness: 0.85 });
+    add(new THREE.BoxGeometry(3.6, 1.15, 1.0), leather, 0, -0.15, 0);                // 가죽 몸체
+    add(new THREE.BoxGeometry(3.66, 0.42, 1.06), chrome, 0, 0.62, 0);                // 크롬 윗판
+    add(new THREE.BoxGeometry(3.66, 0.16, 1.06), chrome, 0, -0.8, 0);                // 크롬 밑판
+    const prism = new THREE.CylinderGeometry(0.42, 0.78, 0.75, 4, 1); prism.rotateY(Math.PI / 4); prism.scale(1, 1, 0.9);
+    add(prism, chrome, 0, 1.2, 0);                                                    // 펜타프리즘
+    add(new THREE.BoxGeometry(0.6, 0.14, 0.12), dark, 0, 1.25, 0.42);                 // 프리즘 로고판
+    add(new THREE.BoxGeometry(0.5, 0.1, 0.5), chrome, 0, 1.62, 0);                    // 핫슈
+    add(cyl(0.95, 0.12), chrome, 0, -0.1, 0.56, RX);                                  // 마운트 링
+    add(cyl(0.82, 0.35), leather, 0, -0.1, 0.8, RX);                                  // 경통
+    for (let i = 0; i < 6; i++) add(cyl(0.86, 0.035, 48), i % 2 ? chrome : dark, 0, -0.1, 0.68 + i * 0.06, RX); // 초점 링 홈
+    add(cyl(0.8, 0.4), chrome, 0, -0.1, 1.2, RX);                                     // 크롬 경통
+    add(cyl(0.84, 0.1), dark, 0, -0.1, 1.42, RX);                                     // 조리개 링
+    add(cyl(0.72, 0.12), chrome, 0, -0.1, 1.52, RX);
+    add(cyl(0.58, 0.04), glass, 0, -0.1, 1.59, RX);
+    add(cyl(0.3, 0.02), mid, 0, -0.1, 1.615, RX);                                     // 렌즈 반사
+    add(cyl(0.32, 0.22, 24), chrome, -1.3, 0.95, 0);                                  // 되감기 노브
+    add(cyl(0.08, 0.3, 12), chrome, -1.3, 1.15, 0.12, 0, 0, 0.0);                    // 크랭크
+    add(cyl(0.34, 0.16, 24), chrome, 1.0, 0.93, 0);                                   // 셔터 속도 다이얼
+    add(cyl(0.12, 0.14, 16), chrome, 1.0, 1.06, 0);                                   // 셔터 버튼
+    add(new THREE.BoxGeometry(0.75, 0.06, 0.18), chrome, 1.5, 0.98, 0.2, 0, -0.4, 0); // 와인딩 레버
+    add(cyl(0.1, 0.25, 12), chrome, 1.25, 0.25, 0.55, RX);                            // 셀프타이머 레버
+    add(new THREE.BoxGeometry(0.12, 0.25, 0.25), chrome, -1.86, 0.45, 0);             // 스트랩 고리
+    add(new THREE.BoxGeometry(0.12, 0.25, 0.25), chrome, 1.86, 0.45, 0);
   } else {
     // 픽셀 카메라: 복셀(정육면체) 블록으로 쌓은 레트로 카메라
     const V = 0.42, vox = new THREE.BoxGeometry(V, V, V);
