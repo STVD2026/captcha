@@ -1195,7 +1195,7 @@ function boothAddSticker(n) {
   el.className = 'pb-sticker-inst';
   el.dataset.sid = (++_sid);
   var img = new Image();
-  img.src = 'images/booth/sticker' + n + '.png?v=2';
+  img.src = 'images/booth/sticker' + n + '.png?v=3';
   el.appendChild(img);
   // 살짝 랜덤 위치 (겹침 방지)
   var sw = strip ? strip.offsetWidth : 320;

@@ -13,7 +13,7 @@ import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 import { initCamObj } from '../hero3d.js';
 
 const save = (name, cv) => fetch('http://127.0.0.1:3401/', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name, data: cv.toDataURL('image/png') }) });
-const W = 900, H = 1100, PX = 3; // 디더 한 칸 = 3px
+const W = 900, H = 1100, PX = 6; // 디더 한 칸 = 3px
 
 function ditherRender(build, name) {
   const cv = document.createElement('canvas'); cv.width = W; cv.height = H; document.body.appendChild(cv);
@@ -26,14 +26,14 @@ function ditherRender(build, name) {
   const k2 = new THREE.DirectionalLight(0xffffff, 2.0); k2.position.set(-7, 4, 6); scene.add(k2);
   const obj = build(); const box = new THREE.Box3().setFromObject(obj), c = box.getCenter(new THREE.Vector3());
   obj.position.sub(c); const g = new THREE.Group(); g.add(obj);
-  g.scale.setScalar(3.5 / box.getBoundingSphere(new THREE.Sphere()).radius); scene.add(g);
+  g.scale.setScalar(4.3 / box.getBoundingSphere(new THREE.Sphere()).radius); scene.add(g);
   const rt = new THREE.WebGLRenderTarget(W / PX, H / PX, { minFilter: THREE.NearestFilter, magFilter: THREE.NearestFilter });
   const post = new THREE.ShaderMaterial({ transparent: true, uniforms: { t: { value: rt.texture } },
     vertexShader: 'varying vec2 v; void main(){ v=uv; gl_Position=vec4(position.xy,0.,1.); }',
     fragmentShader: `uniform sampler2D t; varying vec2 v;
       float bayer(vec2 p){ mat4 B=mat4(0.,8.,2.,10.,12.,4.,14.,6.,3.,11.,1.,9.,15.,7.,13.,5.)/16.; int x=int(mod(p.x,4.)),y=int(mod(p.y,4.)); vec4 r=B[y]; return x==0?r.x:x==1?r.y:x==2?r.z:r.w; }
       void main(){ vec4 c=texture2D(t,v); if(c.a<0.05) discard;
-        float l=dot(c.rgb/max(c.a,.01),vec3(.299,.587,.114)); float cov=clamp((1.-l)*1.35+.02,0.,1.);
+        float l=dot(c.rgb/max(c.a,.01),vec3(.299,.587,.114)); float cov=clamp((1.-l-.65)*4.5+.01,0.,1.)*clamp(c.a+.25,0.,1.); cov=max(cov,.001); /* 메인 히어로 3D와 같은 디더 */
         if(cov<bayer(floor(gl_FragCoord.xy/${PX}.))) discard; gl_FragColor=vec4(.322,.329,1.,1.); }` });
   const ps = new THREE.Scene(); ps.add(new THREE.Mesh(new THREE.PlaneGeometry(2, 2), post));
   r.setRenderTarget(rt); r.clear(); r.render(scene, cam); r.setRenderTarget(null); r.clear();
