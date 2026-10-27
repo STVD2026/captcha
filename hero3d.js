@@ -28,7 +28,7 @@ const MESSAGE_BG_LAYOUT = [
   { key: 'road_narrows',  nx: -0.48, ny: -0.34, hf: 0.44, d: 22, rx: 0.15, ry:  0.25, rz: -2.30, mScale: 1.0, mnx: -0.5, mny: -0.5 },
 ];
 const messageBg = document.getElementById('message-bg');
-if (messageBg) initHero(messageBg, { withRoom: false, layout: MESSAGE_BG_LAYOUT, sizeMode: 'viewport', bg: true });
+if (messageBg) initHero(messageBg, { withRoom: false, sizeMode: 'viewport', bg: true }); // 메인 히어로와 같은 위치에 4개 오브제
 // 포토부스 카메라 선택: 카메라별 필터 느낌으로 렌더한 3D 오브제 (ccd / film / pixel)
 document.querySelectorAll('canvas.pb-cam-3d').forEach(c => initCamObj(c, c.dataset.key, c.dataset.look));
 
@@ -353,12 +353,11 @@ function initCamObj(canvas, key, look) {
           col += smoothstep(0.88, 1.0, l) * 0.25;                       // 날아간 반사
           col *= 0.96 + 0.04 * rnd(vec2(0.0, floor(gl_FragCoord.y)));  // 헤어라인(브러시드) 결
         } else if (uLook == 1) {     // FILM: 바랜 블랙, 따뜻한 하이라이트, 움직이는 그레인
-          col = mix(vec3(0.16,0.14,0.15), vec3(1.0,0.91,0.78), smoothstep(0.04, 0.96, l));
-          col = mix(col, col * vec3(1.05,0.95,0.82), 0.35);              // 세피아 기운
+          col = mix(vec3(0.12,0.11,0.11), vec3(0.88,0.85,0.82), smoothstep(0.04, 0.96, l)); // 쿨 브라운
           col += (rnd(floor(gl_FragCoord.xy / 1.5) + fract(uTime * 7.0)) - 0.5) * 0.18;
         } else {                     // PIXEL: 파랑 디더
           vec2 b = floor(gl_FragCoord.xy / 4.0);
-          if ((1.0 - l) * 1.6 + 0.15 < bayer(b)) col = vec3(1.0); else col = vec3(0.322,0.329,1.0);
+          if ((1.0 - l) * 1.3 - 0.05 < bayer(b)) col = vec3(1.0); else col = vec3(0.322,0.329,1.0);
         }
         gl_FragColor = vec4(col, 1.0);
       }`
@@ -451,8 +450,13 @@ function buildCamera(look, body) { // body: 기본 재질 (CCD는 쇠로 교체)
     for (let x = -4; x <= 4; x++) for (let y = -2; y <= 2; y++) for (let z = -1; z <= 1; z++) put(x, y, z, y === -1 ? dark : body);
     for (let x = -2; x <= -1; x++) put(x, 3, 0, body);                       // 셔터 블록
     put(3, 3, 0, dark);                                                       // 버튼
-    for (let x = -1; x <= 1; x++) for (let y = -1; y <= 1; y++) { put(x, y, 2, (x === 0 && y === 0) ? glass : mid); }
-    put(0, 0, 3, dark); put(-1, 0, 3, mid); put(1, 0, 3, mid); put(0, 1, 3, mid); put(0, -1, 3, mid); // 렌즈 돌출
+    // 렌즈: 진한 링 + 흰 반사 + 진한 중심이 앞으로 2칸 튀어나오게 (디더에서도 렌즈가 또렷하게)
+    for (let x = -2; x <= 2; x++) for (let y = -2; y <= 2; y++) {
+      const r = Math.max(Math.abs(x), Math.abs(y));
+      if (r === 2 && Math.abs(x) + Math.abs(y) === 4) continue;           // 모서리 깎아 둥글게
+      put(x, y, 2, r === 2 ? glass : body);
+      if (r <= 1) put(x, y, 3, (x === 0 && y === 0) ? glass : body);      // 흰 링 + 진한 중심
+    }
     put(3, 1, 2, mid);                                                        // 플래시
   }
   return g;
