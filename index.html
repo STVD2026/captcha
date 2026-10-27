@@ -14,7 +14,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" onload="this.rel='stylesheet'">
 <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap"></noscript>
-<link rel="stylesheet" href="style.css?v=217">
+<link rel="stylesheet" href="style.css?v=218">
 </head>
 <body class="theme-light">
 
@@ -319,24 +319,12 @@
         </div>
       </div>
 
-      <!-- STAGE 1 · 촬영 시작 -->
+      <!-- STAGE 1 · 촬영 (Figma 430-937): ← | 세로 프리뷰 | 카메라·초·컷 -->
       <div class="pb-stage pb-start" id="pb-start" hidden>
-        <button type="button" class="pb-back" onclick="boothBackToPick()">← 카메라 다시 고르기</button>
-        <div class="pb-camwrap">
-          <div class="pb-deco pb-ind pb-ind-sec">
-            <div class="pb-ind-circle">
-              <svg class="pb-ring" viewBox="0 0 100 100" aria-hidden="true">
-                <circle class="pb-ring-track" cx="50" cy="50" r="46"></circle>
-                <circle class="pb-ring-prog" id="pb-ring" cx="50" cy="50" r="46"></circle>
-              </svg>
-              <span id="pb-sec">3</span>
-            </div>
-            <em>SEC</em>
-          </div>
-          <div class="pb-deco pb-ind pb-ind-cut">
-            <span class="pb-ind-num" id="pb-cut">1/4</span>
-            <em>CUT</em>
-          </div>
+        <div class="pb-shoot">
+          <button type="button" class="pb-back" onclick="boothBackToPick()" aria-label="카메라 다시 고르기">
+            <svg viewBox="0 0 56 40" aria-hidden="true"><path d="M24 4 8 20l16 16" fill="none" stroke="#fff" stroke-width="7" stroke-linecap="square"/><path d="M10 20h44" stroke="#fff" stroke-width="7"/></svg>
+          </button>
           <div class="pb-cambox" id="pb-cambox">
             <div class="pb-progress"><span id="pb-prog"></span></div>
             <video id="booth-video" autoplay playsinline muted></video>
@@ -344,19 +332,26 @@
             <div class="pb-cam-fx pb-fx-grain" aria-hidden="true"></div>
             <div class="pb-cam-fx pb-fx-vignette" aria-hidden="true"></div>
             <div class="pb-cam-fx pb-fx-bloom" aria-hidden="true"></div>
-            <div class="pb-cam-idle" id="pb-cam-idle">
-              <svg class="pb-step" viewBox="0 0 40 40" fill="none" aria-hidden="true">
-                <path d="M6 26h9v-8h9v-8h9" stroke="#fff" stroke-width="4"/>
-              </svg>
-            </div>
+            <div class="pb-cam-idle" id="pb-cam-idle"></div>
             <div class="booth-countdown" id="booth-countdown"></div>
-            <span class="pb-cam-tag" id="pb-cam-tag"></span>
-            <button class="pb-start-btn" id="booth-start-btn" onclick="boothStart()">
-              <span class="pb-rec" aria-hidden="true"></span>촬영 시작 <span class="en">Start</span>
-            </button>
+            <span class="pb-cam-tag" id="pb-cam-tag" hidden></span>
+            <button class="pb-start-btn" id="booth-start-btn" onclick="boothStart()">Start shooting!</button>
+            <i class="pb-corner tl"></i><i class="pb-corner tr"></i><i class="pb-corner bl"></i><i class="pb-corner br"></i>
+          </div>
+          <div class="pb-side">
+            <div class="pb-side-item">
+              <svg class="pb-side-cam" viewBox="0 0 18 12" shape-rendering="crispEdges" aria-hidden="true"><path fill="#fff" d="M2 0h4v2H2zM0 2h18v10H0z"/><path fill="var(--blue)" d="M7 4h4v1H7zM6 5h1v4H6zM11 5h1v4h-1zM7 9h4v1H7zM8 6h2v2H8zM14 3h2v2h-2zM0 7h3v1H0zM15 7h3v1h-3z"/></svg>
+              <em id="pb-cam-label">pixel Camera</em>
+            </div>
+            <div class="pb-side-item">
+              <span class="pb-side-box sq" id="pb-sec">3</span><em>Sec</em>
+            </div>
+            <div class="pb-side-item">
+              <span class="pb-side-box" id="pb-cut">1/4</span><em>Cut</em>
+            </div>
+            <svg class="pb-ring" viewBox="0 0 100 100" hidden><circle id="pb-ring" cx="50" cy="50" r="46"></circle></svg>
           </div>
         </div>
-        <p class="pb-hint pb-hint-start" id="booth-hint">버튼을 누르면 3초 카운트다운 후 4컷을 촬영합니다</p>
       </div>
 
       <!-- STAGE 2 · 편집 -->
@@ -459,7 +454,7 @@
 </div>
 
 <script src="works-data.js?v=6"></script>
-<script src="main.js?v=136"></script>
+<script src="main.js?v=137"></script>
 
 <!-- 3D 인터랙티브 히어로 (Three.js — 로컬 번들, CDN 의존 없음) -->
 <script src="models.js?v=1"></script>

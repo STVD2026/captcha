@@ -1193,3 +1193,28 @@ a,button,[onclick],label,summary,.wk-bt,.wk-bt *,[role=button]{cursor:var(--cur-
 .pb-cam-desc{color:#fff;opacity:.85}
 .pb-cam:hover .pb-cam-name{text-decoration:underline;text-underline-offset:6px}
 @media (max-width:640px){.pb-cam-3d{width:110px;flex:0 0 auto}}
+/* ── 촬영 화면 (Figma 430-937) ── */
+.pb-start{width:100%;flex:1 1 auto;display:flex;align-items:center;justify-content:center}
+.pb-shoot{display:grid;grid-template-columns:90px auto 90px;column-gap:56px;align-items:start;justify-content:center}
+.pb-start .pb-back{align-self:start;justify-self:end;margin-top:28px;border:none;background:none;padding:6px;width:64px;visibility:visible!important}
+.pb-start .pb-back svg{width:56px;display:block}
+.pb-start .pb-back:hover{background:none;opacity:.75}
+.pb-start .pb-cambox{position:relative;width:auto;height:min(calc(100vh - 43px - 200px),640px);aspect-ratio:3/4;border:4px solid #fff;overflow:visible;background:#C2C2C2}
+.pb-start .pb-cambox video,.pb-start .pb-cambox canvas#booth-preview{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.pb-corner{position:absolute;width:22px;height:22px;background:#fff;z-index:6}
+.pb-corner.tl{left:-13px;top:-13px}.pb-corner.tr{right:-13px;top:-13px}.pb-corner.bl{left:-13px;bottom:-13px}.pb-corner.br{right:-13px;bottom:-13px}
+.pb-start .pb-progress{top:-4px;height:8px;background:rgba(255,255,255,.45)}
+.pb-start .pb-progress span{background:#fff}
+.pb-start .pb-start-btn{bottom:24px;left:50%;transform:translateX(-50%);background:var(--blue);color:#fff;border:none;padding:12px 18px;font-family:var(--gal);font-weight:700;font-size:16px;letter-spacing:.06em;white-space:nowrap;z-index:7}
+.pb-start .pb-start-btn:hover{background:#fff;color:var(--blue)}
+.pb-side{display:flex;flex-direction:column;align-items:center;gap:22px;margin-top:22px}
+.pb-side-item{display:flex;flex-direction:column;align-items:center;gap:6px;color:#fff}
+.pb-side-item em{font-family:var(--sg);font-style:normal;font-weight:700;font-size:13px;white-space:nowrap}
+.pb-side-cam{width:72px;height:auto}
+.pb-side-box{background:#fff;color:var(--blue);font-family:var(--gal);font-weight:700;font-size:26px;line-height:1;padding:6px 8px;min-width:72px;text-align:center}
+.pb-side-box.sq{min-width:0;width:48px;height:48px;display:flex;align-items:center;justify-content:center;font-size:30px;padding:0}
+@media (max-width:920px){
+  .pb-shoot{grid-template-columns:48px auto 70px;column-gap:20px}
+  .pb-start .pb-back{width:44px}.pb-start .pb-back svg{width:40px}
+  .pb-start .pb-cambox{height:min(calc(100vh - 43px - 180px),520px)}
+}

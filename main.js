@@ -657,6 +657,8 @@ function boothPickCam(cam) {
   pb.classList.add('fx-' + cam);
   var tag = document.getElementById('pb-cam-tag');
   if (tag) tag.textContent = CAMS[cam].name;
+  var lb = document.getElementById('pb-cam-label');
+  if (lb) lb.textContent = ({ ccd: 'CCD', fuji: 'film', pixel: 'pixel' }[cam] || CAMS[cam].name) + ' Camera';
   boothShowStage('start');
   boothResetTimer();
   boothInitCam().catch(function(){});
@@ -889,7 +891,7 @@ function boothApplyCam(canvas) {
 function boothBuildGrid() {}
 
 /* ── 뷰티 필터 ── */
-var _bPrevW = 640, _bPrevH = 480; // 4:3 프리뷰
+var _bPrevW = 480, _bPrevH = 640; // 3:4 세로 프리뷰 (스트립 칸과 같은 비율)
 var _bTmpC, _bTmpCtx, _bPrevCtx, _bAnimId, _bLUT;
 
 function _buildBeautyLUT(w, h) {
@@ -976,7 +978,7 @@ function boothInitCam() {
 }
 
 /* ── 촬영: 4컷 (4:3) ── */
-var CAP_W = 800, CAP_H = 600;
+var CAP_W = 600, CAP_H = 800; // 세로 3:4
 var _bubblePos = { x: 20, y: null };
 
 function boothSetProgress(p) {
