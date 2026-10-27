@@ -22,13 +22,13 @@ const workBg = document.getElementById('work-bg');
 if (workBg) initHero(workBg, { withRoom: false, layout: WORK_BG_LAYOUT, sizeMode: 'viewport', bg: true });
 // 포토부스 배경: 파란 배경 위를 떠다니는 오브제
 const MESSAGE_BG_LAYOUT = [
-  { key: 'traffic_light', nx: -0.48, ny:  0.34, hf: 0.40, d: 22, rx: 0.10, ry: -0.48, rz:  1.42, mScale: 1.0, mnx: -0.5, mny:  0.5 },
-  { key: 'fire_hydrant',  nx:  0.48, ny: -0.34, hf: 0.42, d: 22, rx: 0.10, ry:  0.30, rz:  2.19, mScale: 1.0, mnx:  0.5, mny: -0.5 },
-  { key: 'steps',         nx:  0.50, ny:  0.32, hf: 0.40, d: 24, rx: 0.26, ry:  0.95, rz:  0.20, mScale: 1.0, mnx:  0.5, mny:  0.5 },
-  { key: 'road_narrows',  nx: -0.48, ny: -0.34, hf: 0.44, d: 22, rx: 0.15, ry:  0.25, rz: -2.30, mScale: 1.0, mnx: -0.5, mny: -0.5 },
+  { key: 'steps',         nx: -0.72, ny:  0.42, hf: 0.26, d: 32, rx: 0.26, ry:  0.95, rz:  0.20, mScale: 0.9, mnx: -0.6, mny:  0.55 },
+  { key: 'traffic_light', nx:  0.74, ny:  0.40, hf: 0.26, d: 28, rx: 0.10, ry: -0.48, rz:  1.42, mScale: 0.9, mnx:  0.6, mny:  0.55 },
+  { key: 'fire_hydrant',  nx: -0.70, ny: -0.42, hf: 0.30, d: 26, rx: 0.10, ry:  0.30, rz:  2.19, mScale: 0.9, mnx: -0.6, mny: -0.55 },
+  { key: 'road_narrows',  nx:  0.72, ny: -0.42, hf: 0.32, d: 26, rx: 0.15, ry:  0.25, rz: -2.30, mScale: 0.9, mnx:  0.6, mny: -0.55 },
 ];
 const messageBg = document.getElementById('message-bg');
-if (messageBg) initHero(messageBg, { withRoom: false, sizeMode: 'viewport', bg: true }); // 메인 히어로와 같은 위치에 4개 오브제
+if (messageBg) initHero(messageBg, { withRoom: false, layout: MESSAGE_BG_LAYOUT, sizeMode: 'viewport', bg: true, noMouse: true, floatK: 0.5 }); // 카메라가 있는 가운데는 비우고 네 모서리에서만, 마우스 반응 없음
 // 포토부스 카메라 선택: 카메라별 필터 느낌으로 렌더한 3D 오브제 (ccd / film / pixel)
 document.querySelectorAll('canvas.pb-cam-3d').forEach(c => initCamObj(c, c.dataset.key, c.dataset.look));
 
@@ -271,12 +271,13 @@ function initHero(canvas, opts = {}) {
     const t = clock.getElapsedTime();
     cur.x += (target.x - cur.x) * 0.06;
     cur.y += (target.y - cur.y) * 0.06;
-    const mx = reduce ? 0 : cur.x, my = reduce ? 0 : cur.y;
+    const mx = (reduce || opts.noMouse) ? 0 : cur.x, my = (reduce || opts.noMouse) ? 0 : cur.y;
 
     objs.forEach(p => {
       const u = p.userData, inner = u.inner;
-      p.position.y = u.baseY + Math.sin(t * u.fSpeed + u.fPhase) * u.fAmp * (opts.bg ? 1.6 : 1);
-      if (opts.bg) p.position.x = u.baseX + Math.cos(t * u.fSpeed * 0.7 + u.fPhase) * u.fAmp * 1.4; // 배경: 좌우로도 유영
+      const fk = opts.floatK || 1;
+      p.position.y = u.baseY + Math.sin(t * u.fSpeed + u.fPhase) * u.fAmp * (opts.bg ? 1.6 : 1) * fk;
+      if (opts.bg) p.position.x = u.baseX + Math.cos(t * u.fSpeed * 0.7 + u.fPhase) * u.fAmp * 1.4 * fk; // 배경: 좌우로도 유영
       const tiltX = my * u.mouseKX + Math.sin(t * u.dSpeed + u.dPhase) * u.dAmp;
       const tiltY = mx * u.mouseKY + Math.cos(t * u.dSpeed * 0.8 + u.dPhase) * u.dAmp;
       p.rotation.x += (tiltX - p.rotation.x) * 0.15;
@@ -342,7 +343,7 @@ function initCamObj(canvas, key, look) {
       }
       void main(){
         vec2 uv = vUv;
-        if (uLook == 2) { vec2 b = floor(gl_FragCoord.xy / 4.0); uv = (b + 0.5) * 4.0 / uRes; }
+        if (uLook == 2) { vec2 b = floor(gl_FragCoord.xy / 6.0); uv = (b + 0.5) * 6.0 / uRes; }
         vec4 c = texture2D(tDiffuse, uv);
         if (c.a < 0.05) discard;
         float l = dot(c.rgb / max(c.a, 0.01), vec3(0.299,0.587,0.114));
@@ -356,8 +357,9 @@ function initCamObj(canvas, key, look) {
           col = mix(vec3(0.12,0.11,0.11), vec3(0.88,0.85,0.82), smoothstep(0.04, 0.96, l)); // 쿨 브라운
           col += (rnd(floor(gl_FragCoord.xy / 1.5) + fract(uTime * 7.0)) - 0.5) * 0.18;
         } else {                     // PIXEL: 파랑 디더
-          vec2 b = floor(gl_FragCoord.xy / 4.0);
-          if ((1.0 - l) * 1.3 - 0.05 < bayer(b)) col = vec3(1.0); else col = vec3(0.322,0.329,1.0);
+          vec2 b = floor(gl_FragCoord.xy / 6.0);                     // 큰 픽셀 + 체커 디더가 잘 보이게
+          float v = clamp((1.0 - l) * 1.5 - 0.05, 0.0, 1.0);
+          if (v < bayer(b)) col = vec3(1.0); else col = vec3(0.322,0.329,1.0);
         }
         gl_FragColor = vec4(col, 1.0);
       }`
@@ -373,7 +375,12 @@ function initCamObj(canvas, key, look) {
   }
   new ResizeObserver(resize).observe(canvas); resize();
 
-  let hover = 0, hv = 0;
+  let hover = 0, hv = 0; const ptr = { x: 0, y: 0 }, pc = { x: 0, y: 0 };
+  window.addEventListener('pointermove', e => {               // 마우스 방향으로 카메라가 고개를 돌림
+    const r = canvas.getBoundingClientRect(); if (!r.width) return;
+    ptr.x = Math.max(-1, Math.min(1, (e.clientX - (r.left + r.width / 2)) / (window.innerWidth / 2)));
+    ptr.y = Math.max(-1, Math.min(1, (e.clientY - (r.top + r.height / 2)) / (window.innerHeight / 2)));
+  });
   const btn = canvas.closest('button');
   if (btn) { btn.addEventListener('pointerenter', () => hover = 1); btn.addEventListener('pointerleave', () => hover = 0); }
   const clock = new THREE.Clock();
@@ -381,7 +388,9 @@ function initCamObj(canvas, key, look) {
     if (canvas.getClientRects().length === 0) { requestAnimationFrame(loop); return; }
     const t = clock.getElapsedTime();
     hv += (hover - hv) * 0.08;
-    pivot.rotation.y = Math.sin(t * 0.6) * 0.55 + hv * Math.sin(t * 2.2) * 0.25; // 렌즈가 앞을 보도록 좌우로 흔들림
+    pc.x += (ptr.x - pc.x) * 0.08; pc.y += (ptr.y - pc.y) * 0.08;
+    pivot.rotation.y = Math.sin(t * 0.6) * 0.3 + pc.x * 0.6 + hv * Math.sin(t * 2.2) * 0.25; // 렌즈가 마우스 쪽으로
+    pivot.rotation.x = pc.y * 0.35;
     pivot.position.y = Math.sin(t * 1.1) * 0.15;
     post.uniforms.uTime.value = t;
     renderer.setRenderTarget(rt); renderer.setClearColor(0x000000, 0); renderer.clear(); renderer.render(scene, camera);
