@@ -1,0 +1,74 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>3D PNG 렌더</title>
+<style>body{margin:0;background:#888;font:12px sans-serif}canvas{display:block;margin:8px;background:repeating-conic-gradient(#ddd 0 25%,#fff 0 50%) 0 0/16px 16px}</style>
+</head><body>
+<!-- 스티커(배경 투명 디더 3D) + 카메라 프런트뷰 PNG를 만들어 로컬 저장 서버(3401)로 보냄. 사이트에는 쓰이지 않는 작업용 페이지 -->
+<script src="../models.js?v=1"></script>
+<script type="importmap">{"imports":{"three":"../vendor/three/three.module.js","three/addons/":"../vendor/three/addons/"}}</script>
+<script type="module">
+import * as THREE from 'three';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+import { initCamObj } from '../hero3d.js';
+
+const save = (name, cv) => fetch('http://127.0.0.1:3401/', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name, data: cv.toDataURL('image/png') }) });
+const W = 900, H = 1100, PX = 3; // 디더 한 칸 = 3px
+
+function ditherRender(build, name) {
+  const cv = document.createElement('canvas'); cv.width = W; cv.height = H; document.body.appendChild(cv);
+  const r = new THREE.WebGLRenderer({ canvas: cv, alpha: true, antialias: false, preserveDrawingBuffer: true });
+  r.setClearColor(0, 0); r.autoClear = false;
+  const scene = new THREE.Scene(), cam = new THREE.PerspectiveCamera(30, W / H, 0.1, 200); cam.position.set(0, 0, 14);
+  const pm = new THREE.PMREMGenerator(r); scene.environment = pm.fromScene(new RoomEnvironment(), 0.04).texture;
+  scene.add(new THREE.HemisphereLight(0xffffff, 0xbfbfe8, 1.2));
+  const k = new THREE.DirectionalLight(0xffffff, 3.4); k.position.set(6, 9, 10); scene.add(k);
+  const k2 = new THREE.DirectionalLight(0xffffff, 2.0); k2.position.set(-7, 4, 6); scene.add(k2);
+  const obj = build(); const box = new THREE.Box3().setFromObject(obj), c = box.getCenter(new THREE.Vector3());
+  obj.position.sub(c); const g = new THREE.Group(); g.add(obj);
+  g.scale.setScalar(3.5 / box.getBoundingSphere(new THREE.Sphere()).radius); scene.add(g);
+  const rt = new THREE.WebGLRenderTarget(W / PX, H / PX, { minFilter: THREE.NearestFilter, magFilter: THREE.NearestFilter });
+  const post = new THREE.ShaderMaterial({ transparent: true, uniforms: { t: { value: rt.texture } },
+    vertexShader: 'varying vec2 v; void main(){ v=uv; gl_Position=vec4(position.xy,0.,1.); }',
+    fragmentShader: `uniform sampler2D t; varying vec2 v;
+      float bayer(vec2 p){ mat4 B=mat4(0.,8.,2.,10.,12.,4.,14.,6.,3.,11.,1.,9.,15.,7.,13.,5.)/16.; int x=int(mod(p.x,4.)),y=int(mod(p.y,4.)); vec4 r=B[y]; return x==0?r.x:x==1?r.y:x==2?r.z:r.w; }
+      void main(){ vec4 c=texture2D(t,v); if(c.a<0.05) discard;
+        float l=dot(c.rgb/max(c.a,.01),vec3(.299,.587,.114)); float cov=clamp((1.-l)*1.35+.02,0.,1.);
+        if(cov<bayer(floor(gl_FragCoord.xy/${PX}.))) discard; gl_FragColor=vec4(.322,.329,1.,1.); }` });
+  const ps = new THREE.Scene(); ps.add(new THREE.Mesh(new THREE.PlaneGeometry(2, 2), post));
+  r.setRenderTarget(rt); r.clear(); r.render(scene, cam); r.setRenderTarget(null); r.clear();
+  r.render(ps, new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1));
+  return save(name, cv);
+}
+
+const draco = new DRACOLoader(); draco.setDecoderPath('../vendor/draco/');
+const loader = new GLTFLoader(); loader.setDRACOLoader(draco);
+const mat = new THREE.MeshStandardMaterial({ color: 0x5254ff, roughness: 0.32 });
+const loadModel = key => new Promise(res => {
+  const s = atob(window.CAPTCHA_MODELS[key]), a = new Uint8Array(s.length); for (let i = 0; i < s.length; i++) a[i] = s.charCodeAt(i);
+  loader.parse(a.buffer, '', gl => { gl.scene.traverse(o => { if (o.isMesh) o.material = mat; }); res(gl.scene); });
+});
+// 오브제 4종 × 각도 2개 = 스티커 8장 (격자 없음)
+const ANGLES = {
+  steps:         [[0.26, 0.95, 0.2], [-0.35, -0.6, 0.15]],
+  fire_hydrant:  [[0.1, 0.3, 2.19], [0.35, -0.9, -0.5]],
+  road_narrows:  [[0.15, 0.25, -2.3], [0.6, 1.2, 0.4]],
+  traffic_light: [[0.1, -0.48, 1.42], [-0.25, 0.9, -0.3]],
+};
+const out = [];
+let n = 1;
+for (const key of Object.keys(ANGLES)) for (const rot of ANGLES[key]) {
+  const m = await loadModel(key); m.rotation.set(...rot);
+  out.push(ditherRender(() => m, 'sticker' + (n++) + '.png'));
+}
+await Promise.all(out);
+// 카메라 프런트뷰 (사이트와 같은 필터 렌더)
+for (const look of ['ccd', 'film', 'pixel']) {
+  const cv = document.createElement('canvas'); cv.style.width = '800px'; cv.style.height = '1000px'; document.body.appendChild(cv);
+  initCamObj(cv, '', look, { front: true });
+  await new Promise(r => setTimeout(r, 1200));
+  await save('camera-' + look + '.png', cv);
+}
+document.title = 'DONE';
+</script>
+</body></html>

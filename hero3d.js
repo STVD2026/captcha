@@ -22,10 +22,10 @@ const workBg = document.getElementById('work-bg');
 if (workBg) initHero(workBg, { withRoom: false, layout: WORK_BG_LAYOUT, sizeMode: 'viewport', bg: true });
 // 포토부스 배경: 파란 배경 위를 떠다니는 오브제
 const MESSAGE_BG_LAYOUT = [
-  { key: 'steps',         nx: -0.72, ny:  0.42, hf: 0.26, d: 32, rx: 0.26, ry:  0.95, rz:  0.20, mScale: 0.9, mnx: -0.6, mny:  0.55 },
-  { key: 'traffic_light', nx:  0.74, ny:  0.40, hf: 0.26, d: 28, rx: 0.10, ry: -0.48, rz:  1.42, mScale: 0.9, mnx:  0.6, mny:  0.55 },
-  { key: 'fire_hydrant',  nx: -0.70, ny: -0.42, hf: 0.30, d: 26, rx: 0.10, ry:  0.30, rz:  2.19, mScale: 0.9, mnx: -0.6, mny: -0.55 },
-  { key: 'road_narrows',  nx:  0.72, ny: -0.42, hf: 0.32, d: 26, rx: 0.15, ry:  0.25, rz: -2.30, mScale: 0.9, mnx:  0.6, mny: -0.55 },
+  { key: 'steps',         nx: -0.66, ny:  0.46, hf: 0.50, d: 30, rx: 0.26, ry:  0.95, rz:  0.20, mScale: 1.1, mnx: -0.6, mny:  0.6 },
+  { key: 'traffic_light', nx:  0.70, ny:  0.40, hf: 0.55, d: 24, rx: 0.10, ry: -0.48, rz:  1.42, mScale: 1.1, mnx:  0.6, mny:  0.6 },
+  { key: 'fire_hydrant',  nx: -0.68, ny: -0.46, hf: 0.58, d: 22, rx: 0.10, ry:  0.30, rz:  2.19, mScale: 1.1, mnx: -0.6, mny: -0.6 },
+  { key: 'road_narrows',  nx:  0.66, ny: -0.48, hf: 0.62, d: 22, rx: 0.15, ry:  0.25, rz: -2.30, mScale: 1.1, mnx:  0.6, mny: -0.6 },
 ];
 const messageBg = document.getElementById('message-bg');
 if (messageBg) initHero(messageBg, { withRoom: false, layout: MESSAGE_BG_LAYOUT, sizeMode: 'viewport', bg: true, noMouse: true, floatK: 0.5 }); // 카메라가 있는 가운데는 비우고 네 모서리에서만, 마우스 반응 없음
@@ -299,8 +299,8 @@ function initHero(canvas, opts = {}) {
     requestAnimationFrame(loop);
   })();
 }
-function initCamObj(canvas, key, look) {
-  const renderer = new THREE.WebGLRenderer({ canvas, antialias: look !== 'pixel', alpha: true });
+export function initCamObj(canvas, key, look, o = {}) {
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: look !== 'pixel', alpha: true, preserveDrawingBuffer: !!o.front });
   renderer.setClearColor(0x000000, 0);
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.autoClear = false;
@@ -322,7 +322,7 @@ function initCamObj(canvas, key, look) {
   const inner = new THREE.Group(); inner.add(cam);
   const rad = box.getBoundingSphere(new THREE.Sphere()).radius;
   inner.scale.setScalar(3.1 / rad); // 회전해도 캔버스 밖으로 잘리지 않게 구 기준으로 맞춤
-  inner.rotation.set(0.18, -0.55, 0.04);
+  inner.rotation.set(o.front ? 0 : 0.18, o.front ? 0 : ({ ccd: -0.55, film: 0.5, pixel: -0.2 }[look] || 0), o.front ? 0 : ({ ccd: 0.04, film: -0.06, pixel: 0.1 }[look] || 0)); // 카메라마다 다른 각도
   pivot.add(inner);
 
   const rt = new THREE.WebGLRenderTarget(2, 2, { minFilter: THREE.NearestFilter, magFilter: THREE.NearestFilter });
@@ -343,7 +343,7 @@ function initCamObj(canvas, key, look) {
       }
       void main(){
         vec2 uv = vUv;
-        if (uLook == 2) { vec2 b = floor(gl_FragCoord.xy / 6.0); uv = (b + 0.5) * 6.0 / uRes; }
+        if (uLook == 2) { vec2 b = floor(gl_FragCoord.xy / 3.0); uv = (b + 0.5) * 3.0 / uRes; }
         vec4 c = texture2D(tDiffuse, uv);
         if (c.a < 0.05) discard;
         float l = dot(c.rgb / max(c.a, 0.01), vec3(0.299,0.587,0.114));
@@ -357,7 +357,7 @@ function initCamObj(canvas, key, look) {
           col = mix(vec3(0.12,0.11,0.11), vec3(0.88,0.85,0.82), smoothstep(0.04, 0.96, l)); // 쿨 브라운
           col += (rnd(floor(gl_FragCoord.xy / 1.5) + fract(uTime * 7.0)) - 0.5) * 0.18;
         } else {                     // PIXEL: 파랑 디더
-          vec2 b = floor(gl_FragCoord.xy / 6.0);                     // 큰 픽셀 + 체커 디더가 잘 보이게
+          vec2 b = floor(gl_FragCoord.xy / 3.0);                     // 촘촘한 디더
           float v = clamp((1.0 - l) * 1.5 - 0.05, 0.0, 1.0);
           if (v < bayer(b)) col = vec3(1.0); else col = vec3(0.322,0.329,1.0);
         }
@@ -389,9 +389,14 @@ function initCamObj(canvas, key, look) {
     const t = clock.getElapsedTime();
     hv += (hover - hv) * 0.08;
     pc.x += (ptr.x - pc.x) * 0.08; pc.y += (ptr.y - pc.y) * 0.08;
-    pivot.rotation.y = Math.sin(t * 0.6) * 0.3 + pc.x * 0.6 + hv * Math.sin(t * 2.2) * 0.25; // 렌즈가 마우스 쪽으로
-    pivot.rotation.x = pc.y * 0.35;
-    pivot.position.y = Math.sin(t * 1.1) * 0.15;
+    if (o.front) { pivot.rotation.set(0, 0, 0); pivot.position.y = 0; }
+    else {
+      const ph = { ccd: 0, film: 2.1, pixel: 4.2 }[look] || 0, sp = { ccd: 0.6, film: 0.47, pixel: 0.73 }[look] || 0.6; // 카메라마다 다른 박자
+      pivot.rotation.y = Math.sin(t * sp + ph) * 0.35 + pc.x * 0.6 + hv * Math.sin(t * 2.2) * 0.25; // 렌즈가 마우스 쪽으로
+      pivot.rotation.x = Math.sin(t * sp * 0.8 + ph) * 0.12 + pc.y * 0.35;
+      pivot.rotation.z = Math.cos(t * sp * 0.6 + ph) * 0.08;
+    }
+    if (!o.front) pivot.position.y = Math.sin(t * 1.1 + ({ ccd: 0, film: 1.7, pixel: 3.4 }[look] || 0)) * 0.15;
     post.uniforms.uTime.value = t;
     renderer.setRenderTarget(rt); renderer.setClearColor(0x000000, 0); renderer.clear(); renderer.render(scene, camera);
     renderer.setRenderTarget(null); renderer.clear(); renderer.render(postScene, postCam);
@@ -400,7 +405,7 @@ function initCamObj(canvas, key, look) {
 }
 
 /* 포토부스 카메라 모형 3종 — 렌즈는 +z(화면 쪽) */
-function buildCamera(look, body) { // body: 기본 재질 (CCD는 쇠로 교체)
+export function buildCamera(look, body) { // body: 기본 재질 (CCD는 쇠로 교체)
   const g = new THREE.Group();
   const dark = new THREE.MeshStandardMaterial({ color: 0x15151c, roughness: 0.25 });
   const mid  = new THREE.MeshStandardMaterial({ color: 0x777788, roughness: 0.4 });
