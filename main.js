@@ -659,6 +659,8 @@ function boothPickCam(cam) {
   if (tag) tag.textContent = CAMS[cam].name;
   var lb = document.getElementById('pb-cam-label');
   if (lb) lb.textContent = ({ ccd: 'CCD', fuji: 'film', pixel: 'pixel' }[cam] || CAMS[cam].name) + ' Camera';
+  var ci = document.getElementById('pb-side-cam');
+  if (ci) ci.src = 'images/booth/cameras/camera-' + ({ ccd: 'ccd', fuji: 'film', pixel: 'pixel' }[cam] || 'pixel') + '.png';
   boothShowStage('start');
   boothResetTimer();
   boothInitCam().catch(function(){});

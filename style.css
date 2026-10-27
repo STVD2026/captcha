@@ -1210,7 +1210,7 @@ a,button,[onclick],label,summary,.wk-bt,.wk-bt *,[role=button]{cursor:var(--cur-
 .pb-side{display:flex;flex-direction:column;align-items:center;gap:22px;margin-top:22px}
 .pb-side-item{display:flex;flex-direction:column;align-items:center;gap:6px;color:#fff}
 .pb-side-item em{font-family:var(--sg);font-style:normal;font-weight:700;font-size:13px;white-space:nowrap}
-.pb-side-cam{width:72px;height:auto}
+.pb-side-cam{width:120px;height:76px;object-fit:cover;object-position:center;display:block} /* 프런트뷰 PNG의 빈 여백은 잘라서 카메라만 */
 .pb-side-box{background:#fff;color:var(--blue);font-family:var(--gal);font-weight:700;font-size:26px;line-height:1;padding:6px 8px;min-width:72px;text-align:center}
 .pb-side-box.sq{min-width:0;width:48px;height:48px;display:flex;align-items:center;justify-content:center;font-size:30px;padding:0}
 @media (max-width:920px){
@@ -1218,3 +1218,5 @@ a,button,[onclick],label,summary,.wk-bt,.wk-bt *,[role=button]{cursor:var(--cur-
   .pb-start .pb-back{width:44px}.pb-start .pb-back svg{width:40px}
   .pb-start .pb-cambox{height:min(calc(100vh - 43px - 180px),520px)}
 }
+.pb-cam-desc{font-size:14px;font-weight:700;opacity:1}
+.pb-cam-name{font-size:26px}
