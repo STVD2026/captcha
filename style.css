@@ -1231,3 +1231,12 @@ a,button,[onclick],label,summary,.wk-bt,.wk-bt *,[role=button]{cursor:var(--cur-
 /* 진행 바 = 흰 윗선 그 자체: 같은 두께(4px)로 윗선 위에 파랑이 덮였다가 닳아 없어짐 */
 .pb-start .pb-progress{top:-4px;height:4px;background:transparent}
 .pb-start .pb-progress span{background:var(--blue)}
+/* 초: 원형 게이지 (흰 원판 + 바깥 링이 시계 방향으로 줄어듦) */
+.pb-sec-ring{position:relative;width:76px;height:76px}
+.pb-sec-ring svg{position:absolute;inset:0;width:100%;height:100%;transform:rotate(-90deg)}
+.pb-sec-ring circle{fill:none;stroke-width:8}
+.pb-sec-ring .trk{stroke:rgba(255,255,255,.3)}
+.pb-sec-ring .prg{stroke:#fff;stroke-dasharray:289;stroke-dashoffset:0;stroke-linecap:butt}
+.pb-sec-ring span{position:absolute;inset:12px;background:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--blue);font-family:var(--gal);font-weight:700;font-size:28px;line-height:1}
+/* 위쪽 초 바는 원형 게이지로 대체 */
+.pb-start .pb-progress{display:none}

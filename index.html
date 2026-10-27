@@ -14,7 +14,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" onload="this.rel='stylesheet'">
 <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap"></noscript>
-<link rel="stylesheet" href="style.css?v=224">
+<link rel="stylesheet" href="style.css?v=225">
 </head>
 <body class="theme-light">
 
@@ -344,12 +344,14 @@
               <em id="pb-cam-label">pixel Camera</em>
             </div>
             <div class="pb-side-item">
-              <span class="pb-side-box sq" id="pb-sec">3</span><em>Sec</em>
+              <div class="pb-sec-ring">
+                <svg viewBox="0 0 100 100" aria-hidden="true"><circle class="trk" cx="50" cy="50" r="46"></circle><circle class="prg" id="pb-ring" cx="50" cy="50" r="46"></circle></svg>
+                <span id="pb-sec">3</span>
+              </div><em>Sec</em>
             </div>
             <div class="pb-side-item">
               <span class="pb-side-box" id="pb-cut">1/4</span><em>Cut</em>
             </div>
-            <svg class="pb-ring" viewBox="0 0 100 100" hidden><circle id="pb-ring" cx="50" cy="50" r="46"></circle></svg>
           </div>
         </div>
       </div>
