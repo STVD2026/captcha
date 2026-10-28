@@ -1242,8 +1242,16 @@ function boothAddSticker(n) {
   }
   function onDown(e) {
     var t = e.target;
+    if (t.closest && t.closest('.pb-del')) return; // 지우기 버튼은 드래그 아님
     var el = isTarget(t);
+    // 고른 스티커·말풍선만 선택 표시(× 버튼 보임), 빈 곳을 누르면 선택 해제
+    document.querySelectorAll('#pb-overlay .is-sel').forEach(function(x){ if (x !== el) x.classList.remove('is-sel'); });
     if (!el) return;
+    el.classList.add('is-sel');
+    if (!el.querySelector('.pb-del')) {
+      var d = document.createElement('button'); d.type = 'button'; d.className = 'pb-del'; d.setAttribute('aria-label', '지우기'); d.textContent = '×';
+      el.appendChild(d);
+    }
     dragging = el;
     el.classList.add('dragging');
     var touch = e.touches ? e.touches[0] : e;
@@ -1324,7 +1332,7 @@ function boothBuildCanvas(cb) {
     });
     // 말풍선
     var bub = document.getElementById('booth-bubble-text');
-    if (bub && bub.style.display !== 'none' && bub.textContent) {
+    if (bub && bub.style.display !== 'none' && (document.getElementById('booth-msg-input').value || '').trim()) {
       boothDrawBubble(ctx, bub, scale);
     }
     cb(canvas);
@@ -1370,7 +1378,7 @@ function boothDrawBubble(ctx, el, scale) {
   ctx.fillStyle = _bubbleInk.fg;
   ctx.font = '700 ' + fs + 'px ' + '"Noto Sans KR", sans-serif';
   ctx.textAlign = 'left';
-  var lines = boothWrapText(ctx, el.textContent, w - padX * 2);
+  var lines = boothWrapText(ctx, (document.getElementById('booth-msg-input').value || '').trim(), w - padX * 2); // × 버튼 글자 제외
   lines.forEach(function(l, li) {
     ctx.fillText(l, x + padX, y + padY + fs + li * lineH);
   });
@@ -1768,3 +1776,18 @@ document.addEventListener('click', function(e) {
 });
 // 실제 키보드로 입력하면 화면 키보드 기록도 맞춰 줌
 document.addEventListener('input', function(e){ if (e.target && e.target.id === 'booth-msg-input') _vk.raw = Array.from(e.target.value); });
+
+/* 사진 위 스티커·말풍선 지우기 (선택 후 × 버튼) */
+document.addEventListener('click', function(e) {
+  var d = e.target.closest ? e.target.closest('#pb-overlay .pb-del') : null; if (!d) return;
+  var el = d.parentElement;
+  if (el.id === 'booth-bubble-text') {
+    var ta = document.getElementById('booth-msg-input'); if (ta) ta.value = '';
+    if (typeof _vk !== 'undefined') _vk.raw = [];
+    el.classList.remove('is-sel'); d.remove();
+    boothUpdateBubble();
+  } else {
+    boothStickers = boothStickers.filter(function(st){ return st.el !== el; });
+    el.remove();
+  }
+});
