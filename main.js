@@ -900,7 +900,7 @@ function boothBuildGrid() {}
 
 /* ── 뷰티 필터 ── */
 var _bPrevW = 480, _bPrevH = 640; // 3:4 세로 프리뷰 (스트립 칸과 같은 비율)
-var _bTmpC, _bTmpCtx, _bPrevCtx, _bAnimId, _bLUT;
+var _bTmpC, _bTmpCtx, _bPrevCtx, _bAnimId, _bLUT, _bGlowC;
 
 function _buildBeautyLUT(w, h) {
   var lut = new Float32Array(w * h * 2);
@@ -952,10 +952,15 @@ function _boothLoop() {
     var src = _bTmpCtx.getImageData(0, 0, w, h);
     var dst = new ImageData(w, h);
     _applyWarp(src.data, dst.data, _bLUT, w, h);
-    if (LOOKS[_cam]) _gradeData(dst.data, LOOKS[_cam]); // 프리뷰에도 같은 룩
+    // 촬영 결과와 같은 처리(부드러운 글로우 + 카메라 필터 전체)를 프리뷰에도 그대로 적용
     _bPrevCtx.putImageData(dst, 0, 0);
-    // 픽셀 카메라: 라이브 프리뷰도 디더
-    if (_cam === 'pixel') _ditherCanvas(_bPrevCtx.canvas, 1);
+    var pc = _bPrevCtx.canvas;
+    if (!_bGlowC) { _bGlowC = document.createElement('canvas'); }
+    _bGlowC.width = w; _bGlowC.height = h; _bGlowC.getContext('2d').drawImage(pc, 0, 0);
+    _bPrevCtx.filter = 'blur(1.2px) contrast(1.07)'; _bPrevCtx.globalAlpha = 0.28;
+    _bPrevCtx.drawImage(_bGlowC, 0, 0);
+    _bPrevCtx.globalAlpha = 1; _bPrevCtx.filter = 'none';
+    boothApplyCam(pc);
   }
   _bAnimId = requestAnimationFrame(_boothLoop);
 }
