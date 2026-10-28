@@ -1378,3 +1378,5 @@ a,button,[onclick],label,summary,.wk-bt,.wk-bt *,[role=button]{cursor:var(--cur-
 /* 파랑 프레임(2·5번): 파란 배경과 구분되게 흰 외곽선 */
 .pb-strip.is-blue{outline:3px solid #fff;outline-offset:0}
 .pb-edit .pb-done{gap:6px}.pb-edit .pb-done svg{width:15px;height:15px}
+.pb-strip.is-blue{outline:3px solid #C0C0FF}
+.pb-side-cam{width:92px;height:70px}

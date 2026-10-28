@@ -737,8 +737,9 @@ function _ditherCanvas(canvas, px) {
   var L = new Float32Array(n);
   for (var i = 0, j = 0; j < n; i += 4, j++) {
     var v = 0.299*d[i] + 0.587*d[i+1] + 0.114*d[i+2];
-    v = 255 * Math.pow(v / 255, 0.9);                // 감마(살짝 밝게)
-    v = 128 + (v - 128) * 1.55;                      // 대비
+    v = 255 * Math.pow(v / 255, 0.85);               // 감마(살짝 밝게)
+    v = 128 + (v - 128) * 1.2;                       // 대비 (너무 높으면 어두운 곳이 파랑 덩어리로 뭉침)
+    v = 34 + v * 0.86;                               // 가장 어두운 곳에도 흰 점이 섞이게 블랙 들어올림
     L[j] = v + (Math.random() - 0.5) * 36;           // 그레인
   }
   for (var y = 0; y < sh; y++) {
@@ -1220,7 +1221,7 @@ function boothAddSticker(n) {
   el.className = 'pb-sticker-inst';
   el.dataset.sid = (++_sid);
   var img = new Image();
-  img.src = 'images/booth/sticker' + n + '.png?v=3';
+  img.src = 'images/booth/sticker' + n + '.png?v=4';
   el.appendChild(img);
   // 살짝 랜덤 위치 (겹침 방지)
   var sw = strip ? strip.offsetWidth : 320;
