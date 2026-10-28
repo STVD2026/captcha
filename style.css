@@ -1273,3 +1273,5 @@ a,button,[onclick],label,summary,.wk-bt,.wk-bt *,[role=button]{cursor:var(--cur-
 .pb-edit .pb-done{background:#EEEEFF;color:var(--blue);border:none;height:38px;font-family:var(--noto);font-weight:700;font-size:13px}
 .pb-edit .pb-qr{background:#fff;color:var(--blue);border:none;height:38px;font-family:var(--noto);font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center;gap:6px}
 .pb-edit .pb-qr svg{width:14px}
+/* 카메라가 켜지면 촬영 전에도 실시간 프리뷰 표시 */
+.pb.cam-on #booth-preview{display:block}

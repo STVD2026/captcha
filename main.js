@@ -641,6 +641,12 @@ function boothShowStage(name) {
     var el = document.getElementById('pb-' + s);
     if (el) el.hidden = (s !== name);
   });
+  // 촬영 화면으로 올 때마다 영상 재생·프리뷰 루프 재개 (멈춘 예전 프레임이 남지 않게)
+  if (name === 'start') {
+    var v = document.getElementById('booth-video');
+    if (v && v.srcObject) { var pr = v.play(); if (pr && pr.catch) pr.catch(function(){}); }
+    if (boothStream && !_bAnimId) _boothLoop();
+  }
 }
 
 /* 카메라 선택 → 촬영 화면으로 */
