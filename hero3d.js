@@ -362,10 +362,8 @@ export function initCamObj(canvas, key, look, o = {}) {
         }
         if (uLook == 2) {            // PIXEL: 파랑 디더
           vec2 b = floor(gl_FragCoord.xy / 3.0);                     // 촘촘한 디더
-          float v = clamp((1.0 - l) * 1.6 - 0.05, 0.0, 1.0) * 2.0;   // 3단계: 흰 → 라벤더 → 파랑 (면마다 명암이 달라 입체감)
-          float th2 = bayer(b);
-          if (v < 1.0) col = (v < th2) ? vec3(1.0) : vec3(0.74,0.75,1.0);
-          else col = (v - 1.0 < th2) ? vec3(0.74,0.75,1.0) : vec3(0.13,0.14,0.62); // 가장 어두운 면은 진한 남색 → 파란 배경과 구분
+          float v = clamp((1.0 - l) * 1.7 - 0.1, 0.0, 0.92);   // 키 컬러 2색(흰·#5254FF)만, 면 밝기에 따라 점 밀도로 입체감
+          col = (v < bayer(b)) ? vec3(1.0) : vec3(0.322,0.329,1.0);
         }
         gl_FragColor = vec4(col, 1.0);
       }`
