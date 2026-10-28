@@ -1275,3 +1275,6 @@ a,button,[onclick],label,summary,.wk-bt,.wk-bt *,[role=button]{cursor:var(--cur-
 .pb-edit .pb-qr svg{width:14px}
 /* 카메라가 켜지면 촬영 전에도 실시간 프리뷰 표시 */
 .pb.cam-on #booth-preview{display:block}
+/* 선택 표시: 테두리가 굵어짐 */
+.pb-edit .pb-sticker.is-on{box-shadow:inset 0 0 0 4px var(--blue);outline:3px solid #fff;outline-offset:0}
+.pb-edit .pb-fswatch.is-on{outline:none;box-shadow:0 0 0 4px #fff;border-color:#fff}

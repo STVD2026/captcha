@@ -1200,6 +1200,7 @@ function boothUpdateBubble() {
 
 /* ── 스티커 추가 ── */
 function boothAddSticker(n) {
+  document.querySelectorAll('.pb-sticker').forEach(function(b){ b.classList.toggle('is-on', (b.getAttribute('onclick') || '').indexOf('(' + n + ')') > -1); }); // 고른 스티커 표시
   var overlay = document.getElementById('pb-overlay');
   if (!overlay) return;
   var strip = document.getElementById('booth-strip');
