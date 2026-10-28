@@ -1265,11 +1265,11 @@ a,button,[onclick],label,summary,.wk-bt,.wk-bt *,[role=button]{cursor:var(--cur-
 .pb-edit .pb-fswatch.is-on{outline:3px solid #fff}
 /* 메시지 패널 */
 .pb-edit .pb-msg .pb-hint{color:#fff;font-size:12px;line-height:1.5;margin:0}
-.pb-edit .pb-msg .pb-sec{display:flex;flex-direction:column;gap:10px}
+@media (min-width:921px){.pb-edit .pb-msg .pb-sec{display:flex;flex-direction:column;gap:10px}}
 .pb-edit .pb-swatches{display:grid;grid-template-columns:repeat(3,1fr);gap:4px}
 .pb-edit .pb-swatch{height:18px;border:1.5px solid #fff;border-radius:0}
 .pb-edit .pb-msgbox{background:#fff}
-.pb-edit .pb-actions{display:flex;flex-direction:column;gap:10px;margin-top:14px}
+@media (min-width:921px){.pb-edit .pb-actions{display:flex;flex-direction:column;gap:10px;margin-top:14px}}
 .pb-edit .pb-done{background:#EEEEFF;color:var(--blue);border:none;height:38px;font-family:var(--noto);font-weight:700;font-size:13px}
 .pb-edit .pb-qr{background:#fff;color:var(--blue);border:none;height:38px;font-family:var(--noto);font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center;gap:6px}
 .pb-edit .pb-qr svg{width:14px}
@@ -1287,3 +1287,12 @@ a,button,[onclick],label,summary,.wk-bt,.wk-bt *,[role=button]{cursor:var(--cur-
   .pb-edit .pb-msg .pb-actions{margin-top:0}
 }
 .pb-edit .pb-msg .pb-hint{text-align:left}
+/* 모바일·태블릿 편집: 패널은 투명(display:contents) → 사진 아래 탭 + 활성 섹션 + 하단 액션바 순서 유지 */
+@media (max-width:920px){
+  .pb-edit aside.pb-side,.pb-edit .pb-msg{display:contents}
+  .pb-edit .pb-msg .pb-hint{color:var(--blue)}
+  /* 9:16 스트립은 화면 높이에 맞춰 줄여서 아래 탭·섹션·버튼이 들어오게 */
+  .pb-edit .pb-strip{width:min(64vw, calc((100vh - 43px - 360px) * 648 / 1152));max-width:none;margin:0 auto}
+  .pb-edit .pb-sec{min-height:120px}
+  .pb-edit .pb-actions{display:flex;flex-direction:row}
+}
