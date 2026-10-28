@@ -14,7 +14,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" onload="this.rel='stylesheet'">
 <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap"></noscript>
-<link rel="stylesheet" href="style.css?v=233">
+<link rel="stylesheet" href="style.css?v=235">
 </head>
 <body class="theme-light">
 
@@ -363,14 +363,10 @@
           <div class="pb-sec" data-sec="sticker">
             <h3 class="pb-panel-t">STICKER</h3>
             <div class="pb-stickers" id="pb-stickers">
-              <button class="pb-sticker" onclick="boothAddSticker(1)"><img src="images/booth/sticker1.png?v=3" alt="스티커1"></button>
-              <button class="pb-sticker" onclick="boothAddSticker(2)"><img src="images/booth/sticker2.png?v=3" alt="스티커2"></button>
-              <button class="pb-sticker" onclick="boothAddSticker(3)"><img src="images/booth/sticker3.png?v=3" alt="스티커3"></button>
-              <button class="pb-sticker" onclick="boothAddSticker(4)"><img src="images/booth/sticker4.png?v=3" alt="스티커4"></button>
-              <button class="pb-sticker" onclick="boothAddSticker(5)"><img src="images/booth/sticker5.png?v=3" alt="스티커5"></button>
-              <button class="pb-sticker" onclick="boothAddSticker(6)"><img src="images/booth/sticker6.png?v=3" alt="스티커6"></button>
-              <button class="pb-sticker" onclick="boothAddSticker(7)"><img src="images/booth/sticker7.png?v=3" alt="스티커7"></button>
-              <button class="pb-sticker" onclick="boothAddSticker(8)"><img src="images/booth/sticker8.png?v=3" alt="스티커8"></button>
+              <button class="pb-sticker" onclick="boothAddSticker(1)"><img src="images/booth/sticker1.png?v=3" alt="계단 스티커"></button>
+              <button class="pb-sticker" onclick="boothAddSticker(3)"><img src="images/booth/sticker3.png?v=3" alt="소화전 스티커"></button>
+              <button class="pb-sticker" onclick="boothAddSticker(6)"><img src="images/booth/sticker6.png?v=3" alt="도로 표지 스티커"></button>
+              <button class="pb-sticker" onclick="boothAddSticker(8)"><img src="images/booth/sticker8.png?v=3" alt="신호등 스티커"></button>
               <button class="pb-sticker pb-sticker-wide" onclick="boothAddSticker(9)"><img src="images/booth/sticker9.png?v=3" alt="캡챠 로고 스티커"></button>
             </div>
           </div>
@@ -380,9 +376,9 @@
               <button class="pb-fswatch is-on" data-frame="1" style="background:#fff" onclick="boothSetFrame(this)" aria-label="화이트 프레임"></button>
               <button class="pb-fswatch" data-frame="2" style="background:#5254FF" onclick="boothSetFrame(this)" aria-label="블루 프레임"></button>
               <button class="pb-fswatch" data-frame="3" style="background:#050530" onclick="boothSetFrame(this)" aria-label="네이비 프레임"></button>
-              <button class="pb-fswatch pb-fobj" data-frame="4" style="background-image:url('images/booth/frames/frame4.png')" onclick="boothSetFrame(this)" aria-label="화이트 오브제 프레임"></button>
-              <button class="pb-fswatch pb-fobj" data-frame="5" style="background-image:url('images/booth/frames/frame5.png')" onclick="boothSetFrame(this)" aria-label="블루 오브제 프레임"></button>
-              <button class="pb-fswatch pb-fobj" data-frame="6" style="background-image:url('images/booth/frames/frame6.png')" onclick="boothSetFrame(this)" aria-label="네이비 오브제 프레임"></button>
+              <button class="pb-fswatch pb-fobj" data-frame="4" style="background:#fff" onclick="boothSetFrame(this)" aria-label="화이트 오브제 프레임"><img src="images/booth/sticker3.png?v=3" alt=""></button>
+              <button class="pb-fswatch pb-fobj on-dark" data-frame="5" style="background:#5254FF" onclick="boothSetFrame(this)" aria-label="블루 오브제 프레임"><img src="images/booth/sticker1.png?v=3" alt=""></button>
+              <button class="pb-fswatch pb-fobj on-dark" data-frame="6" style="background:#050530" onclick="boothSetFrame(this)" aria-label="네이비 오브제 프레임"><img src="images/booth/sticker8.png?v=3" alt=""></button>
             </div>
           </div>
         </aside>
