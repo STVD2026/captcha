@@ -14,7 +14,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" onload="this.rel='stylesheet'">
 <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap"></noscript>
-<link rel="stylesheet" href="style.css?v=225">
+<link rel="stylesheet" href="style.css?v=227">
 </head>
 <body class="theme-light">
 
@@ -371,17 +371,18 @@
               <button class="pb-sticker" onclick="boothAddSticker(6)"><img src="images/booth/sticker6.png?v=3" alt="스티커6"></button>
               <button class="pb-sticker" onclick="boothAddSticker(7)"><img src="images/booth/sticker7.png?v=3" alt="스티커7"></button>
               <button class="pb-sticker" onclick="boothAddSticker(8)"><img src="images/booth/sticker8.png?v=3" alt="스티커8"></button>
+              <button class="pb-sticker pb-sticker-wide" onclick="boothAddSticker(9)"><img src="images/booth/sticker9.png?v=3" alt="캡챠 로고 스티커"></button>
             </div>
           </div>
           <div class="pb-sec" data-sec="frame">
             <h3 class="pb-panel-t">FRAME</h3>
             <div class="pb-frames" id="pb-frames">
-              <button class="pb-fswatch is-on" data-frame="#F2F2F7" style="background:#F2F2F7" onclick="boothSetFrame(this)" aria-label="라이트 프레임"></button>
-              <button class="pb-fswatch" data-frame="#5254FF" style="background:#5254FF" onclick="boothSetFrame(this)" aria-label="블루 프레임"></button>
-              <button class="pb-fswatch" data-frame="#050530" style="background:#050530" onclick="boothSetFrame(this)" aria-label="네이비 프레임"></button>
-              <button class="pb-fswatch" data-frame="#EDEDF5" style="background:#EDEDF5" onclick="boothSetFrame(this)" aria-label="화이트 프레임"></button>
-              <button class="pb-fswatch" data-frame="#6A6CFF" style="background:#6A6CFF" onclick="boothSetFrame(this)" aria-label="라이트블루 프레임"></button>
-              <button class="pb-fswatch" data-frame="#0B0B0F" style="background:#0B0B0F" onclick="boothSetFrame(this)" aria-label="블랙 프레임"></button>
+              <button class="pb-fswatch is-on" data-frame="1" style="background:#fff" onclick="boothSetFrame(this)" aria-label="화이트 프레임"></button>
+              <button class="pb-fswatch" data-frame="2" style="background:#5254FF" onclick="boothSetFrame(this)" aria-label="블루 프레임"></button>
+              <button class="pb-fswatch" data-frame="3" style="background:#050530" onclick="boothSetFrame(this)" aria-label="네이비 프레임"></button>
+              <button class="pb-fswatch pb-fobj" data-frame="4" style="background-image:url('images/booth/frames/frame4.png')" onclick="boothSetFrame(this)" aria-label="화이트 오브제 프레임"></button>
+              <button class="pb-fswatch pb-fobj" data-frame="5" style="background-image:url('images/booth/frames/frame5.png')" onclick="boothSetFrame(this)" aria-label="블루 오브제 프레임"></button>
+              <button class="pb-fswatch pb-fobj" data-frame="6" style="background-image:url('images/booth/frames/frame6.png')" onclick="boothSetFrame(this)" aria-label="네이비 오브제 프레임"></button>
             </div>
           </div>
         </aside>
@@ -393,7 +394,6 @@
             <div class="booth-frame" id="booth-frame-1"><span class="booth-frame-num">2</span></div>
             <div class="booth-frame" id="booth-frame-2"><span class="booth-frame-num">3</span></div>
             <div class="booth-frame" id="booth-frame-3"><span class="booth-frame-num">4</span></div>
-            <div class="booth-strip-footer">CAPTCHA! — 2026 SNUT</div>
             <!-- 스티커 · 말풍선 오버레이 -->
             <div class="pb-overlay" id="pb-overlay">
               <div class="booth-bubble" id="booth-bubble-text" style="display:none"></div>
@@ -405,6 +405,7 @@
         <aside class="pb-panel pb-msg">
           <div class="pb-sec" data-sec="message">
             <h3 class="pb-panel-t">MESSAGE</h3>
+            <p class="pb-hint" id="booth-msg-hint-drag">사진 위에서 말풍선을 드래그해 위치를 조정하세요</p>
             <div class="pb-swatches" id="pb-swatches">
               <button class="pb-swatch is-on" data-ink="#FFFFFF" data-bubble="#5254FF" style="background:#fff" onclick="boothSetInk(this)" aria-label="화이트 말풍선"></button>
               <button class="pb-swatch" data-ink="#5254FF" data-bubble="#FFFFFF" style="background:#5254FF" onclick="boothSetInk(this)" aria-label="블루 말풍선"></button>
@@ -419,7 +420,6 @@
                 <svg viewBox="0 0 24 16" class="pb-kbd" aria-hidden="true"><rect x="1" y="1" width="22" height="14" rx="2" stroke="currentColor" fill="none"/><path d="M4 5h1M7 5h1M10 5h1M13 5h1M16 5h1M19 5h1M4 8h1M7 8h1M10 8h1M13 8h1M16 8h1M19 8h1M7 11h10" stroke="currentColor" stroke-width="1"/></svg>
               </div>
             </div>
-            <p class="pb-hint" id="booth-msg-hint-drag">사진 위에서 말풍선을 드래그해 위치를 조정하세요</p>
           </div>
           <div class="pb-actions">
             <button class="pb-done" id="pb-done" onclick="boothRetake()">다시 촬영</button>
@@ -456,7 +456,7 @@
 </div>
 
 <script src="works-data.js?v=6"></script>
-<script src="main.js?v=138"></script>
+<script src="main.js?v=139"></script>
 
 <!-- 3D 인터랙티브 히어로 (Three.js — 로컬 번들, CDN 의존 없음) -->
 <script src="models.js?v=1"></script>

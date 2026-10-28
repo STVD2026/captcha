@@ -626,7 +626,7 @@ var boothPhotos = [];
 var boothRunning = false;
 var boothStickers = [];          // {el} 리스트
 var _sid = 0;
-var _frameColor = '#F2F2F7';     // 스트립 배경(프레임) 색
+var _frameColor = '1';           // 프레임 템플릿 번호 (1~6)
 var _bubbleInk  = { bg: '#5254FF', fg: '#FFFFFF' }; // 말풍선 색
 var _cam = 'ccd';                // 선택 카메라
 var CAMS = {
@@ -1130,12 +1130,14 @@ function boothSetFrame(el) {
   _frameColor = el.dataset.frame;
   boothApplyFrame();
 }
+/* 프레임 = Figma 433-2068 템플릿 이미지 (1~3 단색, 4~6 오브제). 사진 4칸은 템플릿의 회색 칸 위에 놓임 */
+var _frameImg = new Image();
+function boothFrameSrc() { var n = /^[1-6]$/.test(String(_frameColor)) ? _frameColor : '1'; return 'images/booth/frames/frame' + n + '.png'; }
 function boothApplyFrame() {
   var strip = document.getElementById('booth-strip');
-  if (strip) strip.style.background = _frameColor;
-  var dark = boothIsDark(_frameColor);
-  var foot = strip ? strip.querySelector('.booth-strip-footer') : null;
-  if (foot) foot.style.color = dark ? 'rgba(255,255,255,.7)' : '#999';
+  var src = boothFrameSrc();
+  if (strip) { strip.style.background = ''; strip.style.backgroundImage = "url('" + src + "')"; }
+  _frameImg.src = src;
 }
 function boothIsDark(hex) {
   var c = hex.replace('#',''); if (c.length === 3) c = c.replace(/./g,'$&$&');
@@ -1281,9 +1283,9 @@ function boothBuildCanvas(cb) {
   canvas.width  = Math.round(SW * scale);
   canvas.height = Math.round(SH * scale);
   var ctx = canvas.getContext('2d');
-  // 배경(프레임 색)
-  ctx.fillStyle = _frameColor;
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  // 배경(프레임 템플릿 이미지)
+  if (_frameImg.complete && _frameImg.naturalWidth) ctx.drawImage(_frameImg, 0, 0, canvas.width, canvas.height);
+  else { ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, canvas.width, canvas.height); }
 
   var frames = [];
   for (var i = 0; i < 4; i++) frames.push(document.getElementById('booth-frame-' + i));
@@ -1297,13 +1299,6 @@ function boothBuildCanvas(cb) {
 
   var toLoad = boothPhotos.length, loaded = 0;
   function finish() {
-    // 푸터
-    var dark = boothIsDark(_frameColor);
-    ctx.fillStyle = dark ? 'rgba(255,255,255,.72)' : '#999';
-    ctx.font = '700 ' + (10 * scale) + 'px ' + (document.body.style.fontFamily || 'sans-serif');
-    ctx.textAlign = 'center';
-    ctx.fillText('CAPTCHA! — 2026 SNUT', canvas.width / 2, SH * scale - 12 * scale);
-    ctx.textAlign = 'left';
     // 스티커
     boothStickers.forEach(function(s) {
       var el = s.el, im = el.querySelector('img');

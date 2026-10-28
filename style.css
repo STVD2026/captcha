@@ -1240,3 +1240,36 @@ a,button,[onclick],label,summary,.wk-bt,.wk-bt *,[role=button]{cursor:var(--cur-
 .pb-sec-ring span{position:absolute;inset:12px;background:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--blue);font-family:var(--gal);font-weight:700;font-size:28px;line-height:1}
 /* 위쪽 초 바는 원형 게이지로 대체 */
 .pb-start .pb-progress{display:none}
+/* ── 편집 화면 (Figma 430-1192) ── */
+@media (min-width:921px){
+  .pb-edit{grid-template-columns:184px 340px 184px;gap:48px;align-items:center;max-width:none}
+  .pb-edit .pb-panel{background:transparent;color:#fff;padding:0;backdrop-filter:none;gap:12px}
+  .pb-edit .pb-panel-t{color:#fff;font-size:20px}
+  .pb-edit .pb-sec+.pb-sec{margin-top:26px}
+}
+/* 스트립 = 프레임 템플릿 이미지(9:16) + 사진 4칸 절대 배치 */
+.pb-strip{display:block;max-width:340px;aspect-ratio:648/1152;padding:0;background:#fff center/100% 100% no-repeat}
+.pb-strip .booth-frame{position:absolute;aspect-ratio:auto;width:42.59%;height:31.94%;background:#D9D9E2}
+#booth-frame-0{left:6.17%;top:3.47%}
+#booth-frame-1{left:51.23%;top:3.47%}
+#booth-frame-2{left:6.17%;top:36.81%}
+#booth-frame-3{left:51.23%;top:36.81%}
+.pb-strip .booth-frame-num{display:none}
+/* 스티커 칸: 흰 칸 + 파랑 테두리, 로고 스티커는 넓게 */
+.pb-edit .pb-sticker{background:#fff;border:1.5px solid #fff;padding:4px}
+.pb-edit .pb-sticker:hover{background:#EEEEFF}
+.pb-sticker-wide{grid-column:span 3;aspect-ratio:auto;height:56px}
+/* 프레임 칸 */
+.pb-edit .pb-fswatch{border:1.5px solid #fff}
+.pb-fobj{background-size:180% auto;background-position:center 90%}
+.pb-edit .pb-fswatch.is-on{outline:3px solid #fff}
+/* 메시지 패널 */
+.pb-edit .pb-msg .pb-hint{color:#fff;font-size:12px;line-height:1.5;margin:0}
+.pb-edit .pb-msg .pb-sec{display:flex;flex-direction:column;gap:10px}
+.pb-edit .pb-swatches{display:grid;grid-template-columns:repeat(3,1fr);gap:4px}
+.pb-edit .pb-swatch{height:18px;border:1.5px solid #fff;border-radius:0}
+.pb-edit .pb-msgbox{background:#fff}
+.pb-edit .pb-actions{display:flex;flex-direction:column;gap:10px;margin-top:14px}
+.pb-edit .pb-done{background:#EEEEFF;color:var(--blue);border:none;height:38px;font-family:var(--noto);font-weight:700;font-size:13px}
+.pb-edit .pb-qr{background:#fff;color:var(--blue);border:none;height:38px;font-family:var(--noto);font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center;gap:6px}
+.pb-edit .pb-qr svg{width:14px}
