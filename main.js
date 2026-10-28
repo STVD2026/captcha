@@ -1670,3 +1670,12 @@ window.addEventListener('load', function() {
     if (m && m[1] !== 'all' && !has[m[1]]) b.hidden = true;
   });
 });
+
+/* 편집 화면: 오른쪽 메시지 패널 높이를 왼쪽(스티커+프레임)과 맞춤 */
+function boothSyncPanels() {
+  var l = document.querySelector('.pb-edit aside.pb-side'), r = document.querySelector('.pb-edit .pb-msg');
+  if (!l || !r) return;
+  r.style.height = window.innerWidth > 920 ? l.offsetHeight + 'px' : '';
+}
+window.addEventListener('resize', boothSyncPanels);
+(function(){ var _e = boothEnterEdit; boothEnterEdit = function(){ _e.apply(this, arguments); requestAnimationFrame(boothSyncPanels); setTimeout(boothSyncPanels, 300); }; })();
