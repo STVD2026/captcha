@@ -1324,3 +1324,17 @@ a,button,[onclick],label,summary,.wk-bt,.wk-bt *,[role=button]{cursor:var(--cur-
 .pb-edit .pb-swatch{width:52px;height:24px;flex:0 0 auto}
 .pb-edit .pb-swatch.is-on{outline:none;box-shadow:inset 0 0 0 3px var(--blue)}
 .pb-edit .pb-swatch:not([data-ink="#FFFFFF"]).is-on{box-shadow:inset 0 0 0 3px #fff}
+/* Figma 430-1192 수치: 테두리 2px #C0C0FF, 선택 시 같은 색으로 안쪽이 두꺼워짐 */
+.pb-edit .pb-sticker,.pb-edit .pb-fswatch,.pb-edit .pb-swatch{border:2px solid #C0C0FF;box-sizing:border-box}
+.pb-edit .pb-sticker.is-on,.pb-edit .pb-fswatch.is-on,.pb-edit .pb-fswatch[data-frame="1"].is-on,.pb-edit .pb-fswatch[data-frame="4"].is-on,
+.pb-edit .pb-swatch.is-on,.pb-edit .pb-swatch:not([data-ink="#FFFFFF"]).is-on{outline:none;box-shadow:inset 0 0 0 3px #C0C0FF}
+.pb-edit .pb-stickers{gap:4px}
+.pb-edit .pb-frames{gap:8px}
+.pb-edit .pb-swatch{flex:1 1 0;width:auto;height:24px}
+@media (min-width:921px){
+  .pb-edit{grid-template-columns:220px 400px 220px;gap:60px}
+  .pb-edit .pb-strip{max-width:400px;width:400px}
+  .pb-edit .pb-msg .pb-hint{font-size:14px;font-weight:500;line-height:1.4}
+}
+.pb-edit .pb-done{background:#EBEBFF;font-size:14px;height:44px}
+.pb-edit .pb-qr{font-size:14px;height:48px}
