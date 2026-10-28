@@ -1349,3 +1349,4 @@ a,button,[onclick],label,summary,.wk-bt,.wk-bt *,[role=button]{cursor:var(--cur-
 .pb-vk.fn{background:#EBEBFF;flex:1.4 1 0;font-size:11px}
 .pb-vk.fn.on{background:var(--blue);color:#fff}
 .pb-vk.space{flex:3 1 0;font-size:11px}
+@media (min-width:921px){.pb-edit{grid-template-columns:220px 400px 300px}}
