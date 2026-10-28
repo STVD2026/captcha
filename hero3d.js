@@ -321,7 +321,7 @@ export function initCamObj(canvas, key, look, o = {}) {
   const inner = new THREE.Group(); inner.add(cam);
   const rad = box.getBoundingSphere(new THREE.Sphere()).radius;
   inner.scale.setScalar(3.1 / rad); // 회전해도 캔버스 밖으로 잘리지 않게 구 기준으로 맞춤
-  inner.rotation.set(o.front ? 0 : 0.18, o.front ? 0 : ({ ccd: -0.55, film: 0.5, pixel: -0.2 }[look] || 0), o.front ? 0 : ({ ccd: 0.04, film: -0.06, pixel: 0.1 }[look] || 0)); // 카메라마다 다른 각도
+  inner.rotation.set(o.front ? 0 : (look === 'pixel' ? 0.3 : 0.18), o.front ? 0 : ({ ccd: -0.55, film: 0.5, pixel: -0.6 }[look] || 0), o.front ? 0 : ({ ccd: 0.04, film: -0.06, pixel: 0.1 }[look] || 0)); // 카메라마다 다른 각도
   pivot.add(inner);
 
   const rt = new THREE.WebGLRenderTarget(2, 2, { minFilter: THREE.NearestFilter, magFilter: THREE.NearestFilter });
@@ -357,13 +357,15 @@ export function initCamObj(canvas, key, look, o = {}) {
           col += (rnd(floor(gl_FragCoord.xy / 1.5) + fract(uTime * 7.0)) - 0.5) * 0.18;
         }
         if (uLook < 2) {             // CCD·FILM에도 아주 약한 디더 (PIXEL과 톤을 맞춤): 2px 베이어로 7단계 양자화
-          float th = bayer(floor(gl_FragCoord.xy / 2.0)) - 0.5;
-          col = floor(col * 7.0 + 0.5 + th * 0.9) / 7.0;
+          float th = bayer(floor(gl_FragCoord.xy / 3.0)) - 0.5;
+          col = floor(col * 4.0 + 0.5 + th * 1.0) / 4.0;   // 3px 블록·4단계: 디더 결이 확실히 보이게
         }
         if (uLook == 2) {            // PIXEL: 파랑 디더
           vec2 b = floor(gl_FragCoord.xy / 3.0);                     // 촘촘한 디더
-          float v = clamp((1.0 - l) * 1.5 - 0.05, 0.0, 1.0);
-          if (v < bayer(b)) col = vec3(1.0); else col = vec3(0.322,0.329,1.0);
+          float v = clamp((1.0 - l) * 1.6 - 0.05, 0.0, 1.0) * 2.0;   // 3단계: 흰 → 라벤더 → 파랑 (면마다 명암이 달라 입체감)
+          float th2 = bayer(b);
+          if (v < 1.0) col = (v < th2) ? vec3(1.0) : vec3(0.74,0.75,1.0);
+          else col = (v - 1.0 < th2) ? vec3(0.74,0.75,1.0) : vec3(0.13,0.14,0.62); // 가장 어두운 면은 진한 남색 → 파란 배경과 구분
         }
         gl_FragColor = vec4(col, 1.0);
       }`
@@ -464,8 +466,9 @@ export function buildCamera(look, body) { // body: 기본 재질 (CCD는 쇠로 
   } else {
     // 픽셀 카메라: 복셀(정육면체) 블록으로 쌓은 레트로 카메라
     const V = 0.42, vox = new THREE.BoxGeometry(V, V, V);
+    body = new THREE.MeshStandardMaterial({ color: 0xc4c4d8, roughness: 0.6 }); // 중간 밝기 → 면마다 흰·라벤더·파랑 디더로 입체감
     const put = (x, y, z, m) => add(vox, m, x * V, y * V, z * V);
-    for (let x = -4; x <= 4; x++) for (let y = -2; y <= 2; y++) for (let z = -1; z <= 1; z++) put(x, y, z, y === -1 ? dark : body);
+    for (let x = -4; x <= 4; x++) for (let y = -2; y <= 2; y++) for (let z = -2; z <= 1; z++) put(x, y, z, y === -1 ? dark : body); // 두께를 늘려 옆면이 보이게
     for (let x = -2; x <= -1; x++) put(x, 3, 0, body);                       // 셔터 블록
     put(3, 3, 0, dark);                                                       // 버튼
     // 렌즈: 진한 링 + 흰 반사 + 진한 중심이 앞으로 2칸 튀어나오게 (디더에서도 렌즈가 또렷하게)
