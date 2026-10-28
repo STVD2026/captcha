@@ -627,7 +627,7 @@ var boothRunning = false;
 var boothStickers = [];          // {el} 리스트
 var _sid = 0;
 var _frameColor = '1';           // 프레임 템플릿 번호 (1~6)
-var _bubbleInk  = { bg: '#5254FF', fg: '#FFFFFF' }; // 말풍선 색
+var _bubbleInk  = { bg: '#FFFFFF', fg: '#5254FF' }; // 말풍선 색 (기본 선택된 화이트 칸과 일치)
 var _cam = 'ccd';                // 선택 카메라
 var CAMS = {
   ccd:   { name: 'CCD' },       // 쿨·클린 디카룩
@@ -1109,6 +1109,7 @@ function boothEnterEdit() {
   boothStickers = [];
   document.querySelectorAll('#pb-overlay .pb-sticker-inst').forEach(function(el){ el.remove(); });
   document.querySelectorAll('.pb-sticker.is-on').forEach(function(b){ b.classList.remove('is-on'); });
+  var onInk = document.querySelector('.pb-swatch.is-on'); if (onInk) boothSetInk(onInk); // 말풍선 색 = 선택된 칸
   document.getElementById('pb').classList.remove('shooting');
   boothShowStage('edit');
   boothMTab('sticker'); // 모바일 기본 탭
@@ -1153,6 +1154,7 @@ function boothApplyFrame() {
   var strip = document.getElementById('booth-strip');
   var src = boothFrameSrc();
   if (strip) { strip.style.background = ''; strip.style.backgroundImage = "url('" + src + "')"; }
+  if (strip) strip.classList.toggle('is-blue', _frameColor === '2' || _frameColor === '5');
   _frameImg.src = src;
 }
 function boothIsDark(hex) {
@@ -1243,6 +1245,17 @@ function boothAddSticker(n) {
   function onDown(e) {
     var t = e.target;
     if (t.closest && t.closest('.pb-del')) return; // 지우기 버튼은 드래그 아님
+    var rot = t.closest ? t.closest('.pb-rot') : null;
+    if (rot) { // 회전 핸들: 스티커 중심 기준으로 포인터 각도만큼 회전
+      var st = rot.parentElement, r = st.getBoundingClientRect(), cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+      var p0 = e.touches ? e.touches[0] : e, a0 = Math.atan2(p0.clientY - cy, p0.clientX - cx), base = parseFloat(st.dataset.rot || 0);
+      var mv = function(ev){ var p = ev.touches ? ev.touches[0] : ev; var a = Math.atan2(p.clientY - cy, p.clientX - cx);
+        var deg = base + (a - a0) * 180 / Math.PI; st.dataset.rot = deg; st.style.transform = 'rotate(' + deg + 'deg)'; ev.preventDefault(); };
+      var up = function(){ document.removeEventListener('mousemove', mv); document.removeEventListener('touchmove', mv); document.removeEventListener('mouseup', up); document.removeEventListener('touchend', up); };
+      document.addEventListener('mousemove', mv); document.addEventListener('touchmove', mv, { passive: false });
+      document.addEventListener('mouseup', up); document.addEventListener('touchend', up);
+      e.preventDefault(); return;
+    }
     var el = isTarget(t);
     // 고른 스티커·말풍선만 선택 표시(× 버튼 보임), 빈 곳을 누르면 선택 해제
     document.querySelectorAll('#pb-overlay .is-sel').forEach(function(x){ if (x !== el) x.classList.remove('is-sel'); });
@@ -1251,6 +1264,10 @@ function boothAddSticker(n) {
     if (!el.querySelector('.pb-del')) {
       var d = document.createElement('button'); d.type = 'button'; d.className = 'pb-del'; d.setAttribute('aria-label', '지우기'); d.textContent = '×';
       el.appendChild(d);
+      if (el.classList.contains('pb-sticker-inst')) {
+        var rh = document.createElement('span'); rh.className = 'pb-rot'; rh.setAttribute('aria-label', '각도 조절'); rh.textContent = '↻';
+        el.appendChild(rh);
+      }
     }
     dragging = el;
     el.classList.add('dragging');
@@ -1328,7 +1345,9 @@ function boothBuildCanvas(cb) {
     boothStickers.forEach(function(s) {
       var el = s.el, im = el.querySelector('img');
       if (!im || !im.complete) return;
-      ctx.drawImage(im, el.offsetLeft * scale, el.offsetTop * scale, el.offsetWidth * scale, el.offsetHeight * scale);
+      var sw = el.offsetWidth * scale, sh = im.offsetHeight * scale || el.offsetHeight * scale, deg = parseFloat(el.dataset.rot || 0);
+      ctx.save(); ctx.translate(el.offsetLeft * scale + sw / 2, el.offsetTop * scale + sh / 2); ctx.rotate(deg * Math.PI / 180);
+      ctx.drawImage(im, -sw / 2, -sh / 2, sw, sh); ctx.restore(); // 회전 반영
     });
     // 말풍선
     var bub = document.getElementById('booth-bubble-text');

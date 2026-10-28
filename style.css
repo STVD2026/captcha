@@ -1365,3 +1365,16 @@ a,button,[onclick],label,summary,.wk-bt,.wk-bt *,[role=button]{cursor:var(--cur-
 /* 촬영 화면: 뒤로가기 화살표는 ABC Galapagos 글자, 오른쪽 순서 = 초 → 컷 → 카메라 */
 .pb-start .pb-back{font-family:var(--gal);font-weight:700;font-size:52px;line-height:1;color:#fff;width:auto;padding:0 6px}
 .pb-side .pb-side-item:first-child{order:3}
+/* 말풍선 색 버튼 (Figma 430-1245): 47×24, 1px #C0C0FF, 선택 시 체크 아이콘 */
+.pb-edit .pb-swatches{display:flex;gap:4px}
+.pb-edit .pb-swatch{flex:0 0 47px;width:47px;height:24px;border:1px solid #C0C0FF!important;box-shadow:none!important;display:flex;align-items:center;justify-content:center;padding:0}
+.pb-edit .pb-swatch svg{width:15px;height:14px;opacity:.1}
+.pb-edit .pb-swatch.is-on svg{opacity:1}
+.pb-edit .pb-done{background:#9596FF;color:#fff}
+/* 스티커 회전 핸들 */
+#pb-overlay .pb-rot{position:absolute;left:-12px;bottom:-12px;width:24px;height:24px;border:2px solid #fff;background:var(--blue);color:#fff;font-size:14px;line-height:1;display:none;align-items:center;justify-content:center;cursor:var(--cur-hand);pointer-events:all;z-index:3}
+#pb-overlay .is-sel .pb-rot{display:flex}
+#pb-overlay .pb-sticker-inst{transform-origin:50% 50%}
+/* 파랑 프레임(2·5번): 파란 배경과 구분되게 흰 외곽선 */
+.pb-strip.is-blue{outline:3px solid #fff;outline-offset:0}
+.pb-edit .pb-done{gap:6px}.pb-edit .pb-done svg{width:15px;height:15px}

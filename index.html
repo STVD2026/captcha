@@ -14,7 +14,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" onload="this.rel='stylesheet'">
 <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap"></noscript>
-<link rel="stylesheet" href="style.css?v=242">
+<link rel="stylesheet" href="style.css?v=244">
 </head>
 <body class="theme-light">
 
@@ -402,9 +402,9 @@
             <h3 class="pb-panel-t">MESSAGE</h3>
             <p class="pb-hint" id="booth-msg-hint-drag">말풍선을 드래그해 위치를 조정하세요</p>
             <div class="pb-swatches" id="pb-swatches">
-              <button class="pb-swatch is-on" data-ink="#FFFFFF" data-bubble="#5254FF" style="background:#fff" onclick="boothSetInk(this)" aria-label="화이트 말풍선"></button>
-              <button class="pb-swatch" data-ink="#5254FF" data-bubble="#FFFFFF" style="background:#5254FF" onclick="boothSetInk(this)" aria-label="블루 말풍선"></button>
-              <button class="pb-swatch" data-ink="#050530" data-bubble="#FFFFFF" style="background:#050530" onclick="boothSetInk(this)" aria-label="네이비 말풍선"></button>
+              <button class="pb-swatch is-on" data-ink="#FFFFFF" data-bubble="#5254FF" style="background:#fff" onclick="boothSetInk(this)" aria-label="화이트 말풍선"><svg viewBox="16 5 15 14" aria-hidden="true"><path d="M17.3636 19H29.6364V17.7273H31V6.27273H29.6364V5H17.3636V6.27273H16V17.7273H17.3636V19ZM20.0909 13.9091V12.6364H18.7273V11.3636H20.0909V12.6364H21.4545V13.9091H22.8182V12.6364H24.1818V11.3636H25.5455V10.0909H26.9091V8.81818H28.2727V10.0909H26.9091V11.3636H25.5455V12.6364H24.1818V13.9091H22.8182V15.1818H21.4545V13.9091H20.0909Z" fill="#5254FF"/></svg></button>
+              <button class="pb-swatch" data-ink="#5254FF" data-bubble="#FFFFFF" style="background:#5254FF" onclick="boothSetInk(this)" aria-label="블루 말풍선"><svg viewBox="16 5 15 14" aria-hidden="true"><path d="M17.3636 19H29.6364V17.7273H31V6.27273H29.6364V5H17.3636V6.27273H16V17.7273H17.3636V19ZM20.0909 13.9091V12.6364H18.7273V11.3636H20.0909V12.6364H21.4545V13.9091H22.8182V12.6364H24.1818V11.3636H25.5455V10.0909H26.9091V8.81818H28.2727V10.0909H26.9091V11.3636H25.5455V12.6364H24.1818V13.9091H22.8182V15.1818H21.4545V13.9091H20.0909Z" fill="#FFFFFF"/></svg></button>
+              <button class="pb-swatch" data-ink="#050530" data-bubble="#FFFFFF" style="background:#050530" onclick="boothSetInk(this)" aria-label="네이비 말풍선"><svg viewBox="16 5 15 14" aria-hidden="true"><path d="M17.3636 19H29.6364V17.7273H31V6.27273H29.6364V5H17.3636V6.27273H16V17.7273H17.3636V19ZM20.0909 13.9091V12.6364H18.7273V11.3636H20.0909V12.6364H21.4545V13.9091H22.8182V12.6364H24.1818V11.3636H25.5455V10.0909H26.9091V8.81818H28.2727V10.0909H26.9091V11.3636H25.5455V12.6364H24.1818V13.9091H22.8182V15.1818H21.4545V13.9091H20.0909Z" fill="#5254FF"/></svg></button>
             </div>
             <div class="pb-msgbox">
               <textarea id="booth-msg-input" maxlength="60"
@@ -418,7 +418,7 @@
             <div class="pb-vkbd" id="pb-vkbd" hidden></div>
           </div>
           <div class="pb-actions">
-            <button class="pb-done" id="pb-done" onclick="boothRetake()">다시 촬영</button>
+            <button class="pb-done" id="pb-done" onclick="boothRetake()"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M13.5 8A5.5 5.5 0 1 1 11.9 4.1" stroke="currentColor" stroke-width="1.6" fill="none"/><path d="M12.6 1.4v3.4H9.2" stroke="currentColor" stroke-width="1.6" fill="none"/></svg>다시 촬영</button>
             <button class="pb-qr" id="booth-qr-btn" onclick="boothShowQR()">
               <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1v9M8 1L5 4M8 1l3 3M2 10v4h12v-4" stroke="currentColor" stroke-width="1.4" fill="none"/></svg>
               QR 내보내기
@@ -452,7 +452,7 @@
 </div>
 
 <script src="works-data.js?v=6"></script>
-<script src="main.js?v=147"></script>
+<script src="main.js?v=148"></script>
 
 <!-- 3D 인터랙티브 히어로 (Three.js — 로컬 번들, CDN 의존 없음) -->
 <script src="models.js?v=1"></script>
