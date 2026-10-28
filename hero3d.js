@@ -355,7 +355,12 @@ export function initCamObj(canvas, key, look, o = {}) {
         } else if (uLook == 1) {     // FILM: 바랜 블랙, 따뜻한 하이라이트, 움직이는 그레인
           col = mix(vec3(0.12,0.11,0.11), vec3(0.88,0.85,0.82), smoothstep(0.04, 0.96, l)); // 쿨 브라운
           col += (rnd(floor(gl_FragCoord.xy / 1.5) + fract(uTime * 7.0)) - 0.5) * 0.18;
-        } else {                     // PIXEL: 파랑 디더
+        }
+        if (uLook < 2) {             // CCD·FILM에도 아주 약한 디더 (PIXEL과 톤을 맞춤): 2px 베이어로 7단계 양자화
+          float th = bayer(floor(gl_FragCoord.xy / 2.0)) - 0.5;
+          col = floor(col * 7.0 + 0.5 + th * 0.9) / 7.0;
+        }
+        if (uLook == 2) {            // PIXEL: 파랑 디더
           vec2 b = floor(gl_FragCoord.xy / 3.0);                     // 촘촘한 디더
           float v = clamp((1.0 - l) * 1.5 - 0.05, 0.0, 1.0);
           if (v < bayer(b)) col = vec3(1.0); else col = vec3(0.322,0.329,1.0);

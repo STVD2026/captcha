@@ -1148,7 +1148,7 @@ function boothSetFrame(el) {
 }
 /* 프레임 = Figma 433-2068 템플릿 이미지 (1~3 단색, 4~6 오브제). 사진 4칸은 템플릿의 회색 칸 위에 놓임 */
 var _frameImg = new Image();
-function boothFrameSrc() { var n = /^[1-6]$/.test(String(_frameColor)) ? _frameColor : '1'; return 'images/booth/frames/frame' + n + '.png'; }
+function boothFrameSrc() { var n = /^[1-6]$/.test(String(_frameColor)) ? _frameColor : '1'; return 'images/booth/frames/frame' + n + '.png?v=2'; }
 function boothApplyFrame() {
   var strip = document.getElementById('booth-strip');
   var src = boothFrameSrc();
