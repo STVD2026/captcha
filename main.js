@@ -1099,6 +1099,11 @@ function boothCapture(idx) {
 
 /* ── 편집 화면 진입 ── */
 function boothEnterEdit() {
+  // 편집 화면은 항상 빈 상태로 시작 (사용자가 누르기 전엔 스티커 없음)
+  boothStickers.forEach(function(st){ if (st.el && st.el.parentNode) st.el.parentNode.removeChild(st.el); });
+  boothStickers = [];
+  document.querySelectorAll('#pb-overlay .pb-sticker-inst').forEach(function(el){ el.remove(); });
+  document.querySelectorAll('.pb-sticker.is-on').forEach(function(b){ b.classList.remove('is-on'); });
   document.getElementById('pb').classList.remove('shooting');
   boothShowStage('edit');
   boothMTab('sticker'); // 모바일 기본 탭
