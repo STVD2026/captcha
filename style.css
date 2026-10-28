@@ -1362,3 +1362,6 @@ a,button,[onclick],label,summary,.wk-bt,.wk-bt *,[role=button]{cursor:var(--cur-
 #booth-frame-2{left:6.06%;top:41.2%}
 #booth-frame-3{left:50.61%;top:41.2%}
 @media (max-width:920px){.pb-edit .pb-strip{width:min(64vw, calc((100vh - 43px - 360px) * 660 / 1000))}}
+/* 촬영 화면: 뒤로가기 화살표는 ABC Galapagos 글자, 오른쪽 순서 = 초 → 컷 → 카메라 */
+.pb-start .pb-back{font-family:var(--gal);font-weight:700;font-size:52px;line-height:1;color:#fff;width:auto;padding:0 6px}
+.pb-side .pb-side-item:first-child{order:3}
