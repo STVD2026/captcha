@@ -14,7 +14,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" onload="this.rel='stylesheet'">
 <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap"></noscript>
-<link rel="stylesheet" href="style.css?v=237">
+<link rel="stylesheet" href="style.css?v=238">
 </head>
 <body class="theme-light">
 
@@ -413,9 +413,10 @@
                 oninput="boothUpdateBubble()"></textarea>
               <div class="pb-msgbox-bar">
                 <span class="pb-count" id="pb-count">0/60</span>
-                <svg viewBox="0 0 24 16" class="pb-kbd" aria-hidden="true"><rect x="1" y="1" width="22" height="14" rx="2" stroke="currentColor" fill="none"/><path d="M4 5h1M7 5h1M10 5h1M13 5h1M16 5h1M19 5h1M4 8h1M7 8h1M10 8h1M13 8h1M16 8h1M19 8h1M7 11h10" stroke="currentColor" stroke-width="1"/></svg>
+                <button type="button" class="pb-kbd-btn" onclick="boothToggleKbd()" aria-label="화면 키보드 열기"><svg viewBox="0 0 24 16" class="pb-kbd" aria-hidden="true"><rect x="1" y="1" width="22" height="14" rx="2" stroke="currentColor" fill="none"/><path d="M4 5h1M7 5h1M10 5h1M13 5h1M16 5h1M19 5h1M4 8h1M7 8h1M10 8h1M13 8h1M16 8h1M19 8h1M7 11h10" stroke="currentColor" stroke-width="1"/></svg></button>
               </div>
             </div>
+            <div class="pb-vkbd" id="pb-vkbd" hidden></div>
           </div>
           <div class="pb-actions">
             <button class="pb-done" id="pb-done" onclick="boothRetake()">다시 촬영</button>
@@ -452,7 +453,7 @@
 </div>
 
 <script src="works-data.js?v=6"></script>
-<script src="main.js?v=143"></script>
+<script src="main.js?v=144"></script>
 
 <!-- 3D 인터랙티브 히어로 (Three.js — 로컬 번들, CDN 의존 없음) -->
 <script src="models.js?v=1"></script>

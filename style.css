@@ -1338,3 +1338,14 @@ a,button,[onclick],label,summary,.wk-bt,.wk-bt *,[role=button]{cursor:var(--cur-
 }
 .pb-edit .pb-done{background:#EBEBFF;font-size:14px;height:44px}
 .pb-edit .pb-qr{font-size:14px;height:48px}
+/* 화면 키보드 */
+.pb-kbd-btn{background:none;border:none;padding:2px;color:var(--blue);display:flex}
+.pb-kbd-btn:hover{opacity:.7}
+.pb-vkbd{display:flex;flex-direction:column;gap:3px;background:#fff;border:2px solid #C0C0FF;padding:5px}
+.pb-vkbd[hidden]{display:none}
+.pb-vk-row{display:flex;gap:3px}
+.pb-vk{flex:1 1 0;min-width:0;height:30px;padding:0;border:1px solid #C0C0FF;background:#fff;color:var(--blue);font-family:var(--noto);font-weight:600;font-size:12px;display:flex;align-items:center;justify-content:center}
+.pb-vk:active{background:var(--blue);color:#fff}
+.pb-vk.fn{background:#EBEBFF;flex:1.4 1 0;font-size:11px}
+.pb-vk.fn.on{background:var(--blue);color:#fff}
+.pb-vk.space{flex:3 1 0;font-size:11px}

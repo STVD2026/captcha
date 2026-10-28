@@ -1680,7 +1680,86 @@ window.addEventListener('load', function() {
 function boothSyncPanels() {
   var l = document.querySelector('.pb-edit aside.pb-side'), r = document.querySelector('.pb-edit .pb-msg');
   if (!l || !r) return;
-  r.style.height = window.innerWidth > 920 ? l.offsetHeight + 'px' : '';
+  r.style.height = ''; r.style.minHeight = window.innerWidth > 920 ? l.offsetHeight + 'px' : '';
 }
 window.addEventListener('resize', boothSyncPanels);
 (function(){ var _e = boothEnterEdit; boothEnterEdit = function(){ _e.apply(this, arguments); requestAnimationFrame(boothSyncPanels); setTimeout(boothSyncPanels, 300); }; })();
+
+/* ── 화면 키보드 (전시장 터치 화면용) : 두벌식 한글 조합 + 영문 ── */
+var _vk = { open: false, raw: [], shift: false, en: false };
+var _CHO = 'ㄱㄲㄴㄷㄸㄹㅁㅂㅃㅅㅆㅇㅈㅉㅊㅋㅌㅍㅎ', _JUNG = 'ㅏㅐㅑㅒㅓㅔㅕㅖㅗㅘㅙㅚㅛㅜㅝㅞㅟㅠㅡㅢㅣ', _JONG = ' ㄱㄲㄳㄴㄵㄶㄷㄹㄺㄻㄼㄽㄾㄿㅀㅁㅂㅄㅅㅆㅇㅈㅊㅋㅌㅍㅎ';
+var _VCOMB = { 'ㅗㅏ':'ㅘ','ㅗㅐ':'ㅙ','ㅗㅣ':'ㅚ','ㅜㅓ':'ㅝ','ㅜㅔ':'ㅞ','ㅜㅣ':'ㅟ','ㅡㅣ':'ㅢ' };
+var _JCOMB = { 'ㄱㅅ':'ㄳ','ㄴㅈ':'ㄵ','ㄴㅎ':'ㄶ','ㄹㄱ':'ㄺ','ㄹㅁ':'ㄻ','ㄹㅂ':'ㄼ','ㄹㅅ':'ㄽ','ㄹㅌ':'ㄾ','ㄹㅍ':'ㄿ','ㄹㅎ':'ㅀ','ㅂㅅ':'ㅄ' };
+function _hgAssemble(keys) {
+  var out = '', cho = '', jung = '', jong = '';
+  var isV = function(c){ return _JUNG.indexOf(c) > -1; }, isC = function(c){ return _CHO.indexOf(c) > -1 || ('ㄳㄵㄶㄺㄻㄼㄽㄾㄿㅀㅄ'.indexOf(c) > -1); };
+  function flush() {
+    if (cho && jung) out += String.fromCharCode(0xAC00 + (_CHO.indexOf(cho) * 21 + _JUNG.indexOf(jung)) * 28 + Math.max(0, _JONG.indexOf(jong || ' ')));
+    else out += cho + jung + jong;
+    cho = jung = jong = '';
+  }
+  keys.forEach(function(c) {
+    if (isV(c)) {
+      if (jong) {
+        var split = null; for (var k in _JCOMB) if (_JCOMB[k] === jong) split = k;
+        var move = split ? split[1] : jong; jong = split ? split[0] : '';
+        flush(); cho = move; jung = c;
+      } else if (jung) {
+        if (_VCOMB[jung + c] && cho) jung = _VCOMB[jung + c];
+        else { flush(); jung = c; }
+      } else jung = c;
+    } else if (isC(c)) {
+      if (!cho && !jung) cho = c;
+      else if (cho && !jung) { flush(); cho = c; }
+      else if (jung && !jong) { if (cho && _JONG.indexOf(c) > 0) jong = c; else { flush(); cho = c; } }
+      else if (jong) { if (_JCOMB[jong + c]) jong = _JCOMB[jong + c]; else { flush(); cho = c; } }
+    } else { flush(); out += c; }
+  });
+  flush();
+  return out;
+}
+var _VK_KO = [['ㅂ','ㅈ','ㄷ','ㄱ','ㅅ','ㅛ','ㅕ','ㅑ','ㅐ','ㅔ'],['ㅁ','ㄴ','ㅇ','ㄹ','ㅎ','ㅗ','ㅓ','ㅏ','ㅣ'],['⇧','ㅋ','ㅌ','ㅊ','ㅍ','ㅠ','ㅜ','ㅡ','⌫']];
+var _VK_KO_S = { 'ㅂ':'ㅃ','ㅈ':'ㅉ','ㄷ':'ㄸ','ㄱ':'ㄲ','ㅅ':'ㅆ','ㅐ':'ㅒ','ㅔ':'ㅖ' };
+var _VK_EN = [['q','w','e','r','t','y','u','i','o','p'],['a','s','d','f','g','h','j','k','l'],['⇧','z','x','c','v','b','n','m','⌫']];
+function boothRenderKbd() {
+  var box = document.getElementById('pb-vkbd'); if (!box) return;
+  var rows = (_vk.en ? _VK_EN : _VK_KO).map(function(r){ return r.map(function(k){
+    var label = k;
+    if (_vk.shift && k.length === 1) label = _vk.en ? k.toUpperCase() : (_VK_KO_S[k] || k);
+    var cls = 'pb-vk' + (k === '⇧' ? ' fn' + (_vk.shift ? ' on' : '') : k === '⌫' ? ' fn' : '');
+    return '<button type="button" class="' + cls + '" data-k="' + k + '">' + label + '</button>';
+  }).join(''); });
+  rows.push('<button type="button" class="pb-vk fn" data-k="lang">' + (_vk.en ? '한' : 'EN') + '</button>'
+    + ['.', ',', '?', '!'].map(function(p){ return '<button type="button" class="pb-vk" data-k="' + p + '">' + p + '</button>'; }).join('')
+    + '<button type="button" class="pb-vk space" data-k=" ">space</button>'
+    + '<button type="button" class="pb-vk fn" data-k="done">완료</button>');
+  box.innerHTML = rows.map(function(r){ return '<div class="pb-vk-row">' + r + '</div>'; }).join('');
+}
+function boothToggleKbd(force) {
+  var box = document.getElementById('pb-vkbd'), ta = document.getElementById('booth-msg-input');
+  if (!box || !ta) return;
+  _vk.open = force != null ? force : !_vk.open;
+  box.hidden = !_vk.open;
+  if (_vk.open) { _vk.raw = Array.from(ta.value); boothRenderKbd(); }
+  boothSyncPanels();
+}
+document.addEventListener('click', function(e) {
+  var b = e.target.closest ? e.target.closest('#pb-vkbd .pb-vk') : null; if (!b) return;
+  var k = b.dataset.k, ta = document.getElementById('booth-msg-input');
+  if (k === 'done') { boothToggleKbd(false); return; }
+  if (k === 'lang') { _vk.en = !_vk.en; _vk.shift = false; boothRenderKbd(); return; }
+  if (k === '⇧') { _vk.shift = !_vk.shift; boothRenderKbd(); return; }
+  if (k === '⌫') _vk.raw.pop();
+  else {
+    var ch = k;
+    if (_vk.shift && k.length === 1) ch = _vk.en ? k.toUpperCase() : (_VK_KO_S[k] || k);
+    var next = _vk.raw.concat([ch]);
+    if (_hgAssemble(next).length > 60) return;
+    _vk.raw = next;
+    if (_vk.shift) { _vk.shift = false; boothRenderKbd(); }
+  }
+  ta.value = _hgAssemble(_vk.raw);
+  boothUpdateBubble();
+});
+// 실제 키보드로 입력하면 화면 키보드 기록도 맞춰 줌
+document.addEventListener('input', function(e){ if (e.target && e.target.id === 'booth-msg-input') _vk.raw = Array.from(e.target.value); });
