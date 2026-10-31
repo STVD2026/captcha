@@ -1812,16 +1812,26 @@ document.addEventListener('click', function(e) {
   }
 });
 
-// 메인 영상 3열: 시작 지점을 엇갈려 끝나는 타이밍이 서로 다르게, 화면에 보일 때만 재생
+// 메인 영상: 시작 지점을 엇갈리고, 한 편이 끝나면 다른 영상과 끝(로고) 타이밍이 GAP초 이상 벌어질 때까지 첫 장면에서 기다렸다가 다시 재생
 (function(){
-  var vids = document.querySelectorAll('.m-video video'); if (!vids.length) return;
+  var vids = [].slice.call(document.querySelectorAll('.m-video video')); if (!vids.length) return;
+  var GAP = 3, visible = false;
+  var left = function(v){ return v.duration - v.currentTime; };
+  function restart(v){
+    if (!visible) return;
+    var clash = vids.some(function(o){ return o !== v && !o.paused && Math.abs(left(o) - v.duration) < GAP; });
+    if (clash) { v._wait = setTimeout(function(){ restart(v); }, 300); return; }
+    v.play().catch(function(){});
+  }
   vids.forEach(function(v){
     var seek = function(){ v.currentTime = +v.dataset.offset % v.duration; };
     v.readyState >= 1 ? seek() : v.addEventListener('loadedmetadata', seek, { once:true });
+    v.addEventListener('ended', function(){ v.currentTime = 0; restart(v); });
   });
-  if (!('IntersectionObserver' in window)) { vids.forEach(function(v){ v.play().catch(function(){}); }); return; }
-  var io = new IntersectionObserver(function(es){
-    es.forEach(function(e){ e.isIntersecting ? e.target.play().catch(function(){}) : e.target.pause(); });
-  }, { threshold:0.15 });
-  vids.forEach(function(v){ io.observe(v); });
+  var play = function(on){
+    visible = on;
+    vids.forEach(function(v){ clearTimeout(v._wait); on ? v.play().catch(function(){}) : v.pause(); });
+  };
+  if (!('IntersectionObserver' in window)) { play(true); return; }
+  new IntersectionObserver(function(es){ play(es[es.length - 1].isIntersecting); }, { threshold:0 }).observe(document.querySelector('.m-video'));
 })();
