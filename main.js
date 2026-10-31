@@ -1811,3 +1811,17 @@ document.addEventListener('click', function(e) {
     el.remove();
   }
 });
+
+// 메인 영상 3열: 시작 지점을 엇갈려 끝나는 타이밍이 서로 다르게, 화면에 보일 때만 재생
+(function(){
+  var vids = document.querySelectorAll('.m-video video'); if (!vids.length) return;
+  vids.forEach(function(v){
+    var seek = function(){ v.currentTime = +v.dataset.offset % v.duration; };
+    v.readyState >= 1 ? seek() : v.addEventListener('loadedmetadata', seek, { once:true });
+  });
+  if (!('IntersectionObserver' in window)) { vids.forEach(function(v){ v.play().catch(function(){}); }); return; }
+  var io = new IntersectionObserver(function(es){
+    es.forEach(function(e){ e.isIntersecting ? e.target.play().catch(function(){}) : e.target.pause(); });
+  }, { threshold:0.15 });
+  vids.forEach(function(v){ io.observe(v); });
+})();

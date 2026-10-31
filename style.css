@@ -487,12 +487,10 @@ nav{
 .m-video{
   flex:none;width:min(658px,100%);aspect-ratio:658/370;background:var(--bg2); /* 비디오 박스 배경 대비 조정 */
   margin-inline:auto;align-self:center;
-  display:flex;align-items:center;justify-content:center;
+  display:grid;grid-template-columns:repeat(3,1fr);gap:6px;aspect-ratio:auto;background:none;
 }
-.m-video span{
-  font-family:var(--gal);font-weight:900;font-size:28px;letter-spacing:1px;
-  text-transform:uppercase;color:var(--blue);
-}
+/* 세로 영상 3열 — 각자 다른 지점에서 시작해 끝(로고)이 겹치지 않게 */
+.m-video video{display:block;width:100%;aspect-ratio:9/16;object-fit:cover;background:var(--blue)}
 /* 로고: 흰색 배경에 맞게 파란색 로고 이미지 활용 */
 .m-logo{
   flex:none;width:min(670px,100%);aspect-ratio:480.94/193.46;display:block;
@@ -636,7 +634,7 @@ nav{
   .m-blue{padding:60px 16px;gap:24px}
   /* 로고: 양옆 마진 더 넉넉히 */
   .m-logo{width:calc(100% - 52px)}
-  .m-video span{font-size:18px}
+  .m-video{gap:4px}
   .m-info{padding:32px 20px;gap:28px}
   /* PROFESSOR: 라벨(좌) | 교수 이름 세로 스택(우) */
   .mi-profs{flex-direction:column;gap:40px}
