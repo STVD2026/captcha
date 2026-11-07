@@ -1479,17 +1479,19 @@ function fitWorkDesc(resize) {
   info.style.minHeight = '';
   if (more.parentNode !== body) body.insertBefore(more, info.nextSibling);
   body.classList.remove('wd-expanded');
+  body.style.minHeight = '';
+  info.style.maxHeight = '';
   if (window.innerWidth <= 920) return;
-  // 설명이 길어 카드와 겹칠 만큼 화면이 낮으면, 카드를 설명 아래로 이어서 배치 (더보기 없음)
-  var desc = document.getElementById('wd-desc');
-  if (!desc) return;
-  var cur = desc.getAttribute('data-show'), infoH = 0;
-  (cur ? ['kr', 'en'] : [null]).forEach(function(l) { if (l) desc.setAttribute('data-show', l); infoH = Math.max(infoH, info.getBoundingClientRect().height); });
-  if (cur) desc.setAttribute('data-show', cur);
-  var infoTop0 = info.getBoundingClientRect().top + window.scrollY;
-  var room = window.innerHeight - WD_GAP - (infoTop0 + infoH + 24);
-  if (more.getBoundingClientRect().height > room) body.classList.add('wd-expanded');
+  // 짧은 작품도 카드가 화면 하단까지 내려가도록 본문 높이 확보, 설명은 카드와 겹치지 않게 패널 안에서 스크롤
+  body.style.minHeight = (window.innerHeight - body.getBoundingClientRect().top - window.scrollY) + 'px';
+  wdFitInfo();
 }
+function wdFitInfo() {
+  var info = document.querySelector('.wd-info'), more = document.querySelector('.wd-more-wrap');
+  if (!info || !more || !info.offsetParent || window.innerWidth <= 920) return;
+  info.style.maxHeight = Math.max(120, more.getBoundingClientRect().top - 24 - info.getBoundingClientRect().top) + 'px';
+}
+window.addEventListener('scroll', wdFitInfo, { passive: true });
 /* 「더보기」: 팝업 없이 그 자리에서 펼침/접기 */
 function wdOpenDesc() {
   var desc = document.getElementById('wd-desc'), body = document.querySelector('.wd-body'), btn = desc.querySelector('.wd-desc-more');

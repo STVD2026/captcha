@@ -1388,3 +1388,10 @@ a,button,[onclick],label,summary,.wk-bt,.wk-bt *,[role=button]{cursor:var(--cur-
 .pb-edit .pb-done{gap:6px}.pb-edit .pb-done svg{width:15px;height:15px}
 .pb-strip.is-blue{outline:3px solid #C0C0FF}
 .pb-side-cam{width:92px;height:70px}
+
+/* 작품 상세(데스크탑): 설명·다른 작품 패널이 작품 길이와 상관없이 스크롤 내내 고정 */
+@media (min-width:921px){
+  .wd-info{grid-area:auto;grid-column:1;grid-row:1/3;align-self:start;overflow-y:auto}
+  .wd-more-wrap{grid-area:auto;grid-column:1;grid-row:1/3;align-self:end;margin-top:0}
+  .wd-gallery{grid-area:auto;grid-column:2;grid-row:1/3}
+}

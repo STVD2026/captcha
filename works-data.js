@@ -1073,7 +1073,9 @@ window.WORKS_DATA = [
     "booth": "2F E57",
     "thumb": "images/works/Thumbnail/23102207_Witty_Thumbnail.webp",
     "imgs": [
-     "images/works/webportfolio/23102207_Witty_work1.webp"
+     "images/works/webportfolio/23102207_Witty_work1.webp",
+     "images/works/webportfolio/23102207_Witty_work2.webp",
+     "images/works/webportfolio/23102207_Witty_work3.webp"
     ]
    },
    {
@@ -1089,7 +1091,8 @@ window.WORKS_DATA = [
     "booth": "3F C23",
     "thumb": "images/works/Thumbnail/23102207_OuterDark_Thumbnail.webp",
     "imgs": [
-     "images/works/webportfolio/23102207_OuterDark_work1.webp"
+     "images/works/webportfolio/23102207_OuterDark_work1.webp",
+     "images/works/webportfolio/23102207_OuterDark_work2.webp"
     ]
    }
   ]
