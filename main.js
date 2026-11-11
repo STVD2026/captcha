@@ -248,7 +248,8 @@ function openWorkDirect(dIdx, wIdx) {
   // YouTube·Vimeo 링크면 갤러리 맨 위에 영상 임베드 (음소거 자동재생, 컨트롤·제목 바 숨김)
   var emb = videoEmbedURL(w.video), site = !emb && /github\.io/.test(w.video || '');
   var embHTML = emb ? '<div class="wd-embed"><iframe src="'+emb+'" title="'+w.workTitle+' 영상" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>'
-      + '<button class="wd-embed-pp" type="button" aria-label="일시정지" onclick="wdTogglePlay(this)"></button></div>'
+      + '<button class="wd-embed-pp" type="button" aria-label="일시정지" onclick="wdTogglePlay(this)"></button>'
+      + '<button class="wd-embed-snd muted" type="button" aria-label="소리 켜기" onclick="wdToggleSound(this)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z" fill="#fff"/><path class="on" d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round"/><path class="off" d="M16 9l6 6M22 9l-6 6" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg></button></div>'
     : site ? '<div class="wd-embed site"><iframe src="'+w.video+'" title="'+w.workTitle+' 웹사이트" allow="autoplay; fullscreen; camera; microphone"></iframe></div>' : '';
   document.getElementById('wdv-gallery').innerHTML = embHTML
     + imgs.map(function(src, i){
@@ -264,11 +265,20 @@ function wdTogglePlay(btn) {
   f.contentWindow.postMessage(msg, '*');
   btn.classList.toggle('paused', paused); btn.setAttribute('aria-label', paused ? '재생' : '일시정지');
 }
+/* 임베드 영상 소리 켜기/끄기 (처음엔 음소거) */
+function wdToggleSound(btn) {
+  var f = btn.parentNode.querySelector('iframe'), on = btn.classList.contains('muted');
+  var yt = /youtube/.test(f.src);
+  (yt ? [{ event: 'command', func: on ? 'unMute' : 'mute', args: [] }].concat(on ? [{ event: 'command', func: 'setVolume', args: [100] }] : [])
+      : [{ method: 'setMuted', value: !on }, { method: 'setVolume', value: on ? 1 : 0 }])
+    .forEach(function(m) { f.contentWindow.postMessage(JSON.stringify(m), '*'); });
+  btn.classList.toggle('muted', !on); btn.setAttribute('aria-label', on ? '소리 끄기' : '소리 켜기');
+}
 function videoEmbedURL(u) {
   var m;
   if (!u) return '';
   if ((m = u.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?(?:.*&)?v=|embed\/|shorts\/))([\w-]{11})/))) return 'https://www.youtube.com/embed/' + m[1] + '?autoplay=1&mute=1&loop=1&playlist=' + m[1] + '&controls=0&rel=0&playsinline=1&modestbranding=1&iv_load_policy=3&disablekb=1&enablejsapi=1';
-  if ((m = u.match(/vimeo\.com\/(?:video\/)?(\d+)/))) return 'https://player.vimeo.com/video/' + m[1] + '?background=1&autoplay=1&muted=1&loop=1';
+  if ((m = u.match(/vimeo\.com\/(?:video\/)?(\d+)/))) return 'https://player.vimeo.com/video/' + m[1] + '?autoplay=1&muted=1&loop=1&controls=0&title=0&byline=0&portrait=0&dnt=1';
   return '';
 }
 
