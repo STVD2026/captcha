@@ -230,6 +230,7 @@ function openWorkDirect(dIdx, wIdx) {
     langs.forEach(function(x) { var pp = document.createElement('p'); pp.setAttribute('data-lang', x[0]); pp.textContent = x[2].replace(/\s*\n\s*/g, ' ').replace(/\s{2,}/g, ' ').trim(); /* 임의 줄바꿈 해제 → 한 문단으로 */ txt.appendChild(pp); });
     desc.appendChild(txt);
   }
+  document.querySelectorAll('.wd-video').forEach(function(el){ el.remove(); }); // 이전 작품 버튼 제거
   if (w.video) { var va = document.createElement('a'); va.className = 'wd-video'; va.href = /^https?:/.test(w.video) ? w.video : 'https://' + w.video; va.target = '_blank'; va.rel = 'noopener noreferrer'; va.textContent = '▶ 영상 보기'; desc.parentNode.insertBefore(va, desc); }
   if (!desc.childNodes.length) desc.textContent = d.kr + ' 디자이너의 졸업 작품입니다.';
   (function(){ var b = document.querySelector('.wd-body'); if (b && b.classList.contains('wd-released')) { b.classList.remove('wd-released'); ['.wd-info','.wd-more-wrap'].forEach(function(q){ var el = document.querySelector(q); if (el) el.style.position = el.style.top = el.style.left = el.style.width = el.style.bottom = el.style.gridArea = el.style.margin = ''; }); } })();
