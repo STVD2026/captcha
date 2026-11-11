@@ -1407,7 +1407,7 @@ window.WORKS_DATA = [
     "cat": "UX/UI",
     "descKr": "휠체어 사용자는 낯선 곳에 가기 전 늘 전화를 겁니다. 입구 폭과 경사로를 묻고도 가는 길이 두렵고 막막해서 휠체어 사용자 58%는 결국 새로운 곳 방문을 포기합니다.\n'olways'는 이 번거로운 확인을 대신하는 스마트글래스 AR 길안내 서비스입니다.\n출발 전 목적지의 단차와 경사, 입구 너비를 직관적으로 보여주고, 이동 중엔 전방의 턱이나 다가오는 자전거를 감지해 안전한 우회로를 제안합니다. 건물 앞에서는 내 휠체어 폭과 입구를 비교해 진입 가능 여부를 바로 알려줍니다. 이렇게 지나온 길은 실측 데이터가 되어 다음 사람을 위한 길잡이가 됩니다.\n멈춰 서서 확인해야 했던 길, 이제 olways와 함께 멈춤 없이 나아가세요.",
     "descEn": "Before visiting a new place, wheelchair users always have to make phone calls. Yet, due to the anxiety and uncertainty of the journey, 58% still give up on exploring new destinations.\n'olways' is a smart glass AR navigation service that eliminates this burdensome process. Before departure, it intuitively displays steps, slopes, and entrance widths. On the move, it detects upcoming obstacles or approaching bicycles to suggest safe detours. Upon arrival, it instantly compares the user's wheelchair width with the door to confirm accessibility.\nEvery journey traveled becomes precise data, guiding the next person's path.\nStop pausing to check. Keep moving forward with olways.",
-    "video": "",
+    "video": "https://vimeo.com/1245892647",
     "tags": [
      "#UXUI",
      "#스마트글라스",

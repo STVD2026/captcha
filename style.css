@@ -906,7 +906,7 @@ a.wd-dlink:hover{opacity:.75}
 }
 /* 해시태그: 옆 태그와 같은 사각형, 색만 연하게 */
 .wd-tags .wd-hash{font-family:var(--noto);font-weight:500;color:#8E8FFF;border-color:#B9BAFF}
-.wd-video{display:inline-block;margin-top:4px;padding:8px 14px;border:1.5px solid var(--blue);color:var(--blue);font-weight:700;text-decoration:none}
+.wd-video{display:inline-block;align-self:flex-start;margin-top:4px;padding:8px 14px;border:1.5px solid var(--blue);color:var(--blue);font-weight:700;text-decoration:none}
 .wd-video:hover{background:var(--blue);color:#fff}
 /* 디자이너 다른 작품: 좌측 하단, 화면에 고정 (하단 30px 여유) */
 .wd-more-wrap{grid-area:more;align-self:end;position:sticky;bottom:12px;display:flex;flex-direction:column;gap:14px;margin-top:24px}
