@@ -1425,3 +1425,15 @@ a,button,[onclick],label,summary,.wk-bt,.wk-bt *,[role=button]{cursor:var(--cur-
 }
 /* PC: 세 영상이 한 화면(높이 약 78vh)에 다 들어오도록 폭 제한 */
 @media (min-width:921px){.m-video{max-width:min(1600px,calc(132vh + 6vw + 6vw));margin-inline:auto}}
+/* CHEESEBOX 로고: PNG 안쪽 투명 여백을 상쇄해 다른 로고와 높이·왼쪽 정렬 맞춤 */
+.mi-sponsors img[alt="CHEESEBOX"]{height:62px;margin:-20px -17px}
+@media (max-width:920px){.mi-sponsors img[alt="CHEESEBOX"]{height:46px;margin:-15px -13px}}
+/* 모바일: 영상 위 버튼은 작게 */
+@media (max-width:920px){
+  .wd-embed-pp,.wd-embed-snd{width:30px;height:30px;bottom:10px}
+  .wd-embed-pp{left:10px}.wd-embed-snd{left:46px}
+  .wd-embed-pp::before,.wd-embed-pp::after{top:9px;width:3px;height:12px}
+  .wd-embed-pp::before{left:10px}.wd-embed-pp::after{left:17px}
+  .wd-embed-pp.paused::before{left:12px;top:8px;border-left-width:10px;border-top-width:7px;border-bottom-width:7px}
+  .wd-embed-snd svg{width:16px;height:16px}
+}
