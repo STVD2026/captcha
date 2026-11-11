@@ -1551,7 +1551,7 @@ window.WORKS_DATA = [
     "cat": "UX/UI",
     "descKr": "내 옷장을 게임처럼 즐길 수 있다면 어떨까요?패션 소비의 지속 가능성이 중요해진 지금, 패션 소비의 지속 가능성이 중요해진 지금, 옷장 속에는 입지 않고 잠들어 있는 옷들이 많지만 제대로 활용되지 못하고 있습니다. 그러나 기존 서비스들은 단순히 옷을 기록하거나 정보를 탐색하는 수준에 머물러 있습니다. OUTF!T은 옷장에 잠든 옷들을 적극적으로 활용할 수 있는 코디를 제안하는 방식으로 이 문제를 해결합니다. 실제 옷장을 기반으로 어울리는 룩을 제안받고, 캐릭터에 직접 옷을 입혀보며 스타일을 실험합니다. 마음에 드는 스타일은 저장하고, 부족한 아이템은 가상으로 매치해 보며, 유저 콘테스트를 통해 새로운 감각을 발견합니다. 옷을 조합하고 즐기는 경험을 통해 ‘오늘은 뭐 입지?’라는 일상의 고민을 유쾌한 놀이로 전환합니다.",
     "descEn": "What if you could experience your wardrobe like a game? As sustainable fashion becomes increasingly important, many clothes sit forgotten and underutilized in our closets. Yet, existing services do little more than log items or browse information. OUTF!T addresses this by offering outfit suggestions that actively make use of these dormant clothes. Based on your actual wardrobe, you can get matching looks, experiment with styles by directly dressing up an avatar, save your favorite combinations, virtually test missing pieces, and discover new senses of style through user contests. By mixing and enjoying your clothes, OUTF!T turns the daily dilemma of 'What should I wear today?' into a delightful play.",
-    "video": "",
+    "video": "https://vimeo.com/1245464205",
     "tags": [],
     "booth": "2F E54",
     "thumb": "images/works/Thumbnail/20101018_OUTF!T_Thumbnail .webp",
@@ -1604,8 +1604,8 @@ window.WORKS_DATA = [
     "booth": "3F E20",
     "thumb": "images/works/Thumbnail/20101019_KOTO_Thumbnail.webp",
     "imgs": [
-     "images/works/webportfolio/20101019_KOTO_work1.png",
-     "images/works/webportfolio/20101019_KOTO_work2.png"
+     "images/works/webportfolio/20101019_KOTO_work1.webp",
+     "images/works/webportfolio/20101019_KOTO_work2.webp"
     ]
    }
   ]
@@ -2026,7 +2026,7 @@ window.WORKS_DATA = [
     "cat": "영상",
     "descKr": "친구들 사이에서 가난해 보이고 싶지 않은 초등학생 '지우'는 해외여행을 간다는 거짓말을 들키지 않기 위해 며칠 동안 여행 증거를 만들어야 한다. 가짜 여행 패키지에 들어있는 소품을 이용해 여행 증거를 만들던 도중, 반에서 가장 부자인 '시우'역시 자신과 같은 상자를 들고 사진을 찍으러 왔다는 사실을 알게 된다. 결국 '지우'는 가짜 증거를 쓰지 않기로 하고 그 대가로 학교에서 놀림과 벌을 받게 된다.  \n\n<가자! 마다가스카르로>는 학기 중에 떠나는 여행이 훈장이 되는 교실에서 출발한다. 아이들은 한없이 진지하지만, 그 진지함이 만들어내는 광경은 어딘가 우스꽝스럽다. 이 작품은 아이들끼리 서로를 상처 입히고 갈등하는 것처럼 보이지만, 결국 그 경쟁과 과시의 기준이 어디에서 왔는지를 되묻는 이야기가 되길 바란다.",
     "descEn": "Jiwoo, an elementary school student who doesn't want to look poor among his friends, has to spend several days manufacturing evidence of a trip so his lie about going abroad won't be exposed. While staging proof with a fake travel kit, he finds out that Siwoo, the richest kid in class, has come to take photos with the same box. In the end, Jiwoo decides not to use the fake evidence, and for that he is teased and punished at school.\n\n<Let's Go to Madagascar!> begins in a classroom where a trip during the school term becomes a mark of status. The children are serious, yet the spectacle their seriousness produces comes across as funny. The film may look like a story of children wounding and clashing with one another, but I hope it ends up asking where the standards for that competition and showing off came from.",
-    "video": "",
+    "video": "https://youtu.be/X3nSLX5X4Os?si=QYsT68cvClBnvl3f",
     "tags": [
      "#영화",
      "#단편영화",
@@ -3058,7 +3058,7 @@ window.WORKS_DATA = [
     "cat": "BX(브랜드)",
     "descKr": "우리는 음악을 자연스럽게 ‘듣는 것’으로 정의해 왔다. 하지만 음악은 소리뿐 아니라 리듬과 진동, 구조가 만들어내는 감각적 경험이기도 하다. \n\nFEELosophy는 청각장애인도 음악을 경험할 수 있도록 음악의 요소를 시각, 진동, 촉각의 언어로 번역한 다감각 음악 체험 프로젝트이다. 재즈, 소울, 록, 일렉트로닉, 힙합의 서로 다른 리듬과 분위기를 영상 속 움직임과 형태 변화, 발끝으로 전해지는 진동, 손으로 직접 만지는 소재의 질감으로 재구성한다. 각 감각은 소리를 단순히 대체하는 것이 아니라 음악을 이해하고 느끼는 또 다른 통로가 된다. \n\nFEELosophy는 음악을 귀로 듣는 대상에서 온몸으로 보고, 만지고, 느끼는 경험으로 확장하며, 감각의 차이를 넘어 누구나 각자의 방식으로 음악을 향유할 수 있는 새로운 가능성을 제안한다.",
     "descEn": "We have long defined music as something we “hear.” Yet music is also a sensory experience shaped by rhythm, vibration, and structure.\n\nFEELosophy translates music into visual, vibrational, and tactile languages, expanding it beyond hearing. The rhythms and moods of jazz, soul, rock, electronic, and hip-hop are reinterpreted through movement, vibrations felt through the feet, and textures explored by touch. Rather than replacing sound, each sense becomes another pathway to experience music.\n\nBy transforming music into something seen, touched, and felt through the whole body, FEELosophy proposes a multisensory experience where everyone can enjoy music in their own way, beyond sensory differences.",
-    "video": "",
+    "video": "https://youtu.be/ccUfVFn508o",
     "tags": [
      "#음악",
      "#다감각",
