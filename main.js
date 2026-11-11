@@ -244,7 +244,7 @@ function openWorkDirect(dIdx, wIdx) {
     + '<div class="wd-mc-body"><div class="wd-mc-title">'+workNames(ow).main+'</div><div class="wd-mc-en">'+workNames(ow).sub+'</div>'+(ow.booth ? '<span class="wd-mc-booth">'+ow.booth+'</span>' : '')+'</div>';
   mc.onclick = function(){ openWorkDirect(dIdx, otherIdx); };
   var imgs = (w.workImgs && w.workImgs.length) ? w.workImgs : ['images/works/none.jpg'];
-  // YouTube·Vimeo 링크면 갤러리 맨 위에 영상 임베드
+  // YouTube·Vimeo 링크면 갤러리 맨 위에 영상 임베드 (음소거 자동재생, 컨트롤·제목 바 숨김)
   var emb = videoEmbedURL(w.video);
   document.getElementById('wdv-gallery').innerHTML = (emb ? '<div class="wd-embed"><iframe src="'+emb+'" title="'+w.workTitle+' 영상" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe></div>' : '')
     + imgs.map(function(src, i){
@@ -256,8 +256,8 @@ function openWorkDirect(dIdx, wIdx) {
 function videoEmbedURL(u) {
   var m;
   if (!u) return '';
-  if ((m = u.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?(?:.*&)?v=|embed\/|shorts\/))([\w-]{11})/))) return 'https://www.youtube.com/embed/' + m[1] + '?rel=0';
-  if ((m = u.match(/vimeo\.com\/(?:video\/)?(\d+)/))) return 'https://player.vimeo.com/video/' + m[1];
+  if ((m = u.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?(?:.*&)?v=|embed\/|shorts\/))([\w-]{11})/))) return 'https://www.youtube.com/embed/' + m[1] + '?autoplay=1&mute=1&loop=1&playlist=' + m[1] + '&controls=0&rel=0&playsinline=1&modestbranding=1&iv_load_policy=3&disablekb=1';
+  if ((m = u.match(/vimeo\.com\/(?:video\/)?(\d+)/))) return 'https://player.vimeo.com/video/' + m[1] + '?background=1&autoplay=1&muted=1&loop=1';
   return '';
 }
 
