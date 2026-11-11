@@ -1410,3 +1410,18 @@ a,button,[onclick],label,summary,.wk-bt,.wk-bt *,[role=button]{cursor:var(--cur-
 .wd-embed-snd .off{display:none}
 .wd-embed-snd.muted .off{display:inline}
 .wd-embed-snd.muted .on{display:none}
+/* 메인 영상 다듬기: 캡션 국문 병기(우측), 스크롤 진입 시 순차 등장 */
+.m-video figcaption em{margin-left:auto;font-family:var(--noto);font-style:normal;font-weight:400;font-size:12px;letter-spacing:0;opacity:.7}
+.m-video figure{opacity:0;transform:translateY(24px);transition:opacity .8s ease,transform .8s cubic-bezier(.2,.7,.2,1)}
+.m-video figure:nth-child(2){transition-delay:.12s}
+.m-video figure:nth-child(3){transition-delay:.24s}
+.m-video.in figure{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){.m-video figure{opacity:1;transform:none;transition:none}}
+@media (max-width:920px){
+  .m-video{gap:8px}
+  .m-video video{outline-width:1.5px;outline-offset:-1.5px}
+  .m-video figcaption em{display:none}
+  .m-video figcaption{white-space:nowrap;overflow:hidden}
+}
+/* PC: 세 영상이 한 화면(높이 약 78vh)에 다 들어오도록 폭 제한 */
+@media (min-width:921px){.m-video{max-width:min(1600px,calc(132vh + 6vw + 6vw));margin-inline:auto}}

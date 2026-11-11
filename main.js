@@ -1873,6 +1873,6 @@ document.addEventListener('click', function(e) {
     visible = on;
     vids.forEach(function(v){ clearTimeout(v._wait); on ? v.play().catch(function(){}) : v.pause(); });
   };
-  if (!('IntersectionObserver' in window)) { play(true); return; }
-  new IntersectionObserver(function(es){ play(es[es.length - 1].isIntersecting); }, { threshold:0 }).observe(document.querySelector('.m-video'));
+  if (!('IntersectionObserver' in window)) { document.querySelector('.m-video').classList.add('in'); play(true); return; }
+  new IntersectionObserver(function(es){ var on = es[es.length - 1].isIntersecting; if (on) es[0].target.classList.add('in'); play(on); }, { threshold:0 }).observe(document.querySelector('.m-video'));
 })();
