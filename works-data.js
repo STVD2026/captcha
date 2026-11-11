@@ -3058,7 +3058,7 @@ window.WORKS_DATA = [
     "cat": "BX(브랜드)",
     "descKr": "우리는 음악을 자연스럽게 ‘듣는 것’으로 정의해 왔다. 하지만 음악은 소리뿐 아니라 리듬과 진동, 구조가 만들어내는 감각적 경험이기도 하다. \n\nFEELosophy는 청각장애인도 음악을 경험할 수 있도록 음악의 요소를 시각, 진동, 촉각의 언어로 번역한 다감각 음악 체험 프로젝트이다. 재즈, 소울, 록, 일렉트로닉, 힙합의 서로 다른 리듬과 분위기를 영상 속 움직임과 형태 변화, 발끝으로 전해지는 진동, 손으로 직접 만지는 소재의 질감으로 재구성한다. 각 감각은 소리를 단순히 대체하는 것이 아니라 음악을 이해하고 느끼는 또 다른 통로가 된다. \n\nFEELosophy는 음악을 귀로 듣는 대상에서 온몸으로 보고, 만지고, 느끼는 경험으로 확장하며, 감각의 차이를 넘어 누구나 각자의 방식으로 음악을 향유할 수 있는 새로운 가능성을 제안한다.",
     "descEn": "We have long defined music as something we “hear.” Yet music is also a sensory experience shaped by rhythm, vibration, and structure.\n\nFEELosophy translates music into visual, vibrational, and tactile languages, expanding it beyond hearing. The rhythms and moods of jazz, soul, rock, electronic, and hip-hop are reinterpreted through movement, vibrations felt through the feet, and textures explored by touch. Rather than replacing sound, each sense becomes another pathway to experience music.\n\nBy transforming music into something seen, touched, and felt through the whole body, FEELosophy proposes a multisensory experience where everyone can enjoy music in their own way, beyond sensory differences.",
-    "video": "https://youtu.be/ccUfVFn508o",
+    "video": "",
     "tags": [
      "#음악",
      "#다감각",
@@ -3080,7 +3080,7 @@ window.WORKS_DATA = [
     "cat": "영상",
     "descKr": "〈고래낙하〉는 죽은 고래가 심해로 가라앉아 새로운 생명의 터전이 되는 ‘고래낙하(Whale Fall)’ 현상에서 출발한 인터랙티브 뮤직비디오이다. 음악을 하며 행복했던 주인공은 현실 속 좌절로 침잠하고, 바닷속에서 자신처럼 가라앉은 고래와 마주한다. 죽은 고래와의 접촉에서 시작된 생명은 빛나는 숲으로 확장되고, 주인공은 그 길을 따라 나아가며 다시 심장을 뛰게 하는 빛을 발견한다.\n직접 작곡한 음악과 영상은 하나의 서사를 공유하며, 전시에서는 MIDI 컨트롤러를 통해 악기별 소리와 이에 연동된 영상의 색채를 변화시키며 작품에 직접 개입할 수 있다.\n죽은 고래가 소멸 이후에도 새로운 생명을 품고 또 다른 세계를 만들어내듯, 이 작품은 무너지고 가라앉는 시간 역시 끝이 아니라 다시 나아갈 수 있는 새로운 가능성의 시작이 될 수 있음을 이야기한다.",
     "descEn": "Whale Fall is an interactive music video inspired by the phenomenon in which a dead whale sinks into the deep sea and becomes a foundation for new life. Once happy making music, the protagonist gradually sinks into despair and encounters a whale that has sunk like herself. From her touch, new life emerges and grows into a luminous forest. Following its path, she discovers a light that makes her heart beat again.\n\nThe music, composed by the artist, and the visuals share one narrative. In the exhibition, viewers use a MIDI controller to alter individual instrument sounds and corresponding colors in the video.\n\nJust as a dead whale gives rise to new life, the work suggests that times of collapse and descent may not be an end, but the beginning of a new possibility to move forward.",
-    "video": "",
+    "video": "https://youtu.be/ccUfVFn508o",
     "tags": [
      "#음악",
      "#뮤직비디오",
