@@ -1398,3 +1398,11 @@ a,button,[onclick],label,summary,.wk-bt,.wk-bt *,[role=button]{cursor:var(--cur-
 /* 작품 상세: 영상 임베드 (갤러리 맨 위, 16:9) */
 .wd-embed{position:relative;width:100%;aspect-ratio:16/9;background:#000;overflow:hidden}
 .wd-embed iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+/* 임베드 위 재생/일시정지 버튼만 노출 */
+.wd-embed-pp{position:absolute;left:14px;bottom:14px;width:40px;height:40px;border:none;border-radius:50%;background:rgba(82,84,255,.9);cursor:var(--cur-hand);z-index:2}
+.wd-embed-pp::before,.wd-embed-pp::after{content:"";position:absolute;top:13px;width:4px;height:14px;background:#fff}
+.wd-embed-pp::before{left:14px}.wd-embed-pp::after{left:22px}
+.wd-embed-pp.paused::after{display:none}
+.wd-embed-pp.paused::before{left:16px;top:12px;width:0;height:0;background:none;border-left:12px solid #fff;border-top:8px solid transparent;border-bottom:8px solid transparent}
+/* 웹사이트 작품: 사이트 자체를 임베드 (조작 가능) */
+.wd-embed.site{aspect-ratio:16/10;background:#fff}

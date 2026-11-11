@@ -246,18 +246,28 @@ function openWorkDirect(dIdx, wIdx) {
   mc.onclick = function(){ openWorkDirect(dIdx, otherIdx); };
   var imgs = (w.workImgs && w.workImgs.length) ? w.workImgs : ['images/works/none.jpg'];
   // YouTube·Vimeo 링크면 갤러리 맨 위에 영상 임베드 (음소거 자동재생, 컨트롤·제목 바 숨김)
-  var emb = videoEmbedURL(w.video);
-  document.getElementById('wdv-gallery').innerHTML = (emb ? '<div class="wd-embed"><iframe src="'+emb+'" title="'+w.workTitle+' 영상" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe></div>' : '')
+  var emb = videoEmbedURL(w.video), site = !emb && /github\.io/.test(w.video || '');
+  var embHTML = emb ? '<div class="wd-embed"><iframe src="'+emb+'" title="'+w.workTitle+' 영상" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>'
+      + '<button class="wd-embed-pp" type="button" aria-label="일시정지" onclick="wdTogglePlay(this)"></button></div>'
+    : site ? '<div class="wd-embed site"><iframe src="'+w.video+'" title="'+w.workTitle+' 웹사이트" allow="autoplay; fullscreen; camera; microphone"></iframe></div>' : '';
+  document.getElementById('wdv-gallery').innerHTML = embHTML
     + imgs.map(function(src, i){
     return '<img src="'+src+'" alt="'+w.workTitle+' '+(i+1)+'" loading="lazy" onerror="this.onerror=null;this.src=\'images/works/none.jpg\'">';
   }).join('');
   window.scrollTo(0,0);
 }
 
+/* 임베드 영상 재생/일시정지 (YouTube·Vimeo 플레이어에 postMessage) */
+function wdTogglePlay(btn) {
+  var f = btn.parentNode.querySelector('iframe'), paused = !btn.classList.contains('paused');
+  var msg = /youtube/.test(f.src) ? JSON.stringify({ event: 'command', func: paused ? 'pauseVideo' : 'playVideo', args: [] }) : JSON.stringify({ method: paused ? 'pause' : 'play' });
+  f.contentWindow.postMessage(msg, '*');
+  btn.classList.toggle('paused', paused); btn.setAttribute('aria-label', paused ? '재생' : '일시정지');
+}
 function videoEmbedURL(u) {
   var m;
   if (!u) return '';
-  if ((m = u.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?(?:.*&)?v=|embed\/|shorts\/))([\w-]{11})/))) return 'https://www.youtube.com/embed/' + m[1] + '?autoplay=1&mute=1&loop=1&playlist=' + m[1] + '&controls=0&rel=0&playsinline=1&modestbranding=1&iv_load_policy=3&disablekb=1';
+  if ((m = u.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?(?:.*&)?v=|embed\/|shorts\/))([\w-]{11})/))) return 'https://www.youtube.com/embed/' + m[1] + '?autoplay=1&mute=1&loop=1&playlist=' + m[1] + '&controls=0&rel=0&playsinline=1&modestbranding=1&iv_load_policy=3&disablekb=1&enablejsapi=1';
   if ((m = u.match(/vimeo\.com\/(?:video\/)?(\d+)/))) return 'https://player.vimeo.com/video/' + m[1] + '?background=1&autoplay=1&muted=1&loop=1';
   return '';
 }
