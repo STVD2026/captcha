@@ -1432,7 +1432,7 @@ window.WORKS_DATA = [
     "cat": "영상",
     "descKr": "우리는 무언가를 잃어버렸다는 사실조차 모른 채 살아갑니다. 공기로 계절을 읽던 감각, 누군가의 체온을 기억하던 손. 상실은 사건처럼 오지 않고 모르는 사이에 진행됩니다.\n《야광》은 그 감각이 도착하는 곳을 상상합니다. 2087년 서울, 감각자원관리공단의 끝없는 선반에 잃어버린 감각이 구슬로 보관되어 있습니다. 관객은 분실을 신고하고 야광귀에게 구슬을 건네받지만 가져가지 않고 제자리에 놓습니다. 모든 영상은 Seedance·Veo·Kling 등 AI 모델을 사용해, 촬영할 수 없는 비현실적인 공간을 장면으로 만들었습니다. 웹은 관객이 그 공간을 직접 탐험하고 상호작용할 수 있도록 Claude Code로 구현했으며, 관객이 입력한 감각이 즉시 보관소에 쌓이고 영상과 인터랙션이 하나의 흐름이 되도록 했습니다.",
     "descEn": "We live without noticing what we have lost — the sense that once read a season from the air, the hand that remembered someone's warmth. Loss does not arrive as an event; it proceeds while we fail to notice. Yagwang imagines where those senses arrive. In Seoul, 2087, the endless shelves of the Bureau of Sensory Resources hold them as glowing marbles. A visitor files a report of their loss and receives their marble from Yagwanggwi, then sets it back rather than taking it. Every scene was made with AI models — Seedance, Veo and Kling — to build spaces that could not be filmed. The web was built in Claude Code so that visitors can explore and act inside those spaces themselves: a sense typed by a visitor enters the archive at once, and film and interaction run as one flow.",
-    "video": "",
+    "video": "https://sie0nahn.github.io/yagwang/",
     "tags": [
      "#웹인터렉션",
      "#인터렉티브",
