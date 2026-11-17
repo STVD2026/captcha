@@ -14,7 +14,16 @@
 body{margin:0;min-height:100vh;background:#fff;color:var(--blue);font-family:'Space Grotesk','Noto Sans KR',-apple-system,sans-serif;display:flex;flex-direction:column;align-items:center;padding:28px 16px calc(32px + env(safe-area-inset-bottom))}
 .logo{width:min(320px,78vw);aspect-ratio:480.94/193.46;background:url('../logo-blue.svg') center/contain no-repeat}
 .sub{font-family:'ABC Galapagos','Space Grotesk',sans-serif;font-weight:700;font-size:13px;letter-spacing:.08em;margin:6px 0 22px;text-align:center;line-height:1.5}
-.photo{width:min(420px,100%);border:2px solid var(--blue);background:#EEEEFF;min-height:200px;display:flex;align-items:center;justify-content:center}
+.photo{width:min(420px,100%);border:2px solid var(--blue);background:#EEEEFF;min-height:200px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;text-align:center;font-size:14px;font-weight:500;padding:0 16px}
+.photo:has(img){padding:0}
+/* 불러오는 동안: 사진과 같은 비율의 칸 안에 캡챠 격자(3×3) 로딩 */
+.photo.loading{aspect-ratio:648/1152}
+.ld{display:grid;grid-template-columns:repeat(3,22px);gap:6px}
+.ld i{width:22px;height:22px;background:var(--blue);opacity:.15;animation:ld 1.2s infinite steps(1)}
+.ld i:nth-child(1){animation-delay:0s}.ld i:nth-child(2){animation-delay:.1s}.ld i:nth-child(3){animation-delay:.2s}
+.ld i:nth-child(6){animation-delay:.3s}.ld i:nth-child(9){animation-delay:.4s}.ld i:nth-child(8){animation-delay:.5s}
+.ld i:nth-child(7){animation-delay:.6s}.ld i:nth-child(4){animation-delay:.7s}.ld i:nth-child(5){animation-delay:.8s}
+@keyframes ld{0%{opacity:1}35%{opacity:.15}}
 .photo img{display:block;width:100%;height:auto}
 .hint{font-size:14px;font-weight:500;margin:18px 0 12px;text-align:center;word-break:keep-all}
 .btn[hidden]{display:none}
@@ -25,7 +34,10 @@ body{margin:0;min-height:100vh;background:#fff;color:var(--blue);font-family:'Sp
 <body>
   <div class="logo" role="img" aria-label="Captcha!"></div>
   <div class="sub">SEOULTECH VISUAL COMMUNICATION DESIGN<br>THE 44TH GRADUATION EXHIBITION</div>
-  <div class="photo" id="photo"><span id="msg">사진을 불러오는 중…</span></div>
+  <div class="photo loading" id="photo">
+    <div class="ld" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <span id="msg">사진을 불러오는 중이에요</span>
+  </div>
   <div class="hint" id="hint">사진을 길게 눌러 저장하세요</div>
   <button class="btn" id="dl" type="button" hidden>사진 저장하기</button>
   <div class="foot">사진은 잠시 뒤 자동으로 삭제됩니다 · 2026 Captcha!</div>
@@ -35,12 +47,13 @@ body{margin:0;min-height:100vh;background:#fff;color:var(--blue);font-family:'Sp
   var u = q.get('u') || '';
   if (/^[\w-]{20,}$/.test(id)) u = 'https://lh3.googleusercontent.com/d/' + id + '=w2000'; // 위원회 드라이브 사진 (외부 페이지 이동 없이 바로 표시)
   var dl = document.getElementById('dl'), box = document.getElementById('photo'), msg = document.getElementById('msg');
-  if (!/^https:\/\/(tmpfiles\.org|file\.io|lh3\.googleusercontent\.com)\//.test(u)) { msg.textContent = '사진 주소가 올바르지 않아요'; document.getElementById('hint').style.display = 'none'; return; }
+  if (!/^https:\/\/(tmpfiles\.org|file\.io|lh3\.googleusercontent\.com)\//.test(u)) { box.classList.remove('loading'); box.querySelector('.ld').remove(); msg.textContent = '사진 주소가 올바르지 않아요'; document.getElementById('hint').style.display = 'none'; return; }
   // 외부 사이트(광고)로 넘어가지 않게: 사진을 직접 받아 올 수 있을 때만 저장 버튼을 보여 주고, 아니면 길게 눌러 저장만 안내
   var img = new Image();
   img.alt = 'Captcha! 포토부스 사진';
-  img.onload = function(){ box.innerHTML = ''; box.appendChild(img); };
+  img.onload = function(){ box.classList.remove('loading'); box.innerHTML = ''; box.appendChild(img); };
   img.onerror = function(){ // 임시 호스팅이 외부 표시를 막으면: 원본 페이지로 가는 버튼만 제공
+    box.classList.remove('loading'); box.querySelector('.ld').remove();
     msg.textContent = '아래 버튼을 눌러 사진을 저장해 주세요';
     document.getElementById('hint').style.display = 'none';
     var go = document.createElement('a'); go.className = 'btn'; go.textContent = '사진 저장 페이지로 이동';
