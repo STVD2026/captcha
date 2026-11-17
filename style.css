@@ -404,16 +404,6 @@ footer{padding:28px 40px;background:var(--bg2);border-top:1px solid var(--g800);
   .pb-cam-desc{text-align:left}
 }
 /* QR 모달 */
-.booth-qr-modal{position:fixed;inset:0;background:rgba(0,0,0,.75);backdrop-filter:blur(8px);z-index:500;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s}
-.booth-qr-modal.show{opacity:1;pointer-events:all}
-.booth-qr-box{background:var(--bg2);border:1px solid var(--g700);padding:40px 36px;display:flex;flex-direction:column;align-items:center;gap:20px;min-width:300px}
-.booth-qr-label{font-size:12px;font-weight:500;color:var(--g100);text-align:center;line-height:1.8}
-.booth-qr-label span{font-size:10px;color:var(--g500)}
-.booth-qr-box img{width:220px;height:220px;background:var(--white);display:block}
-.booth-qr-direct{font-size:10px;font-weight:600;letter-spacing:.08em;color:var(--g300);text-decoration:none;text-transform:uppercase}
-.booth-qr-direct:hover{color:var(--white)}
-.booth-qr-close{background:none;border:1px solid var(--g700);color:var(--g500);font-family:var(--font);font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;padding:9px 24px;cursor:var(--cur-hand);transition:all var(--ease)}
-.booth-qr-close:hover{border-color:var(--white);color:var(--white)}
 
 
 /* ══════════════════════════════════════════════════
@@ -1437,3 +1427,37 @@ a,button,[onclick],label,summary,.wk-bt,.wk-bt *,[role=button]{cursor:var(--cur-
   .wd-embed-pp.paused::before{left:12px;top:8px;border-left-width:10px;border-top-width:7px;border-bottom-width:7px}
   .wd-embed-snd svg{width:16px;height:16px}
 }
+
+/* ── 사진 내보내기 로딩: 파란 화면 + 바뀌는 디더 3D 오브제 ── */
+.booth-loader{position:fixed;inset:0;z-index:600;background:var(--blue);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;opacity:0;pointer-events:none;transition:opacity .25s;
+  background-image:linear-gradient(rgba(255,255,255,.12) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.12) 1px,transparent 1px);background-size:48px 48px;background-position:center}
+.booth-loader.show{opacity:1;pointer-events:all}
+#booth-loader-3d{width:min(380px,70vw);height:min(380px,70vw);display:block}
+.bl-text{display:flex;flex-direction:column;align-items:center;gap:10px;color:#fff}
+.bl-title{font-family:var(--gal);font-weight:700;font-size:clamp(26px,3.4vw,40px);letter-spacing:.08em;transform:skewX(-8deg)}
+.bl-dots i{font-style:normal;animation:blDot 1.2s infinite}
+.bl-dots i:nth-child(2){animation-delay:.2s}.bl-dots i:nth-child(3){animation-delay:.4s}
+@keyframes blDot{0%,60%,100%{opacity:.15}30%{opacity:1}}
+.bl-sub{font-family:var(--noto);font-size:14px;font-weight:500}
+.bl-bar{width:220px;height:6px;border:1px solid #fff;overflow:hidden;margin-top:6px}
+.bl-bar span{display:block;height:100%;width:30%;background:repeating-linear-gradient(90deg,#fff 0 4px,transparent 4px 6px);animation:blBar 1.4s ease-in-out infinite}
+@keyframes blBar{0%{transform:translateX(-100%)}100%{transform:translateX(340%)}}
+
+/* ── QR 모달: 사이트 무드 (파랑·흰색, 갈라파고스 타이틀, 디더 프레임) ── */
+.booth-qr-modal{position:fixed;inset:0;z-index:600;background:rgba(82,84,255,.82);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .25s;padding:16px}
+.booth-qr-modal.show{opacity:1;pointer-events:all}
+.booth-qr-box{background:#fff;border:2px solid #C0C0FF;outline:2px solid #fff;padding:22px 26px 26px;display:flex;flex-direction:column;align-items:center;gap:14px;width:min(340px,100%);transform:translateY(12px) scale(.98);transition:transform .3s cubic-bezier(.2,.7,.2,1)}
+.booth-qr-modal.show .booth-qr-box{transform:none}
+.bq-head{align-self:stretch;display:flex;justify-content:space-between;align-items:center;border-bottom:1.5px solid var(--blue);padding-bottom:8px}
+.bq-title{font-family:var(--gal);font-weight:700;font-size:30px;color:var(--blue);letter-spacing:.06em;transform:skewX(-8deg)}
+.bq-x{background:none;border:none;color:var(--blue);font-size:28px;line-height:1;cursor:var(--cur-hand);padding:0 2px}
+.bq-frame{position:relative;padding:14px;background:#fff}
+.bq-frame img{width:220px;height:220px;display:block;image-rendering:pixelated}
+.bq-frame .c{position:absolute;width:22px;height:22px;border:3px solid var(--blue)}
+.bq-frame .tl{left:0;top:0;border-right:none;border-bottom:none}.bq-frame .tr{right:0;top:0;border-left:none;border-bottom:none}
+.bq-frame .bl{left:0;bottom:0;border-right:none;border-top:none}.bq-frame .br{right:0;bottom:0;border-left:none;border-top:none}
+.booth-qr-label{font-family:var(--noto);font-size:13px;font-weight:600;color:var(--blue);text-align:center;line-height:1.5;word-break:keep-all}
+.bq-timer{font-family:var(--noto);font-size:12px;color:#6b6b8a}
+.bq-timer b{font-family:var(--sg);color:var(--blue);font-weight:700}
+.booth-qr-direct{background:var(--blue);color:#fff;font-family:var(--noto);font-size:12px;font-weight:600;text-decoration:none;padding:7px 14px}
+.booth-qr-direct:hover{background:#3f41e6}

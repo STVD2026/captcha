@@ -1447,9 +1447,11 @@ function boothShowQR() {
   if (boothPhotos.length < 4) return;
   var qrBtn = document.getElementById('booth-qr-btn');
   qrBtn.disabled = true;
-  var label = qrBtn.innerHTML;
-  qrBtn.textContent = '업로드 중...';
+  boothLoader(true);
+  var t0 = Date.now(), MIN = 2600; // 오브제가 한 바퀴는 바뀌도록 최소 표시 시간
+  var finish = function(fn) { setTimeout(function() { boothLoader(false); qrBtn.disabled = false; fn && fn(); }, Math.max(0, MIN - (Date.now() - t0))); };
   boothBuildCanvas(function(canvas) {
+    boothLoaderSub('사진을 업로드하는 중이에요');
     canvas.toBlob(function(blob) {
       var form = new FormData();
       form.append('file', blob, 'photobooth_2026_snut.jpg');
@@ -1457,7 +1459,7 @@ function boothShowQR() {
         .then(function(r) { return r.json(); })
         .then(function(json) {
           if (!json.success || !json.link) throw new Error('link 없음');
-          boothOpenQRModal(json.link);
+          return json.link;
         })
         .catch(function(err) {
           console.error('file.io 실패, tmpfiles 시도:', err);
@@ -1468,28 +1470,51 @@ function boothShowQR() {
             .then(function(json) {
               var url = json.data && json.data.url;
               if (!url) throw new Error('url 없음');
-              boothOpenQRModal(url.replace('tmpfiles.org/', 'tmpfiles.org/dl/'));
+              return url.replace('tmpfiles.org/', 'tmpfiles.org/dl/');
             });
         })
-        .catch(function() {
-          alert('업로드에 실패했습니다. 잠시 후 다시 시도해주세요.');
+        .then(function(url) {
+          boothLoaderSub('QR코드를 만드는 중이에요');
+          finish(function() { boothOpenQRModal(url); });
         })
-        .finally(function() {
-          qrBtn.disabled = false;
-          qrBtn.innerHTML = label;
+        .catch(function() {
+          finish(function() { alert('업로드에 실패했습니다. 잠시 후 다시 시도해주세요.'); });
         });
     }, 'image/jpeg', 0.95);
   });
 }
 
+/* 내보내기 로딩 화면 (3D 오브제는 hero3d.js의 boothLoader3D) */
+function boothLoader(on) {
+  var el = document.getElementById('booth-loader');
+  if (on) boothLoaderSub('사진을 인화하는 중이에요');
+  el.classList.toggle('show', on);
+  if (window.boothLoader3D) window.boothLoader3D[on ? 'start' : 'stop']();
+}
+function boothLoaderSub(t) { document.getElementById('booth-loader-sub').textContent = t; }
+
+var _boothQRTimer = 0;
 function boothOpenQRModal(url) {
-  var qrImgUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=220x220&margin=12&data=' + encodeURIComponent(url);
-  document.getElementById('booth-qr-img').src = qrImgUrl;
+  // QR도 사이트 파랑(#5254FF)으로
+  document.getElementById('booth-qr-img').src = 'https://api.qrserver.com/v1/create-qr-code/?size=440x440&margin=0&color=5254ff&bgcolor=ffffff&data=' + encodeURIComponent(url);
   document.getElementById('booth-qr-link').href = url;
   document.getElementById('booth-qr-modal').classList.add('show');
+  var end = Date.now() + 10 * 60 * 1000, el = document.getElementById('booth-qr-timer');
+  clearInterval(_boothQRTimer);
+  (function tick() {
+    var s = Math.max(0, Math.round((end - Date.now()) / 1000));
+    el.textContent = Math.floor(s / 60) + ':' + ('0' + s % 60).slice(-2);
+    if (!s) clearInterval(_boothQRTimer);
+  })();
+  _boothQRTimer = setInterval(function() {
+    var s = Math.max(0, Math.round((end - Date.now()) / 1000));
+    el.textContent = Math.floor(s / 60) + ':' + ('0' + s % 60).slice(-2);
+    if (!s) { clearInterval(_boothQRTimer); el.textContent = '만료됨'; }
+  }, 1000);
 }
 
 function boothCloseQR() {
+  clearInterval(_boothQRTimer);
   document.getElementById('booth-qr-modal').classList.remove('show');
 }
 

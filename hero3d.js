@@ -480,3 +480,73 @@ export function buildCamera(look, body) { // body: 기본 재질 (CCD는 쇠로 
   }
   return g;
 }
+
+// ── 사진 내보내기 로딩: 오브제 4종이 차례로 비틀리며 바뀌는 디더 3D (흰 점, 파란 배경 위) ──
+export function initLoaderObj(canvas) {
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: false, alpha: true });
+  renderer.setClearColor(0x000000, 0); renderer.autoClear = false;
+  const scene = new THREE.Scene(), camera = new THREE.PerspectiveCamera(32, 1, 0.1, 100);
+  camera.position.set(0, 0, 14);
+  const pmrem = new THREE.PMREMGenerator(renderer);
+  scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+  scene.add(new THREE.HemisphereLight(0xffffff, 0xbfbfe8, 1.2));
+  const k1 = new THREE.DirectionalLight(0xffffff, 3.4); k1.position.set(6, 9, 10); scene.add(k1);
+  const k2 = new THREE.DirectionalLight(0xffffff, 2.0); k2.position.set(-7, 4, 6); scene.add(k2);
+  const mat = new THREE.MeshStandardMaterial({ color: 0x5254ff, roughness: 0.32 });
+  const draco = new DRACOLoader(); draco.setDecoderPath('vendor/draco/');
+  const loader = new GLTFLoader(); loader.setDRACOLoader(draco);
+  const toBuf = b64 => { const s = atob(b64), a = new Uint8Array(s.length); for (let i = 0; i < s.length; i++) a[i] = s.charCodeAt(i); return a.buffer; };
+  const KEYS = ['fire_hydrant', 'traffic_light', 'steps', 'road_narrows'], objs = [];
+  KEYS.forEach((key, i) => {
+    const b64 = (window.CAPTCHA_MODELS || {})[key]; if (!b64) return;
+    loader.parse(toBuf(b64), '', gl => {
+      gl.scene.traverse(o => { if (o.isMesh) o.material = mat; });
+      const box = new THREE.Box3().setFromObject(gl.scene); gl.scene.position.sub(box.getCenter(new THREE.Vector3()));
+      const g = new THREE.Group(); g.add(gl.scene); g.userData.s = 4.2 / box.getBoundingSphere(new THREE.Sphere()).radius;
+      g.visible = false; scene.add(g); objs[i] = g;
+    });
+  });
+  const rt = new THREE.WebGLRenderTarget(2, 2, { minFilter: THREE.NearestFilter, magFilter: THREE.NearestFilter });
+  const PX = 4;
+  const post = new THREE.ShaderMaterial({ transparent: true, uniforms: { t: { value: rt.texture } },
+    vertexShader: 'varying vec2 v; void main(){ v=uv; gl_Position=vec4(position.xy,0.,1.); }',
+    fragmentShader: `uniform sampler2D t; varying vec2 v;
+      float bayer(vec2 p){ mat4 B=mat4(0.,8.,2.,10.,12.,4.,14.,6.,3.,11.,1.,9.,15.,7.,13.,5.)/16.; int x=int(mod(p.x,4.)),y=int(mod(p.y,4.)); vec4 r=B[y]; return x==0?r.x:x==1?r.y:x==2?r.z:r.w; }
+      void main(){ vec4 c=texture2D(t,v); if(c.a<0.05) discard;
+        float l=dot(c.rgb/max(c.a,.01),vec3(.299,.587,.114)); float cov=clamp((1.-l-.65)*4.5+.01,0.,1.)*clamp(c.a+.25,0.,1.); cov=max(cov,.001);
+        if(cov<bayer(floor(gl_FragCoord.xy/${PX}.))) discard; gl_FragColor=vec4(1.,1.,1.,1.); }` });
+  const ps = new THREE.Scene(); ps.add(new THREE.Mesh(new THREE.PlaneGeometry(2, 2), post));
+  const pc = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+  let raf = 0, t0 = 0;
+  const resize = () => {
+    const w = canvas.clientWidth || 1, h = canvas.clientHeight || 1;
+    renderer.setPixelRatio(1); renderer.setSize(w, h, false);
+    rt.setSize(Math.ceil(w / PX), Math.ceil(h / PX)); camera.aspect = w / h; camera.updateProjectionMatrix();
+  };
+  const HOLD = 1.5, MORPH = 0.45; // 한 오브제 보여주는 시간 / 바뀌는 시간(초)
+  const ease = x => x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
+  const frame = now => {
+    raf = requestAnimationFrame(frame);
+    const t = (now - t0) / 1000, list = objs.filter(Boolean); if (!list.length) return;
+    const per = HOLD + MORPH, idx = Math.floor(t / per) % list.length, local = t % per;
+    list.forEach(o => o.visible = false);
+    const cur = list[idx], s = cur.userData.s;
+    let k = 1, twist = 0;
+    if (local < MORPH / 2) { const e = ease(local / (MORPH / 2)); k = e; twist = (1 - e) * 1.6; }                    // 들어오며 펼쳐짐
+    else if (local > per - MORPH / 2) { const e = ease((local - (per - MORPH / 2)) / (MORPH / 2)); k = 1 - e; twist = -e * 1.6; } // 비틀리며 사라짐
+    cur.visible = true; cur.scale.setScalar(s * Math.max(k, .001));
+    cur.rotation.set(0.35 + Math.sin(t * .9) * .12, t * 1.1 + twist, twist * .4);
+    renderer.setRenderTarget(rt); renderer.clear(); renderer.render(scene, camera);
+    renderer.setRenderTarget(null); renderer.clear(); renderer.render(ps, pc);
+  };
+  return {
+    start() { resize(); cancelAnimationFrame(raf); t0 = performance.now(); raf = requestAnimationFrame(frame); },
+    stop() { cancelAnimationFrame(raf); renderer.setRenderTarget(null); renderer.clear(); }
+  };
+}
+// 포토부스(main.js)에서 쓰도록 노출: 처음 열 때 한 번만 만든다
+let _loader3d = null;
+window.boothLoader3D = {
+  start() { const c = document.getElementById('booth-loader-3d'); if (!c) return; _loader3d = _loader3d || initLoaderObj(c); _loader3d.start(); },
+  stop() { _loader3d && _loader3d.stop(); }
+};

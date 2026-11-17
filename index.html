@@ -14,7 +14,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" onload="this.rel='stylesheet'">
 <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap"></noscript>
-<link rel="stylesheet" href="style.css?v=260">
+<link rel="stylesheet" href="style.css?v=261">
 </head>
 <body class="theme-light">
 
@@ -441,13 +441,27 @@
     </div>
   </section>
 
+  <!-- 사진 내보내기 로딩 -->
+  <div class="booth-loader" id="booth-loader" aria-live="polite">
+    <canvas id="booth-loader-3d"></canvas>
+    <div class="bl-text">
+      <div class="bl-title">PROCESSING<span class="bl-dots"><i>.</i><i>.</i><i>.</i></span></div>
+      <div class="bl-sub" id="booth-loader-sub">사진을 인화하는 중이에요</div>
+      <div class="bl-bar"><span></span></div>
+    </div>
+  </div>
+
   <!-- QR 모달 -->
   <div class="booth-qr-modal" id="booth-qr-modal" onclick="boothCloseQR()">
     <div class="booth-qr-box" onclick="event.stopPropagation()">
-      <div class="booth-qr-label">QR코드를 스캔해 사진을 저장하세요<br><span>약 10분 후 링크가 만료됩니다</span></div>
-      <img id="booth-qr-img" src="" alt="QR Code">
-      <a id="booth-qr-link" href="#" target="_blank" class="booth-qr-direct">→ 직접 링크 열기</a>
-      <button class="booth-qr-close" onclick="boothCloseQR()">닫기</button>
+      <div class="bq-head"><span class="bq-title">SCAN!</span><button class="bq-x" onclick="boothCloseQR()" aria-label="닫기">×</button></div>
+      <div class="bq-frame">
+        <img id="booth-qr-img" src="" alt="QR Code">
+        <i class="c tl"></i><i class="c tr"></i><i class="c bl"></i><i class="c br"></i>
+      </div>
+      <div class="booth-qr-label">휴대폰 카메라로 QR을 스캔해 사진을 저장하세요</div>
+      <div class="bq-timer">링크 만료까지 <b id="booth-qr-timer">10:00</b></div>
+      <a id="booth-qr-link" href="#" target="_blank" class="booth-qr-direct">직접 링크 열기 ↗</a>
     </div>
   </div>
 
@@ -455,7 +469,7 @@
 </div>
 
 <script src="works-data.js?v=12"></script>
-<script src="main.js?v=164"></script>
+<script src="main.js?v=165"></script>
 
 <!-- 3D 인터랙티브 히어로 (Three.js — 로컬 번들, CDN 의존 없음) -->
 <script src="models.js?v=1"></script>
@@ -463,6 +477,6 @@
 <script type="importmap">
 {"imports":{"three":"./vendor/three/three.module.js","three/addons/":"./vendor/three/addons/"}}
 </script>
-<script type="module" src="hero3d.js?v=35"></script>
+<script type="module" src="hero3d.js?v=36"></script>
 </body>
 </html>
