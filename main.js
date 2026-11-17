@@ -68,7 +68,7 @@ function contactHTML(c) {
 }
 
 function showPage(name) {
-  if (name === 'message' && window.innerWidth <= 640) name = 'main'; // 모바일: 포토부스(MESSAGE) 미제공
+  if (name === 'message' && window.innerWidth <= 640 && !/[?&]kiosk\b/.test(location.search)) name = 'main'; // 모바일: 포토부스(MESSAGE) 미제공 (키오스크는 예외)
   document.querySelectorAll('.page').forEach(function(p){ p.classList.remove('active'); });
   document.querySelectorAll('.nav-links button').forEach(function(b){ b.classList.remove('active'); });
   document.getElementById('designer-detail').classList.remove('active');
@@ -690,8 +690,15 @@ function boothShowStage(name) {
 
 /* 카메라 선택 → 촬영 화면으로 */
 /* 카메라 선택 화면으로 돌아가기 */
+var _boothSess = 0; // 촬영 회차: 뒤로 가기로 중단하면 이전 카운트다운·촬영 예약이 무시되도록
 function boothBackToPick() {
-  if (boothRunning) return;
+  if (boothRunning) { // 촬영 중이어도 중단하고 카메라 선택 화면으로
+    _boothSess++;
+    boothRunning = false;
+    boothPhotos = [];
+    document.getElementById('pb').classList.remove('shooting');
+    boothSetRing(1); boothSetProgress(0); boothSetInd(3, 1);
+  }
   boothShowStage('pick');
 }
 
@@ -1052,6 +1059,7 @@ function boothStart() {
   if (boothRunning) return;
   boothInitCam().then(function() {
     boothRunning = true;
+    _boothSess++;
     boothPhotos = [];
     document.getElementById('pb').classList.add('shooting');
     boothResetTimer();
@@ -1069,6 +1077,7 @@ function boothSetInd(sec, cutIdx) {
 }
 
 function boothShootSequence(shotIdx) {
+  var sess = _boothSess;
   if (shotIdx >= 4) {
     boothRunning = false;
     boothSetProgress(0);
@@ -1078,15 +1087,17 @@ function boothShootSequence(shotIdx) {
   }
   boothSetInd(3, shotIdx + 1); // 현재 컷 표시
   boothCountdown(3, function() {
+    if (sess !== _boothSess) return; // 중단됨
     boothCapture(shotIdx);
-    setTimeout(function() { boothShootSequence(shotIdx + 1); }, 600);
+    setTimeout(function() { if (sess === _boothSess) boothShootSequence(shotIdx + 1); }, 600);
   });
 }
 
 /* 3→2→1 부드럽게: SEC 숫자·원형 링·상단 바를 초에 맞춰 함께 닳게 */
 function boothCountdown(sec, cb) {
-  var dur = sec * 1000, start = performance.now();
+  var dur = sec * 1000, start = performance.now(), sess = _boothSess;
   (function tick(now) {
+    if (sess !== _boothSess) return; // 뒤로 가기로 중단
     now = now || performance.now();
     var remain = Math.max(0, dur - (now - start));
     var frac = remain / dur;

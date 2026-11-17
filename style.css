@@ -283,7 +283,7 @@ footer{padding:28px 40px;background:var(--bg2);border-top:1px solid var(--g800);
 /* 뒤로 가기 */
 .pb-back{align-self:center;display:inline-flex;align-items:center;gap:8px;background:transparent;color:#fff;border:1.5px solid #fff;padding:8px 16px;font-family:var(--noto);font-size:13px;font-weight:700;cursor:var(--cur-hand);margin-bottom:12px;transition:background var(--ease),color var(--ease)}
 .pb-back:hover{background:#fff;color:var(--blue)}
-.pb.shooting .pb-back{visibility:hidden}
+/* 촬영 중에도 뒤로 가기 표시 (누르면 촬영 중단 → 카메라 선택) */
 
 /* ── STAGE 0 · 카메라 선택 ── */
 .pb-pick{width:100%;max-width:860px;flex:1 1 auto;min-height:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:2vh 0}
