@@ -1478,3 +1478,4 @@ body.kiosk .nav-links{display:none}
 body.kiosk .nav-logo{pointer-events:none}
 body.kiosk footer.site-foot{display:none}
 body.kiosk .booth-qr-direct{display:none}
+.bq-warn{font-family:var(--noto);font-size:12px;font-weight:600;line-height:1.55;color:#fff;background:var(--blue);padding:8px 12px;text-align:center;word-break:keep-all;align-self:stretch}

@@ -38,7 +38,16 @@ body{margin:0;min-height:100vh;background:#fff;color:var(--blue);font-family:'Sp
   var img = new Image();
   img.alt = 'Captcha! 포토부스 사진';
   img.onload = function(){ box.innerHTML = ''; box.appendChild(img); };
-  img.onerror = function(){ msg.textContent = '사진을 불러오지 못했어요. 링크가 만료되었을 수 있어요'; document.getElementById('hint').style.display = 'none'; };
+  img.onerror = function(){ // 임시 호스팅이 외부 표시를 막으면: 원본 페이지로 가는 버튼만 제공
+    msg.textContent = '아래 버튼을 눌러 사진을 저장해 주세요';
+    document.getElementById('hint').style.display = 'none';
+    var go = document.createElement('a'); go.className = 'btn'; go.textContent = '사진 저장 페이지로 이동';
+    go.href = u.replace('tmpfiles.org/dl/', 'tmpfiles.org/'); go.rel = 'noopener';
+    dl.parentNode.insertBefore(go, dl);
+    var note = document.createElement('div'); note.className = 'foot'; note.style.marginTop = '10px'; note.style.paddingTop = '0';
+    note.textContent = '외부 파일 보관 사이트로 이동합니다. 광고가 보이면 닫고 사진을 길게 눌러 저장하세요';
+    dl.parentNode.insertBefore(note, dl);
+  };
   img.src = u;
   fetch(u).then(function(r){ if (!r.ok) throw 0; return r.blob(); }).then(function(blob){
     if (!/^image\//.test(blob.type)) return; // 이미지가 아니면(광고·안내 페이지) 버튼 숨김 유지
