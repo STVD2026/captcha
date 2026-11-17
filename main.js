@@ -1928,4 +1928,11 @@ window.addEventListener('resize', boothFitEdit);
   window.addEventListener('hashchange', function() { try { history.replaceState({ y: 0 }, '', '#message'); } catch (e) {} setTimeout(force, 0); });
   window.addEventListener('load', function() { setTimeout(force, 0); });
   force();
+  // 주소창·탭 숨기기: 웹페이지는 사용자 조작(클릭) 때만 전체화면을 켤 수 있어, 화면을 누를 때마다 전체화면이 아니면 다시 켬
+  var fs = function() {
+    var d = document.documentElement;
+    if (document.fullscreenElement || document.webkitFullscreenElement) return;
+    (d.requestFullscreen || d.webkitRequestFullscreen || function(){}).call(d);
+  };
+  document.addEventListener('pointerdown', fs, true);
 })();
