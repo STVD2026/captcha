@@ -1431,7 +1431,7 @@ a,button,[onclick],label,summary,.wk-bt,.wk-bt *,[role=button]{cursor:var(--cur-
 /* ── 사진 내보내기 로딩: 바뀌는 디더 3D 오브제 ── */
 /* 메시지 페이지 배경(그리드·떠다니는 오브제)은 그대로 두고, 그 위 UI만 숨긴 채 로딩 표시 */
 .booth-loader{position:absolute;inset:0;z-index:3;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;opacity:0;pointer-events:none;transition:opacity .25s}
-.pb.loading .pb-inner{visibility:hidden}
+.pb.loading .pb-inner,.pb.loading .pb-bg3d{visibility:hidden} /* 로딩 중엔 그리드만 남김 */
 .booth-loader.show{opacity:1;pointer-events:all}
 #booth-loader-3d{width:min(380px,70vw);height:min(380px,70vw);display:block}
 .bl-text{display:flex;flex-direction:column;align-items:center;gap:10px;color:#fff}
