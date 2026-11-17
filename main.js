@@ -1445,6 +1445,27 @@ function boothDrawBubble(ctx, el, scale) {
   });
 }
 
+/* 사진 업로드: 위원회 구글 Apps Script(BOOTH_UPLOAD_URL)가 있으면 드라이브로, 없으면 tmpfiles로.
+   반환값은 QR이 열 사진 페이지의 쿼리 (?id= 드라이브 파일 / ?u= tmpfiles 주소) */
+var BOOTH_UPLOAD_URL = ''; // 예: 'https://script.google.com/macros/s/XXXX/exec'
+function boothUpload(blob) {
+  if (BOOTH_UPLOAD_URL) {
+    return new Promise(function(res, rej) { var fr = new FileReader(); fr.onload = function() { res(fr.result); }; fr.onerror = rej; fr.readAsDataURL(blob); })
+      .then(function(dataUrl) { return fetch(BOOTH_UPLOAD_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: dataUrl }); })
+      .then(function(r) { return r.json(); })
+      .then(function(j) { if (!j.ok || !j.id) throw new Error(j.error || 'id 없음'); return 'id=' + encodeURIComponent(j.id); });
+  }
+  var form = new FormData();
+  form.append('file', blob, 'photobooth_2026_snut.jpg');
+  return fetch('https://tmpfiles.org/api/v1/upload', { method: 'POST', body: form })
+    .then(function(r) { return r.json(); })
+    .then(function(json) {
+      var url = json.data && json.data.url;
+      if (!url) throw new Error('url 없음');
+      return 'u=' + encodeURIComponent(url.replace('tmpfiles.org/', 'tmpfiles.org/dl/'));
+    });
+}
+
 function boothShowQR() {
   if (boothPhotos.length < 4) return;
   var qrBtn = document.getElementById('booth-qr-btn');
@@ -1455,26 +1476,7 @@ function boothShowQR() {
   boothBuildCanvas(function(canvas) {
     boothLoaderSub('사진을 업로드하는 중이에요');
     canvas.toBlob(function(blob) {
-      var form = new FormData();
-      form.append('file', blob, 'photobooth_2026_snut.jpg');
-      fetch('https://file.io/?expires=10m', { method: 'POST', body: form })
-        .then(function(r) { return r.json(); })
-        .then(function(json) {
-          if (!json.success || !json.link) throw new Error('link 없음');
-          return json.link;
-        })
-        .catch(function(err) {
-          console.error('file.io 실패, tmpfiles 시도:', err);
-          var form2 = new FormData();
-          form2.append('file', blob, 'photobooth_2026_snut.jpg');
-          return fetch('https://tmpfiles.org/api/v1/upload', { method: 'POST', body: form2 })
-            .then(function(r) { return r.json(); })
-            .then(function(json) {
-              var url = json.data && json.data.url;
-              if (!url) throw new Error('url 없음');
-              return url.replace('tmpfiles.org/', 'tmpfiles.org/dl/');
-            });
-        })
+      boothUpload(blob)
         .then(function(url) {
           boothLoaderSub('QR코드를 만드는 중이에요');
           finish(function() { boothOpenQRModal(url); });
@@ -1500,7 +1502,7 @@ var _boothQRTimer = 0, _boothQRHome = 0;
 function boothOpenQRModal(url) {
   // QR도 사이트 파랑(#5254FF)으로
   // QR은 캡챠 로고가 있는 사진 보기 페이지(photo/)로 연결
-  var view = location.origin + location.pathname.replace(/[^/]*$/, '') + 'photo/?u=' + encodeURIComponent(url);
+  var view = location.origin + location.pathname.replace(/[^/]*$/, '') + 'photo/?' + url; // url = 'id=…' 또는 'u=…'
   document.getElementById('booth-qr-img').src = 'https://api.qrserver.com/v1/create-qr-code/?size=440x440&margin=0&color=5254ff&bgcolor=ffffff&data=' + encodeURIComponent(view);
   document.getElementById('booth-qr-link').href = url;
   document.getElementById('booth-qr-modal').classList.add('show');

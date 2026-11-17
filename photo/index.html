@@ -28,12 +28,14 @@ body{margin:0;min-height:100vh;background:#fff;color:var(--blue);font-family:'Sp
   <div class="photo" id="photo"><span id="msg">사진을 불러오는 중…</span></div>
   <div class="hint" id="hint">사진을 길게 눌러 저장하세요</div>
   <button class="btn" id="dl" type="button" hidden>사진 저장하기</button>
-  <div class="foot">링크는 약 10분 뒤 만료됩니다 · 2026 Captcha!</div>
+  <div class="foot">사진은 잠시 뒤 자동으로 삭제됩니다 · 2026 Captcha!</div>
 <script>
 (function(){
-  var u = new URLSearchParams(location.search).get('u') || '';
+  var q = new URLSearchParams(location.search), id = q.get('id') || '';
+  var u = q.get('u') || '';
+  if (/^[\w-]{20,}$/.test(id)) u = 'https://lh3.googleusercontent.com/d/' + id + '=w2000'; // 위원회 드라이브 사진 (외부 페이지 이동 없이 바로 표시)
   var dl = document.getElementById('dl'), box = document.getElementById('photo'), msg = document.getElementById('msg');
-  if (!/^https:\/\/(tmpfiles\.org|file\.io)\//.test(u)) { msg.textContent = '사진 주소가 올바르지 않아요'; document.getElementById('hint').style.display = 'none'; return; }
+  if (!/^https:\/\/(tmpfiles\.org|file\.io|lh3\.googleusercontent\.com)\//.test(u)) { msg.textContent = '사진 주소가 올바르지 않아요'; document.getElementById('hint').style.display = 'none'; return; }
   // 외부 사이트(광고)로 넘어가지 않게: 사진을 직접 받아 올 수 있을 때만 저장 버튼을 보여 주고, 아니면 길게 눌러 저장만 안내
   var img = new Image();
   img.alt = 'Captcha! 포토부스 사진';
