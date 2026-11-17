@@ -1168,7 +1168,7 @@ function boothMTab(name) {
 }
 
 function boothRetake() {
-  boothShowStage('start');
+  boothShowStage('pick'); // 다시 촬영 = 카메라 3종 선택 화면부터
   boothResetTimer();
   boothSetInd(3, 1);
   // 스티커 · 말풍선 초기화
@@ -1496,7 +1496,7 @@ function boothLoader(on) {
 }
 function boothLoaderSub(t) { document.getElementById('booth-loader-sub').textContent = t; }
 
-var _boothQRTimer = 0;
+var _boothQRTimer = 0, _boothQRHome = 0;
 function boothOpenQRModal(url) {
   // QR도 사이트 파랑(#5254FF)으로
   // QR은 캡챠 로고가 있는 사진 보기 페이지(photo/)로 연결
@@ -1511,6 +1511,7 @@ function boothOpenQRModal(url) {
     el.textContent = Math.floor(s / 60) + ':' + ('0' + s % 60).slice(-2);
     if (!s) clearInterval(_boothQRTimer);
   })();
+  clearTimeout(_boothQRHome); _boothQRHome = setTimeout(boothGoHome, 2 * 60 * 1000); // QR 띄우고 2분 뒤 첫 화면으로
   _boothQRTimer = setInterval(function() {
     var s = Math.max(0, Math.round((end - Date.now()) / 1000));
     el.textContent = Math.floor(s / 60) + ':' + ('0' + s % 60).slice(-2);
@@ -1519,7 +1520,7 @@ function boothOpenQRModal(url) {
 }
 
 function boothCloseQR() {
-  clearInterval(_boothQRTimer);
+  clearInterval(_boothQRTimer); clearTimeout(_boothQRHome);
   document.getElementById('booth-qr-modal').classList.remove('show');
 }
 
@@ -1937,4 +1938,22 @@ window.addEventListener('resize', boothFitEdit);
     (d.requestFullscreen || d.webkitRequestFullscreen || function(){}).call(d);
   };
   document.addEventListener('pointerdown', fs, true);
+})();
+
+/* 자동 초기화: QR 2분 뒤 / 편집 화면에서 5분 동안 조작이 없으면 첫 화면(카메라 선택)으로 */
+function boothGoHome() {
+  boothCloseQR();
+  if (document.getElementById('booth-loader').classList.contains('show')) return; // 업로드 중엔 건드리지 않음
+  boothRetake();
+}
+(function(){
+  var last = Date.now(), IDLE = 5 * 60 * 1000;
+  ['pointerdown', 'pointermove', 'keydown', 'input', 'touchstart', 'wheel'].forEach(function(ev) {
+    document.addEventListener(ev, function() { last = Date.now(); }, { passive: true, capture: true });
+  });
+  setInterval(function() {
+    var ed = document.getElementById('pb-edit'), qr = document.getElementById('booth-qr-modal');
+    if (!ed || ed.hidden || (qr && qr.classList.contains('show'))) { last = Date.now(); return; } // 편집 화면에 들어온 뒤부터 계산 (QR은 따로 2분 타이머)
+    if (Date.now() - last > IDLE) { last = Date.now(); boothGoHome(); }
+  }, 5000);
 })();
