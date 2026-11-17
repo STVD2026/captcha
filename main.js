@@ -1953,14 +1953,14 @@ window.addEventListener('resize', boothFitEdit);
   document.addEventListener('pointerdown', fs, true);
 })();
 
-/* 자동 초기화: QR 2분 뒤 / 편집 화면에서 5분 동안 조작이 없으면 첫 화면(카메라 선택)으로 */
+/* 자동 초기화: QR 2분 뒤 / 편집 화면에서 3분 동안 조작이 없으면 첫 화면(카메라 선택)으로 */
 function boothGoHome() {
   boothCloseQR();
   if (document.getElementById('booth-loader').classList.contains('show')) return; // 업로드 중엔 건드리지 않음
   boothRetake();
 }
 (function(){
-  var last = Date.now(), IDLE = 5 * 60 * 1000;
+  var last = Date.now(), IDLE = 3 * 60 * 1000;
   ['pointerdown', 'pointermove', 'keydown', 'input', 'touchstart', 'wheel'].forEach(function(ev) {
     document.addEventListener(ev, function() { last = Date.now(); }, { passive: true, capture: true });
   });
