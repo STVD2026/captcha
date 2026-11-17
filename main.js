@@ -1499,7 +1499,9 @@ function boothLoaderSub(t) { document.getElementById('booth-loader-sub').textCon
 var _boothQRTimer = 0;
 function boothOpenQRModal(url) {
   // QR도 사이트 파랑(#5254FF)으로
-  document.getElementById('booth-qr-img').src = 'https://api.qrserver.com/v1/create-qr-code/?size=440x440&margin=0&color=5254ff&bgcolor=ffffff&data=' + encodeURIComponent(url);
+  // QR은 캡챠 로고가 있는 사진 보기 페이지(photo/)로 연결
+  var view = location.origin + location.pathname.replace(/[^/]*$/, '') + 'photo/?u=' + encodeURIComponent(url);
+  document.getElementById('booth-qr-img').src = 'https://api.qrserver.com/v1/create-qr-code/?size=440x440&margin=0&color=5254ff&bgcolor=ffffff&data=' + encodeURIComponent(view);
   document.getElementById('booth-qr-link').href = url;
   document.getElementById('booth-qr-modal').classList.add('show');
   var end = Date.now() + 10 * 60 * 1000, el = document.getElementById('booth-qr-timer');
