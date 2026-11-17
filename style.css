@@ -1459,3 +1459,22 @@ a,button,[onclick],label,summary,.wk-bt,.wk-bt *,[role=button]{cursor:var(--cur-
 .bq-timer b{font-family:var(--sg);color:var(--blue);font-weight:700}
 .booth-qr-direct{background:var(--blue);color:#fff;font-family:var(--noto);font-size:12px;font-weight:600;text-decoration:none;padding:7px 14px}
 .booth-qr-direct:hover{background:#3f41e6}
+
+/* 큰 화면(아이맥 24" 등) 편집 화면: 흐름과 무관하게 타이틀 아래 영역 정중앙에 고정, 크기는 JS(boothFitEdit)가 화면 높이에 맞춰 키움 */
+@media (min-width:921px) and (min-height:800px){
+  .pb-edit{position:absolute;left:50%;top:calc(50% + 50px);transform:translate(-50%,-50%);margin:0;width:max-content}
+}
+/* 큰 화면(아이맥 24"): 첫 화면 카메라 선택을 화면 높이에 맞춰 크게 */
+@media (min-width:1400px) and (min-height:820px){
+  .pb-pick{max-width:min(1500px,calc((100vh - 400px) * 2.3))}
+  .pb-cams{gap:40px}
+  .pb-pick-title{font-size:40px}
+  .pb-pick-sub{font-size:15px;margin-bottom:34px}
+  .pb-cam-name{font-size:30px}
+  .pb-cam-desc{font-size:16px}
+}
+/* 키오스크 모드: 메뉴 숨김, 로고는 장식만, 푸터·링크 비활성 */
+body.kiosk .nav-links{display:none}
+body.kiosk .nav-logo{pointer-events:none}
+body.kiosk footer.site-foot{display:none}
+body.kiosk .booth-qr-direct{display:none}

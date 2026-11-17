@@ -1155,6 +1155,7 @@ function boothEnterEdit() {
   boothMTab('sticker'); // 모바일 기본 탭
   boothApplyFrame();
   boothUpdateBubble();
+  boothFitEdit();
 }
 
 /* 모바일 편집 탭 전환 (스티커 / 프레임 / 메시지) */
@@ -1320,8 +1321,9 @@ function boothAddSticker(n) {
   function onMove(e) {
     if (!dragging) return;
     var touch = e.touches ? e.touches[0] : e;
-    var dx = touch.clientX - startX;
-    var dy = touch.clientY - startY;
+    var z = parseFloat((document.querySelector('.pb-edit') || {}).style && document.querySelector('.pb-edit').style.zoom) || 1; // 큰 화면 확대분 보정
+    var dx = (touch.clientX - startX) / z;
+    var dy = (touch.clientY - startY) / z;
     var wrap = dragging.parentElement; // pb-overlay
     var maxX = wrap.offsetWidth  - dragging.offsetWidth;
     var maxY = wrap.offsetHeight - dragging.offsetHeight;
@@ -1901,4 +1903,29 @@ document.addEventListener('click', function(e) {
   };
   if (!('IntersectionObserver' in window)) { document.querySelector('.m-video').classList.add('in'); play(true); return; }
   new IntersectionObserver(function(es){ var on = es[es.length - 1].isIntersecting; if (on) es[0].target.classList.add('in'); play(on); }, { threshold:0 }).observe(document.querySelector('.m-video'));
+})();
+
+/* 편집 화면 크기: 기준 레이아웃(높이 약 620px)을 화면 높이에 맞춰 확대 — 아이맥 24" 같은 큰 화면에서 작게·아래로 쏠려 보이지 않게 */
+function boothFitEdit() {
+  var ed = document.querySelector('.pb-edit'); if (!ed) return;
+  if (window.innerWidth <= 920 || window.innerHeight < 800) { ed.style.zoom = ''; return; }
+  var avail = window.innerHeight - 43 - 150 - 40; // 상단 바·타이틀·여백 제외
+  var z = Math.max(1, Math.min(1.7, avail / 620, (window.innerWidth - 80) / 900));
+  ed.style.zoom = z.toFixed(3);
+}
+window.addEventListener('resize', boothFitEdit);
+
+/* 전시용 키오스크 모드 (?kiosk 또는 /booth/): 메시지(포토부스)만 — 메뉴·로고·푸터를 눌러도 다른 페이지로 가지 않음 */
+(function(){
+  if (!/[?&]kiosk\b/.test(location.search)) return;
+  document.body.classList.add('kiosk');
+  try { history.replaceState({ y: 0 }, '', location.pathname + location.search + '#message'); } catch (e) {}
+  var _sp = showPage;
+  showPage = function() { _sp('message'); };
+  openDesigner = openWorkDirect = function() {};
+  var force = function() { if (!document.getElementById('page-message').classList.contains('active')) _sp('message'); };
+  window.addEventListener('popstate', function() { setTimeout(force, 0); });
+  window.addEventListener('hashchange', function() { try { history.replaceState({ y: 0 }, '', '#message'); } catch (e) {} setTimeout(force, 0); });
+  window.addEventListener('load', function() { setTimeout(force, 0); });
+  force();
 })();
