@@ -1428,9 +1428,10 @@ a,button,[onclick],label,summary,.wk-bt,.wk-bt *,[role=button]{cursor:var(--cur-
   .wd-embed-snd svg{width:16px;height:16px}
 }
 
-/* ── 사진 내보내기 로딩: 파란 화면 + 바뀌는 디더 3D 오브제 ── */
-.booth-loader{position:fixed;inset:0;z-index:600;background:var(--blue);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;opacity:0;pointer-events:none;transition:opacity .25s;
-  background-image:linear-gradient(rgba(255,255,255,.12) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.12) 1px,transparent 1px);background-size:48px 48px;background-position:center}
+/* ── 사진 내보내기 로딩: 바뀌는 디더 3D 오브제 ── */
+/* 메시지 페이지 배경(그리드·떠다니는 오브제)은 그대로 두고, 그 위 UI만 숨긴 채 로딩 표시 */
+.booth-loader{position:absolute;inset:0;z-index:3;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;opacity:0;pointer-events:none;transition:opacity .25s}
+.pb.loading .pb-inner{visibility:hidden}
 .booth-loader.show{opacity:1;pointer-events:all}
 #booth-loader-3d{width:min(380px,70vw);height:min(380px,70vw);display:block}
 .bl-text{display:flex;flex-direction:column;align-items:center;gap:10px;color:#fff}

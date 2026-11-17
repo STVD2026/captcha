@@ -14,7 +14,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" onload="this.rel='stylesheet'">
 <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap"></noscript>
-<link rel="stylesheet" href="style.css?v=263">
+<link rel="stylesheet" href="style.css?v=264">
 </head>
 <body class="theme-light">
 
@@ -298,6 +298,15 @@
   <section class="pb" id="pb">
     <div class="pb-grid" id="pb-grid" aria-hidden="true"></div>
     <canvas id="message-bg" class="pb-bg3d" aria-hidden="true"></canvas>
+    <!-- 사진 내보내기 로딩 -->
+    <div class="booth-loader" id="booth-loader" aria-live="polite">
+      <canvas id="booth-loader-3d"></canvas>
+      <div class="bl-text">
+        <div class="bl-title">PROCESSING<span class="bl-dots"><i>.</i><i>.</i><i>.</i></span></div>
+        <div class="bl-sub" id="booth-loader-sub">사진을 인화하는 중이에요</div>
+        <div class="bl-bar"><span></span></div>
+      </div>
+    </div>
     <div class="pb-inner">
       <h2 class="pb-title">PHOTOBOOTH</h2>
 
@@ -441,16 +450,6 @@
     </div>
   </section>
 
-  <!-- 사진 내보내기 로딩 -->
-  <div class="booth-loader" id="booth-loader" aria-live="polite">
-    <canvas id="booth-loader-3d"></canvas>
-    <div class="bl-text">
-      <div class="bl-title">PROCESSING<span class="bl-dots"><i>.</i><i>.</i><i>.</i></span></div>
-      <div class="bl-sub" id="booth-loader-sub">사진을 인화하는 중이에요</div>
-      <div class="bl-bar"><span></span></div>
-    </div>
-  </div>
-
   <!-- QR 모달 -->
   <div class="booth-qr-modal" id="booth-qr-modal" onclick="boothCloseQR()">
     <div class="booth-qr-box" onclick="event.stopPropagation()">
@@ -468,7 +467,7 @@
 </div>
 
 <script src="works-data.js?v=12"></script>
-<script src="main.js?v=165"></script>
+<script src="main.js?v=166"></script>
 
 <!-- 3D 인터랙티브 히어로 (Three.js — 로컬 번들, CDN 의존 없음) -->
 <script src="models.js?v=1"></script>

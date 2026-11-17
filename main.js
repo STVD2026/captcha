@@ -1489,6 +1489,7 @@ function boothLoader(on) {
   var el = document.getElementById('booth-loader');
   if (on) boothLoaderSub('사진을 인화하는 중이에요');
   el.classList.toggle('show', on);
+  document.getElementById('pb').classList.toggle('loading', on);
   if (window.boothLoader3D) window.boothLoader3D[on ? 'start' : 'stop']();
 }
 function boothLoaderSub(t) { document.getElementById('booth-loader-sub').textContent = t; }
