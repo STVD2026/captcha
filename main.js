@@ -1447,7 +1447,7 @@ function boothDrawBubble(ctx, el, scale) {
 
 /* 사진 업로드: 위원회 구글 Apps Script(BOOTH_UPLOAD_URL)가 있으면 드라이브로, 없으면 tmpfiles로.
    반환값은 QR이 열 사진 페이지의 쿼리 (?id= 드라이브 파일 / ?u= tmpfiles 주소) */
-var BOOTH_UPLOAD_URL = ''; // 예: 'https://script.google.com/macros/s/XXXX/exec'
+var BOOTH_UPLOAD_URL = 'https://script.google.com/macros/s/AKfycbxdd_yixFGpUcY7R1I7tOt7FTQjRrf-Y_9c2sSGW4RMhlcP9uBJrNfhpRG2kHXHbohEuQ/exec'; // 위원회 계정 Apps Script (tools/photobooth-upload.gs)
 function boothUpload(blob) {
   if (BOOTH_UPLOAD_URL) {
     return new Promise(function(res, rej) { var fr = new FileReader(); fr.onload = function() { res(fr.result); }; fr.onerror = rej; fr.readAsDataURL(blob); })
